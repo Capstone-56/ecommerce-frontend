@@ -1,3 +1,9 @@
+# frontend
+This repo is responsible for the UI of the eCommerce site.
+test
+
+Website URL (Staging Environment): https://capstone56-frontend.netlify.app/
+
 # React + TypeScript + Vite
 
 This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
