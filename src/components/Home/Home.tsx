@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react"
-import { testCreateUser } from "../API/testAPI";
+
+import { TestService } from "../API/test-service";
 
 
 export default function Home() {
@@ -8,7 +9,7 @@ export default function Home() {
   const handleButtonClick = async () => {
     try {
       const user = {"id": "1", "name": "Xavier"};
-      const data = await testCreateUser(user); // Call the API
+      const data = await TestService.createUser(user); // Call the API
       setUserData(data); // Set the response data in state
     } catch (error) {
       console.log(error);
@@ -22,8 +23,10 @@ export default function Home() {
   return (
     <>
       <div>Home</div>
-      <button onClick={handleButtonClick}></button>
+      <button onClick={handleButtonClick}>POST</button>
       {userData && <p>{JSON.stringify(userData)}</p>}
+
+      <button onClick={TestService.testApiCall}>GET</button>
     </>
   )
 }
