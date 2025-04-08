@@ -12,9 +12,9 @@ export const TestService = {
     }
   },
 
-  async testApiCall() {
+  async testApiCall(username: string) {
     try {
-      const response = await api.get("/api/user");
+      const response = await api.get(`/api/user/${username}`);
       console.log(response.data);
     } catch (error) {
       console.error("API call failed:", error);
