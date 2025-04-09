@@ -1,7 +1,5 @@
 #root {
-  max-width: 1280px;
   margin: 0 auto;
-  padding: 2rem;
   text-align: center;
 }
 
@@ -39,4 +37,89 @@
 
 .read-the-docs {
   color: #888;
+}
+
+.hero{
+  background-color: #D9D9D9;
+  width: 100vw;
+  min-height: 550px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.hero h1{
+  font-size: 72px;
+  line-height: 1.1;
+  margin-bottom: 8px;
+  margin-top: 0;
+}
+
+.hero h2{
+  margin-bottom: 32px;
+  margin-top: 0;
+}
+
+.hero button{
+  margin: 8px;
+}
+
+/* featured section */
+.featured{
+  max-width: 1200px; /* random made up number */
+  margin: 0 auto;
+  margin-top: 128px;
+  margin-bottom: 128px;
+}
+
+.featured-products{
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  flex-wrap: wrap;
+  margin-top: 48px;
+  margin-bottom: 48px;
+  gap: 30px;
+}
+
+.section-title h2{
+  font-size: 32px;
+  line-height: 1.1;
+  margin-bottom: 8px;
+  margin-top: 0;
+}
+
+.categories{
+  width: 100%;
+  background-color: #efefef;
+  padding: 65px;
+}
+.category-cards{
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  flex-wrap: wrap;
+  margin-top: 48px;
+  margin-bottom: 48px;
+  gap: 30px;
+}
+
+.category-card{
+  display: flex;
+  flex-direction: column;
+  text-align: left;
+}
+
+.category-card-text{
+  padding: 8px 0;
+}
+.category-card-text h3{
+  font-size: 16px;
+  margin: 0;
+}
+
+.category-card-text p{
+  font-size: 13px;
+  margin: 0;
+  margin-top: 10px;
 }
