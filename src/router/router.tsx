@@ -1,10 +1,10 @@
 import { createBrowserRouter } from "react-router";
 
-import App from '../App.tsx';
-import Home from '../components/Home/Home.tsx';
-import About from "../components/About/About.tsx";
-import Profile from "../components/Profile/Profile.tsx";
-import NotFound from '../components/NotFound/NotFound.tsx';
+import App from "@/App";
+import Home from "@/components/Home/Home";
+import About from "@/components/About/About";
+import NotFound from "@/components/NotFound/NotFound";
+import Profile from "@/components/Profile/Profile.tsx";
 
 export const router = createBrowserRouter([
     {
