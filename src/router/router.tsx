@@ -4,6 +4,7 @@ import App from "@/App";
 import Home from "@/components/Home/Home";
 import About from "@/components/About/About";
 import NotFound from "@/components/NotFound/NotFound";
+import Profile from "@/components/Profile/Profile.tsx";
 
 export const router = createBrowserRouter([
     {
@@ -18,6 +19,10 @@ export const router = createBrowserRouter([
             {
                 path: "/about",
                 element: <About />
+            },
+            {
+                path: "/profile",
+                element: <Profile />
             },
             {
                 path: "/*",
