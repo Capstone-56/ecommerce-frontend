@@ -1,7 +1,9 @@
 import React from "react";
-import { Trolley } from "@mui/icons-material";
+import { KeyboardCommandKey, Trolley, Person } from "@mui/icons-material";
 import {
   AppBar,
+  Box,
+  Button,
   Container,
   IconButton,
   Menu,
@@ -9,44 +11,84 @@ import {
   Typography,
 } from "@mui/material";
 
+import { grey, red } from "@mui/material/colors";
+
 const menus = ["Home", "Products", "Categories", "About"];
+
+// Leading Trolley Icon
+const LogoStyle = {
+  minHeight: "48px",
+  minWidth: "48px",
+  mr: 1,
+  color: grey[900],
+};
+
+const TitleStyling = {
+  fontWeight: "700",
+  fontSize: "20px",
+  textDecoration: "none",
+  color: grey[900],
+  "&:hover": {
+    color: grey[900],
+  },
+};
+
+// Navigation Buttons
+const ButtonStyling = {
+  color: grey[900],
+  "&:hover": {
+    backgroundColor: red,
+  },
+};
 
 const Navbar: React.FC = () => {
   return (
     <AppBar position="static">
       <Container maxWidth={false} disableGutters>
-        <Toolbar sx={{ backgroundColor: "grey" }}>
-          <IconButton disableRipple href="/">
-            <Trolley
-              sx={{
-                minHeight: "48px",
-                minWidth: "48px",
-                mr: 1,
-                color: "inherit",
-                "&:hover": {
-                  color: "inherit",
-                },
-              }}
-            />
-          </IconButton>
-          <Typography
-            variant="h1"
-            noWrap
-            fontSize="48px"
-            component="a"
-            href="/"
+        <Toolbar
+          sx={{ backgroundColor: grey[50], justifyContent: "space-between" }}
+        >
+          <Box
             sx={{
-              fontWeight: "500",
-              fontSize: "48px",
-              textDecoration: "none",
-              color: "inherit",
-              "&:hover": {
-                color: "inherit",
-              },
+              display: "flex",
+              flexDirection: "row",
+              alignItems: "center",
             }}
           >
-            Company name
-          </Typography>
+            <IconButton disableRipple>
+              <KeyboardCommandKey sx={{ ...LogoStyle }} />
+            </IconButton>
+            <Typography
+              variant="h1"
+              noWrap
+              // component="a"
+              // href="/"
+              sx={{ ...TitleStyling }}
+            >
+              Company name
+            </Typography>
+          </Box>
+
+          <Box>
+            {menus.map((menuItem) => (
+              <Button
+                key={menuItem}
+                onClick={() => console.log(`${menuItem} clicked!`)}
+                sx={{ ...ButtonStyling }}
+              >
+                {menuItem}
+              </Button>
+            ))}
+          </Box>
+
+          <Box>
+            <IconButton size="large">
+              <Trolley />
+            </IconButton>
+            <IconButton size="large">
+              <Person />
+            </IconButton>
+          </Box>
         </Toolbar>
       </Container>
     </AppBar>

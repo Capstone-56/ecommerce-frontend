@@ -1,16 +1,15 @@
-import { useEffect } from "react"
+import { useEffect } from "react";
 import Navbar from "../Navigation/Navigation";
 
 export default function Home() {
   useEffect(() => {
-    document.title = "eCommerce | Home"
+    document.title = "eCommerce | Home";
   }, []);
-  
+
   return (
     <>
-      <Navbar/>
+      <Navbar />
       <div>Home</div>
-      
     </>
-  )
+  );
 }
