@@ -1,8 +1,8 @@
 // Corresponding backend model: UserModel.py
 
 export interface UserModel {
-  Id       : string;
-  Username : string;
-  Name     : string;
-  Email    : string;
+  id       : string;
+  username : string;
+  name     : string;
+  email    : string;
 }
