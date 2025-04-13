@@ -1,11 +1,29 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 
 import { Box, Button, Typography, Container } from "@mui/material";
+import { ProductService } from "@/services/product-service";
+import { ProductModel } from "@/domain/models/ProductModel";
 
 export default function Home() {
+  const [products, setProducts] = useState<Array<ProductModel>>([]);
+
+  /**
+   * A useEffect required to get product data upon mount.
+   */
   useEffect(() => {
     document.title = "eCommerce | Home";
+
+    // The ProductService required to get product data.
+    const productService = new ProductService();
+
+    // Function to retrieve products via the API.
+    const getProducts = async () => {
+      const products = await productService.listProducts();
+      setProducts(products);
+    };
+
+    getProducts();
   }, []);
 
   return (
@@ -43,7 +61,7 @@ export default function Home() {
         >
           Lorem ipsum dolor sit amet, consectetur adipiscing
         </Typography>
-
+        {products && <p>{JSON.stringify(products[0])}</p>}
         <Box sx={{ display: "flex", gap: 2 }}>
           <Button
             variant="outlined"
