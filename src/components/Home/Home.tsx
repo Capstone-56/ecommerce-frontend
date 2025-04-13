@@ -5,9 +5,9 @@ import { Box, Button, Typography, Container } from "@mui/material";
 
 export default function Home() {
   useEffect(() => {
-    document.title = "eCommerce | Home"
+    document.title = "eCommerce | Home";
   }, []);
-  
+
   return (
     <>
       {/* Hero Section */}
@@ -30,7 +30,6 @@ export default function Home() {
           sx={{
             fontSize: { xs: "48px", md: "72px" },
             mb: 1,
-            fontWeight: 500,
           }}
         >
           Discover the latest
@@ -188,5 +187,5 @@ export default function Home() {
         <Typography>Footer</Typography>
       </Box>
     </>
-  )
+  );
 }
