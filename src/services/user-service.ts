@@ -1,8 +1,13 @@
 import api from "@/api";
 
-import { UserModel } from "@/models/UserModel";
+import { UserModel } from "@/domain/models/UserModel";
 
 export class UserService {
+  /**
+   * Calls /api/user
+   * @params null
+   * @returns list of all users (Array\<UserModel\>)
+   */
   async listUsers() : Promise<Array<UserModel>> {
     try {
       const response = await api.get("/api/user");
@@ -14,6 +19,11 @@ export class UserService {
     }
   }
 
+  /**
+   * Calls /api/user/id
+   * @params id (userId)
+   * @returns a UserModel
+   */
   async getUser(id: string) : Promise<UserModel> {
     try {
       const response = await api.get(`/api/user/${id}`);
