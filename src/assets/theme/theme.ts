@@ -11,6 +11,7 @@ export const themeOptions: ThemeOptions = {
   // },
 
   // e.g. This block changes all typography to have font-family "Inter", and all h1 has font-weight 700
+  // We can also define custom variants, see https://mui.com/material-ui/customization/typography/#variants
   typography: {
     fontFamily: 'Inter',
     h1: {
