@@ -1,6 +1,8 @@
-// Corresponding backend model: ProductModel.py (TODO: create this model in backend)
+// Corresponding backend model: ProductModel.py
 
 export interface ProductModel {
-  id   : string;
-  name : string;
+  id: string,
+  name: string,
+  description: string,
+  images: Array<string> | null,
 };
