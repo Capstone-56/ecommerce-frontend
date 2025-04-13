@@ -6,7 +6,7 @@ import { ProductModel } from "@/domain/models/ProductModel";
 export class ProductService {
   /**
    * An endpoint to retrieve all products stored in the database.
-   * @returns A list of products.
+   * @returns A paged result of products.
    */
   async listProducts(
     page?      : number,
