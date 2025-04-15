@@ -30,14 +30,14 @@ export default function Products() {
     <>
     {/* Nav goes here */}
     <Container maxWidth="lg" sx={{ mt: 4, mb: 8 }}>
-      {/* breadcrumb */}
+      {/* REPLACE: breadcrumb currently hardcoded. needs to be dynamic */}
       <Breadcrumbs>
         <Link to="/">Home</Link>
         <Link to="/products">Products</Link>
       </Breadcrumbs>
 
       {/* Main layout with filters on left and products on right */}
-      <Box sx={{ display: "flex", gap: 3 }}>
+      <Box sx={{ display: "flex", gap: 3, mt: 2.5 }}>
           {/* Filters section */}
           <Box sx={{ width: "240px", flexShrink: 0 }}>
             <Paper elevation={0} sx={{ p: 2, border: "1px solid #e0e0e0" }}>
@@ -65,27 +65,22 @@ export default function Products() {
           {/* Product listing */}
           <Box sx={{ flexGrow: 1 }}>
             {/* Product list header with count and sorting */}
-            <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center", mb: 3 }}>
+            <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center", mb: 2.5 }}>
               <Typography variant="body2" color="text.secondary">
-                {/* Product count would be dynamic */}
-                Showing 6 products
+                Showing {products.length} products
               </Typography>
               
+              {/* REPLACE: Implement sort functionality */}
               <Box sx={{ display: "flex", alignItems: "center" }}>
                 <Typography variant="body2" sx={{ mr: 1 }}>Sort by:</Typography>
+
               </Box>
             </Box>
             
             {/* Product grid would be implemented here */}
             <Grid container spacing={3}>
               {/* Map through products here */}
-              {/* Example: */}
-              {/* {products.map((product) => (
-                <Grid item key={product.id} xs={12} sm={6} md={4}>
-                  <ProductCard product={product} />
-                </Grid>
-              ))} */}
-              
+
               {/* Placeholder for product grid */}
               {[1, 2, 3, 4, 5, 6].map((item) => (
                 <Grid item key={item} xs={12} sm={6} md={4}>
@@ -117,11 +112,7 @@ export default function Products() {
         </Box>
         {/* Pagination would be implemented here */}
           <Box sx={{ display: "flex", justifyContent: "center", mt: 4 }}>
-            {/* <Pagination 
-              count={totalPages} 
-              page={currentPage}
-              onChange={handlePageChange}
-            /> */}
+
           </Box>
       </Container>
     </>
