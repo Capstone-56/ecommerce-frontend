@@ -6,7 +6,7 @@ import { ProductService } from "@/services/product-service";
 import { ProductModel } from "@/domain/models/ProductModel";
 
 export default function Home() {
-  const [products, setProducts] = useState<Array<ProductModel>>([]);
+  const [products, setProducts] = useState<ProductModel>();
 
   /**
    * A useEffect required to get product data upon mount.
@@ -19,8 +19,8 @@ export default function Home() {
 
     // Function to retrieve products via the API.
     const getProducts = async () => {
-      const products = await productService.listProducts(1, 3);
-      setProducts(products.results);
+      const products = await productService.getProduct("e4d96de0-8301-4c0e-a408-83d3991da3b1");
+      setProducts(products);
     };
 
     getProducts();
@@ -61,7 +61,7 @@ export default function Home() {
         >
           Lorem ipsum dolor sit amet, consectetur adipiscing
         </Typography>
-        {products && <p>{JSON.stringify(products[0])}</p>}
+        {products && <p>{JSON.stringify(products)}</p>}
         <Box sx={{ display: "flex", gap: 2 }}>
           <Button
             variant="outlined"
