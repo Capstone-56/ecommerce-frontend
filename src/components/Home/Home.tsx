@@ -19,8 +19,8 @@ export default function Home() {
 
     // Function to retrieve products via the API.
     const getProducts = async () => {
-      const products = await productService.listProducts();
-      setProducts(products);
+      const products = await productService.listProducts(1, 3);
+      setProducts(products.results);
     };
 
     getProducts();
