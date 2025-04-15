@@ -5,17 +5,19 @@ import { ProductModel } from "@/domain/models/ProductModel";
 
 export class ProductService {
   /**
-   * An endpoint to retrieve all products stored in the database.
+   * An endpoint to retrieve products stored in the database.
+   * @param page     The page number to retrieve.
+   * @param pageSize Size of the page / number of products to be returned.
    * @returns A paged result of products.
    */
   async listProducts(
     page?      : number,
-    page_size? : number,
+    pageSize? : number,
   ) : Promise<PagedList<ProductModel>> {
     try {
       const params = new URLSearchParams();
       if (page) params.append("page", page.toString());
-      if (page_size) params.append("page_size", page_size.toString());
+      if (pageSize) params.append("page_size", pageSize.toString());
 
       const baseUrl = `/api/product?${params.toString()}`;
 
