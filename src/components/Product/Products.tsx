@@ -82,28 +82,16 @@ export default function Products() {
               {/* Map through products here */}
 
               {/* Placeholder for product grid */}
-              {[1, 2, 3, 4, 5, 6].map((item) => (
+              {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map((item) => (
                 <Grid item key={item} xs={12} sm={6} md={4}>
                   <Paper sx={{ 
                     p: 2, 
-                    height: "280px", 
+                    height: "200px", 
+                    width: "150px",
                     display: "flex", 
                     flexDirection: "column",
                     backgroundColor: "#f5f5f5"
                   }}>
-                    <Box sx={{ 
-                      height: "180px", 
-                      backgroundColor: "#e0e0e0", 
-                      mb: 2,
-                      display: "flex",
-                      alignItems: "center",
-                      justifyContent: "center"
-                    }}>
-                      <Typography color="text.secondary">Product Image</Typography>
-                    </Box>
-                    <Typography variant="caption" color="text.secondary">Category</Typography>
-                    <Typography variant="body2" sx={{ mb: 1 }}>Product Title</Typography>
-                    <Typography variant="body1" fontWeight="bold">$30</Typography>
                   </Paper>
                 </Grid>
               ))}
