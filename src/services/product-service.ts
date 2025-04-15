@@ -11,8 +11,8 @@ export class ProductService {
    * @returns A paged result of products.
    */
   async listProducts(
-    page?      : number,
-    pageSize? : number,
+    page?: number,
+    pageSize?: number,
   ) : Promise<PagedList<ProductModel>> {
     try {
       const params = new URLSearchParams();
