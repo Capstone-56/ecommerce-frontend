@@ -4,6 +4,7 @@ import { Link } from "react-router-dom";
 import { Box, Button, Typography, Container, Card, CardContent, CardMedia  } from "@mui/material";
 import { ProductService } from "@/services/product-service";
 import { ProductModel } from "@/domain/models/ProductModel";
+import Footer from "../Footer/Footer";
 
 export default function Home() {
   const [products, setProducts] = useState<Array<ProductModel>>([]);
@@ -224,11 +225,8 @@ export default function Home() {
           </Typography>
         </Box>
       </Box>
-
       {/* Footer Section */}
-      <Box sx={{ mt: 4, py: 2 }}>
-        <Typography>Footer</Typography>
-      </Box>
+      <Footer />
     </>
   );
 }
