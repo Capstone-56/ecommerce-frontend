@@ -1,8 +1,7 @@
 // A Products page component that displays the list of products
 import { Link } from "react-router-dom";
 import { useEffect, useState } from "react"; 
-import { Box, Button, Typography, Breadcrumbs, Container, Grid, Paper } from "@mui/material";
-
+import { Box, Typography, Breadcrumbs, Container, Grid, Paper } from "@mui/material";
 import { ProductService } from "@/services/product-service";
 
 import { PagedList } from "@/domain/abstract-models/PagedList";
