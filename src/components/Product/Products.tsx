@@ -26,7 +26,7 @@ export default function Products() {
   const fetchProducts = async (page: number) => {
     const productService = new ProductService();
 
-    const result = await productService.listProducts(page, 10);
+    const result = await productService.listProducts(page, 4);
     setProducts(result);
   };
 
