@@ -2,30 +2,37 @@
 import { Link } from "react-router-dom";
 import { useEffect, useState } from "react"; 
 import { Box, Button, Typography, Breadcrumbs, Container, Grid, Paper } from "@mui/material";
+
 import { ProductService } from "@/services/product-service";
+
+import { PagedList } from "@/domain/abstract-models/PagedList";
 import { ProductModel } from "@/domain/models/ProductModel";
-import api from "@/api";
+
+import Paginator from "@/components/Pagination/Paginator";
 
 export default function Products() {
-  const [products, setProducts] = useState<Array<ProductModel>>([]);
+  const [products, setProducts] = useState<PagedList<ProductModel>>();
+  const [currentPage, setCurrentPage] = useState(1);
   
-    /**
-     * A useEffect required to get product data upon mount.
-     */
-    useEffect(() => {
-      document.title = "eCommerce | Home";
-  
-      // The ProductService required to get product data.
-      const productService = new ProductService();
-  
-      // Function to retrieve products via the API.
-      const getProducts = async () => {
-        const products = await productService.listProducts(1, 3);
-      setProducts(products.results);
-      };
-  
-      getProducts();
-    }, []);
+  /**
+   * A useEffect required to get product data upon mount.
+   */
+  useEffect(() => {
+    document.title = "eCommerce | Home";
+    fetchProducts(currentPage);
+  }, [currentPage]);
+
+  const fetchProducts = async (page: number) => {
+    const productService = new ProductService();
+
+    const result = await productService.listProducts(page, 10);
+    setProducts(result);
+  };
+
+  const handlePageChange = (page: number) => {
+    setCurrentPage(page);
+  };
+
   return (
     <>
     <Container maxWidth="xl" sx={{ mt: 4, mb: 8 }}>
@@ -81,9 +88,11 @@ export default function Products() {
                 mb: 2.5 
               }}
             >
-              <Typography variant="body2" color="text.secondary">
-                Showing {products.length} products
-              </Typography>
+              {products && (
+                <Typography variant="body2" color="text.secondary">
+                  Showing {products.results.length} products
+                </Typography>
+              )}
 
               <Box sx={{ display: "flex", alignItems: "center", mt: { xs: 1, sm: 0 } }}>
                 <Typography variant="body2" sx={{ mr: 1 }}>Sort by:</Typography>
@@ -97,9 +106,12 @@ export default function Products() {
           </Box>
         </Box>
 
-        {/* Pagination */}
         <Box sx={{ display: "flex", justifyContent: "center", mt: 4 }}>
-          {/* Add pagination component */}
+          <Paginator
+            pagedData={products}
+            currentPage={currentPage}
+            onPageChange={handlePageChange}
+          />
         </Box>
       </Container>
     </>
