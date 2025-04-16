@@ -4,24 +4,36 @@ import { ProductModel } from "domain/models/ProductModel";
 import placeholderImage from '/src/assets/ProductCard/product_card_placeholder.svg';
 
 interface ProductCardProps {
-  product: ProductModel;
+  /* Details relating to a particular product. */
+  product: ProductModel,
+  /* The width to set the product card. */
+  width: number,
+  /* The height to set the product card. */
+  height: number,
 }
 
-const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
+/**
+ * The product card component. Will be used to display products throughout the website
+ * to users and have the ability to transfer them to the product's detail page.
+ */
+const ProductCard: React.FC<ProductCardProps> = ({ product, width, height }) => {
   const { id, name, description, images } = product;
 
+  /**
+   * When clicked direct the user to the product's detail page.
+   */
   const handleClick = () => {
     window.location.href = `/products/${id}/details`;
   };
 
-  // not sure if we want to use a placeholder image, or just have nothing if images is null
+  // Currently choose the first image, otherwise if no image specified display a placeholder image.
   const thumbnail = (Array.isArray(images) && images.length > 0) ? images[0] : placeholderImage;
 
   return (
     <Card
       sx={{
-        width: 300,
-        height: 400,
+        width: width,
+        height: height,
         display: "flex",
         flexDirection: "column",
         justifyContent: "space-between",
