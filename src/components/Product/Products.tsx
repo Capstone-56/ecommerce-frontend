@@ -26,7 +26,7 @@ export default function Products() {
   const fetchProducts = async (page: number) => {
     const productService = new ProductService();
 
-    const result = await productService.listProducts(page, 10);
+    const result = await productService.listProducts(page, 4);
     setProducts(result);
   };
 
@@ -104,7 +104,7 @@ export default function Products() {
                 )}
 
                 <Box sx={{ display: "flex", alignItems: "center", mt: { xs: 1, sm: 0 } }}>
-                  <Typography variant="body2" sx={{ mr: 1 }}>Sort by:</Typography>
+                  <Typography variant="body2" sx={{ mr: 1 }} color="text.primary">Sort by:</Typography>
                   {/* Sort options to be implemented */}
                 </Box>
               </Box>
