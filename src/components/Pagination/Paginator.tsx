@@ -3,7 +3,7 @@ import { Pagination, Stack } from "@mui/material";
 import { useNavigate, useLocation } from "react-router-dom";
 import { PagedList } from "@/domain/abstract-models/PagedList";
 
-interface ServerPaginationProps<T> {
+interface PaginatorProps<T> {
   pagedData?: PagedList<T>;
   currentPage: number;
   isLoading?: boolean;
@@ -14,7 +14,7 @@ interface ServerPaginationProps<T> {
   updateUrl?: boolean;
 }
 
-const ServerPagination = <T,>({
+const Paginator = <T,>({
   pagedData,
   currentPage,
   isLoading = false,
@@ -23,9 +23,9 @@ const ServerPagination = <T,>({
   showFirstButton = true,
   showLastButton = true,
   updateUrl = true,
-}: ServerPaginationProps<T>) => {
+}: PaginatorProps<T>) => {
     const navigate = useNavigate();
-    const location = useLocation();
+    const { search, pathname } = useLocation();
     // calculate page count from PagedList model if available
     const pageCount = useMemo(() => {
       return pagedData ? Math.ceil(pagedData.count / pagedData.pageSize) : 0;
@@ -34,22 +34,23 @@ const ServerPagination = <T,>({
   // update URL with current page
   useEffect(() => {
     if (updateUrl && pageCount > 0) {
-      const searchParams = new URLSearchParams(location.search);
-
+      const searchParams = new URLSearchParams(search);
+  
       if (currentPage === 1) {
         searchParams.delete("page");
       } else {
         searchParams.set("page", currentPage.toString());
       }
-
+  
       const newSearch = searchParams.toString();
-      const newUrl = location.pathname + (newSearch ? `?${newSearch}` : "");
-
-      if (location.search !== `?${newSearch}`) {
+      const newUrl = pathname + (newSearch ? `?${newSearch}` : "");
+  
+      // Only navigate if the URL would actually change
+      if (`?${newSearch}` !== search) {
         navigate(newUrl, { replace: true });
       }
     }
-  }, [currentPage, updateUrl, location, navigate, pageCount]);
+  }, [currentPage, updateUrl, search, pathname, pageCount, navigate]);
   const handleChange = (_event: React.ChangeEvent<unknown>, value: number) => {
     if (value !== currentPage) {
       onPageChange(value);
@@ -95,4 +96,4 @@ const ServerPagination = <T,>({
   );
 };
 
-export default ServerPagination;
+export default Paginator;
