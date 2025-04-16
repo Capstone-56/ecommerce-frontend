@@ -28,22 +28,32 @@ export default function Products() {
     }, []);
   return (
     <>
-    {/* Nav goes here */}
-    <Container maxWidth="lg" sx={{ mt: 4, mb: 8 }}>
+    <Container maxWidth="xl" sx={{ mt: 4, mb: 8 }}>
       {/* REPLACE: breadcrumb currently hardcoded. needs to be dynamic */}
-      <Breadcrumbs>
-        <Link to="/">Home</Link>
-        <Link to="/products">Products</Link>
-      </Breadcrumbs>
+        <Breadcrumbs>
+          <Link to="/">Home</Link>
+          <Link to="/products">Products</Link>
+        </Breadcrumbs>
 
-      {/* Main layout with filters on left and products on right */}
-      <Box sx={{ display: "flex", gap: 3, mt: 2.5 }}>
+        {/* Responsive Flex Container */}
+        <Box 
+          sx={{ 
+            display: "flex", 
+            flexDirection: { xs: "column", md: "row" }, 
+            gap: 3, 
+            mt: 2.5 
+          }}
+        >
           {/* Filters section */}
-          <Box sx={{ width: "240px", flexShrink: 0 }}>
-            <Paper elevation={0} sx={{ p: 2, border: "1px solid #e0e0e0" }}>
+          <Box 
+            sx={{ 
+              width: { xs: "100%", md: "240px" }, 
+              flexShrink: 0 
+            }}
+          >
+            {/* Categories filter would be implemented here */}
+            <Paper elevation={0} sx={{ p: 2, border: "1px solid #e0e0e0", borderRadius: 3 }}>
               <Typography variant="h6" sx={{ mb: 2 }}>Filters</Typography>
-              
-              {/* Categories filter would be implemented here */}
               <Box sx={{ mb: 3 }}>
                 <Typography variant="subtitle1" sx={{ mb: 1 }}>Categories</Typography>
                 <Typography variant="subtitle1" sx={{ mb: 1 }}>Category 1</Typography>
@@ -52,56 +62,45 @@ export default function Products() {
                 <Typography variant="subtitle1" sx={{ mb: 1 }}>Category 4</Typography>
                 <Typography variant="subtitle1" sx={{ mb: 1 }}>Category 5</Typography>
                 <Typography variant="subtitle1" sx={{ mb: 1 }}>Category 6</Typography>
-                
               </Box>
-              
-              {/* Price range filter would be implemented here */}
+
               <Box sx={{ mb: 3 }}>
-                
+                {/* Price range filter would be implemented here */}
               </Box>
             </Paper>
           </Box>
-          
+
           {/* Product listing */}
-          <Box sx={{ flexGrow: 1 }}>
-            {/* Product list header with count and sorting */}
-            <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center", mb: 2.5 }}>
+          <Box sx={{ flex: 1 }}>
+            <Box 
+              sx={{ 
+                display: "flex", 
+                flexDirection: { xs: "column", sm: "row" }, 
+                justifyContent: "space-between", 
+                alignItems: { xs: "flex-start", sm: "center" }, 
+                mb: 2.5 
+              }}
+            >
               <Typography variant="body2" color="text.secondary">
                 Showing {products.length} products
               </Typography>
-              
-              {/* REPLACE: Implement sort functionality */}
-              <Box sx={{ display: "flex", alignItems: "center" }}>
-                <Typography variant="body2" sx={{ mr: 1 }}>Sort by:</Typography>
 
+              <Box sx={{ display: "flex", alignItems: "center", mt: { xs: 1, sm: 0 } }}>
+                <Typography variant="body2" sx={{ mr: 1 }}>Sort by:</Typography>
+                {/* Sort options to be implemented */}
               </Box>
             </Box>
-            
-            {/* Product grid would be implemented here */}
-            <Grid container spacing={3}>
-              {/* Map through products here */}
 
-              {/* Placeholder for product grid */}
-              {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map((item) => (
-                <Grid item key={item} xs={12} sm={6} md={4}>
-                  <Paper sx={{ 
-                    p: 2, 
-                    height: "200px", 
-                    width: "150px",
-                    display: "flex", 
-                    flexDirection: "column",
-                    backgroundColor: "#f5f5f5"
-                  }}>
-                  </Paper>
-                </Grid>
-              ))}
+            <Grid container spacing={3}>
+              {/* Product Grid to be inserted here*/}
             </Grid>
           </Box>
         </Box>
-        {/* Pagination would be implemented here */}
-          <Box sx={{ display: "flex", justifyContent: "center", mt: 4 }}>
 
-          </Box>
+        {/* Pagination */}
+        <Box sx={{ display: "flex", justifyContent: "center", mt: 4 }}>
+          {/* Add pagination component */}
+        </Box>
       </Container>
     </>
   );
