@@ -1,14 +1,7 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useMemo } from "react";
 import { Pagination, Stack } from "@mui/material";
 import { useNavigate, useLocation } from "react-router-dom";
-
-export interface PagedList<T> {
-  count: number;
-  pageSize: number;
-  next: string | null;
-  previous: string | null;
-  results: Array<T>;
-}
+import { PagedList } from "@/domain/abstract-models/PagedList";
 
 interface ServerPaginationProps<T> {
   pagedData?: PagedList<T>;
@@ -33,10 +26,10 @@ const ServerPagination = <T,>({
 }: ServerPaginationProps<T>) => {
     const navigate = useNavigate();
     const location = useLocation();
-  // calculate page count from PagedList model if available
-  const pageCount = pagedData
-    ? Math.ceil(pagedData.count / pagedData.pageSize)
-    : 0;
+    // calculate page count from PagedList model if available
+    const pageCount = useMemo(() => {
+      return pagedData ? Math.ceil(pagedData.count / pagedData.pageSize) : 0;
+    }, [pagedData]);
 
   // update URL with current page
   useEffect(() => {
@@ -52,8 +45,9 @@ const ServerPagination = <T,>({
       const newSearch = searchParams.toString();
       const newUrl = location.pathname + (newSearch ? `?${newSearch}` : "");
 
-      // replace = true to avoid filling browser history with pagination changes
-      navigate(newUrl, { replace: true });
+      if (location.search !== `?${newSearch}`) {
+        navigate(newUrl, { replace: true });
+      }
     }
   }, [currentPage, updateUrl, location, navigate, pageCount]);
   const handleChange = (_event: React.ChangeEvent<unknown>, value: number) => {
