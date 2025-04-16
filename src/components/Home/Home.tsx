@@ -62,7 +62,6 @@ export default function Home() {
         >
           Lorem ipsum dolor sit amet, consectetur adipiscing
         </Typography>
-        {products && <p>{JSON.stringify(products[0])}</p>}
         <Box sx={{ display: "flex", gap: 2 }}>
           <Button
             variant="outlined"
@@ -121,6 +120,7 @@ export default function Home() {
             fontWeight: 500,
             mb: 1,
           }}
+          color="text.primary"
         >
           Featured Products
         </Typography>
@@ -205,6 +205,7 @@ export default function Home() {
             fontWeight: 500,
             mb: 1,
           }}
+          color="text.primary"
         >
           Shop By Category
         </Typography>

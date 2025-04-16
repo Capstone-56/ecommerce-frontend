@@ -18,7 +18,7 @@ export default function Footer() {
         <Grid container spacing={4} >
           {/* Branding or Logo */}
             <Grid size={{xs:12, sm:6, md:4}}>
-              <Typography variant="h5" gutterBottom sx={{ textAlign: { xs: "center", md: "left", sm: "left" }}}>
+              <Typography variant="h5" gutterBottom sx={{ textAlign: { xs: "center", md: "left", sm: "left" }}} color="text.primary">
                 BDMX
               </Typography>
               <Typography variant="body2" color="text.secondary" sx={{ textAlign: { xs: "center", md: "left", sm: "left"  } }}>
@@ -29,29 +29,29 @@ export default function Footer() {
           {/* Footer links */}
           <Grid size={{xs:6, sm:6, md:2}}>
             <Box sx={{ textAlign: "left" }}>
-              <Typography variant="h6" gutterBottom align="left">
+              <Typography variant="h6" gutterBottom align="left" color="text.primary">
                 Shop Now
               </Typography>
               <Box sx={{ display: "flex", flexDirection: "column", gap: 0.5 }}>
                 {/* Replace with category links */}
-                <MuiLink href="/products" color="inherit" underline="hover">All Products</MuiLink>
-                <MuiLink href="/categories" color="inherit" underline="hover">Categories</MuiLink>
+                <MuiLink href="/products" color="text.primary" underline="hover">All Products</MuiLink>
+                <MuiLink href="/categories" color="text.primary" underline="hover">Categories</MuiLink>
               </Box>
             </Box>
           </Grid>
 
           {/* Footer links */}
           <Grid size={{xs:6, sm:6, md:2}}>
-            <Box sx={{ textAlign: "left" }}>
-              <Typography variant="h6" gutterBottom align="left">
+            <Box sx={{ textAlign: "left"}}>
+              <Typography variant="h6" gutterBottom align="left" color="text.primary">
                 Company
               </Typography>
               <Box sx={{ display: "flex", flexDirection: "column", gap: 0.5 }}>
-                <MuiLink href="/about" color="inherit" underline="hover">About</MuiLink>
-                <MuiLink href="/contact" color="inherit" underline="hover">Contact</MuiLink>
+                <MuiLink href="/about" color="text.primary" underline="hover">About</MuiLink>
+                <MuiLink href="/contact" color="text.primary" underline="hover">Contact</MuiLink>
                 {/* requires further clarification */}
-                <MuiLink href="/privacy" color="inherit" underline="hover">Privacy Policy</MuiLink>
-                <MuiLink href="/terms" color="inherit" underline="hover">Terms & Conditions</MuiLink>
+                <MuiLink href="/privacy" color="text.primary" underline="hover">Privacy Policy</MuiLink>
+                <MuiLink href="/terms" color="text.primary" underline="hover">Terms & Conditions</MuiLink>
               </Box>
             </Box>
           </Grid>
@@ -59,7 +59,7 @@ export default function Footer() {
           {/* Newsletter Subscription */}
           <Grid size={{xs:12, sm:6, md:3}}>
             <Box sx={{ textAlign: { xs: "center", md: "left", sm: "left"  } }}>
-              <Typography variant="h6" gutterBottom>
+              <Typography variant="h6" gutterBottom color="text.primary">
                 Subscribe to Us
               </Typography>
               <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
