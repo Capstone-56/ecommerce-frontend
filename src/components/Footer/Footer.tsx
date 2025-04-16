@@ -19,7 +19,7 @@ export default function Footer() {
           {/* Branding or Logo */}
             <Grid size={{xs:12, sm:6, md:4}}>
               <Typography variant="h5" gutterBottom sx={{ textAlign: { xs: "center", md: "left", sm: "left" }}} color="text.primary">
-                BDMX
+                BDNX
               </Typography>
               <Typography variant="body2" color="text.secondary" sx={{ textAlign: { xs: "center", md: "left", sm: "left"  } }}>
                 Your trusted store for all your needs.
