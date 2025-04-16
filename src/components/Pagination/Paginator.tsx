@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo } from "react";
+import { useEffect, useMemo } from "react";
 import { Pagination, Stack } from "@mui/material";
 import { useNavigate, useLocation } from "react-router-dom";
 import { PagedList } from "@/domain/abstract-models/PagedList";
