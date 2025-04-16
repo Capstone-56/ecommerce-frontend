@@ -1,38 +1,44 @@
 import React from "react";
 import { Card, CardMedia, CardContent, Typography, Box } from "@mui/material";
-
-interface Product {
-  id: string;
-  name: string;
-  price: number;
-  brand?: string;
-  category: string;
-  thumbnail?: string;
-  inStock: boolean;
-}
+import { ProductModel } from "domain/models/ProductModel";
+import placeholderImage from '/src/assets/ProductCard/product_card_placeholder.svg';
 
 interface ProductCardProps {
-  product: Product;
-  onClick: (productId: string) => void; // callback to handle redirection
+  /* Details relating to a particular product. */
+  product: ProductModel,
+  /* The width to set the product card. */
+  width: number,
+  /* The height to set the product card. */
+  height: number,
 }
 
-const ProductCard: React.FC<ProductCardProps> = ({ product, onClick }) => {
-  const { id, name, price, thumbnail, brand, category, inStock } = product;
+/**
+ * The product card component. Will be used to display products throughout the website
+ * to users and have the ability to transfer them to the product's detail page.
+ */
+const ProductCard: React.FC<ProductCardProps> = ({ product, width, height }) => {
+  const { id, name, description, images } = product;
 
+  /**
+   * When clicked direct the user to the product's detail page.
+   */
   const handleClick = () => {
-    onClick(id); // triggers navigation to product info page
+    window.location.href = `/products/${id}/details`;
   };
+
+  // Currently choose the first image, otherwise if no image specified display a placeholder image.
+  const thumbnail = (Array.isArray(images) && images.length > 0) ? images[0] : placeholderImage;
 
   return (
     <Card
       sx={{
-        width: 300,
-        height: 400,
+        width: width,
+        height: height,
         display: "flex",
         flexDirection: "column",
         justifyContent: "space-between",
         transition: "transform 0.2s",
-        "&:hover": { transform: "scale(1.009)" }, // tiny hover effect, may not use in final design
+        "&:hover": { transform: "scale(1.009)" },
         cursor: "pointer",
         overflow: "hidden",
       }}
@@ -45,51 +51,23 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, onClick }) => {
           image={thumbnail}
           alt={name}
           sx={{
-            width: '100%',
-            height: '100%',
-            objectFit: 'cover',
+            width: "100%",
+            height: "100%",
+            objectFit: "cover",
           }}
         />
       </Box>
 
-       {/* product details */}
-       <CardContent sx={{ textAlign: 'left', paddingY: 1, paddingX: 1.5 }}>
-        {/* brand & category */}
-        {(brand || category) && (
-          <Typography variant="body2" color="text.secondary" sx = {{ mb: 0 }}>
-            {brand && category ? `${brand} • ${category}` : brand || category}
-          </Typography>
-        )}
+      {/* product name & description */}
+      <CardContent sx={{ textAlign: "left", paddingY: 1, paddingX: 1.5 }}>
+        <Typography gutterBottom variant="h6" component="div" noWrap sx={{ mb: 0 }}>
+          {name}
+        </Typography>
 
-          {/* product name */}
-          <Typography gutterBottom variant="h6" component="div" noWrap sx = {{ mb: 0 }} >
-            {name}
-          </Typography>
-
-          {/* price and stock status */}
-          <Box sx={{ display: "flex", alignItems: "center" }}>
-            <Typography
-              variant="h6"
-              sx={{
-                color: "black",
-                fontWeight: "bold",
-                textDecoration: inStock ? "none" : "line-through", // strikethrough if out of stock
-              }}
-            >
-              ${price.toFixed(2)}
-            </Typography>
-
-            {!inStock && (
-              <Typography
-                variant="body2"
-                color="error"
-                sx={{ ml: 1 }} // margin-left for spacing
-              >
-                Out of Stock
-              </Typography>
-            )}
-          </Box>
-        </CardContent>
+        <Typography variant="body2" color="text.secondary" noWrap>
+          {description}
+        </Typography>
+      </CardContent>
     </Card>
   );
 };
