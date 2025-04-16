@@ -15,12 +15,15 @@ import { grey, red } from "@mui/material/colors";
 
 const menus = ["Home", "Products", "Categories", "About"];
 
-// Leading Trolley Icon
 const LogoStyle = {
   minHeight: "48px",
   minWidth: "48px",
   mr: 1,
   color: grey[900],
+  display: {
+    xs: "none",
+    md: "flex",
+  },
 };
 
 const TitleStyling = {
@@ -58,13 +61,7 @@ const Navbar: React.FC = () => {
             <IconButton disableRipple>
               <KeyboardCommandKey sx={{ ...LogoStyle }} />
             </IconButton>
-            <Typography
-              variant="h1"
-              noWrap
-              // component="a"
-              // href="/"
-              sx={{ ...TitleStyling }}
-            >
+            <Typography variant="h1" noWrap sx={{ ...TitleStyling }}>
               Company name
             </Typography>
           </Box>
