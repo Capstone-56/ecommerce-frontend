@@ -5,6 +5,7 @@ import { Box, Button, Typography, Container, Card, CardContent, CardMedia  } fro
 import { ProductService } from "@/services/product-service";
 import { ProductModel } from "@/domain/models/ProductModel";
 import Footer from "../Footer/Footer";
+import ProductCard from "../ProductCard/ProductCard";
 
 export default function Home() {
   const [products, setProducts] = useState<Array<ProductModel>>([]);
@@ -18,10 +19,10 @@ export default function Home() {
     // The ProductService required to get product data.
     const productService = new ProductService();
 
-    // Function to retrieve products via the API.
+    // Function to retrieve featured products via the API.
     const getProducts = async () => {
-      const products = await productService.listProducts(1, 3);
-      setProducts(products.results);
+      const products = await productService.getFeaturedProducts();
+      setProducts(products);
     };
 
     getProducts();
@@ -138,32 +139,14 @@ export default function Home() {
             marginBottom: 4,
           }}
         >
-          {/* REPLACE: sample cards for testing, replace with card component*/}
-          {products.length > 0 ? (
-          products.map((product) => (
-            <Card key={product.id} sx={{ maxWidth: 345, boxShadow: 3 }}>
-              {product.images && product.images.length > 0 && (
-                <CardMedia
-                  component="img"
-                  height="140"
-                  image={product.images[0]}
-                  alt={product.name}
-                />
-              )}
-              <CardContent>
-                <Typography variant="h6" component="div">
-                  {product.name}
-                </Typography>
-                <Typography variant="body2" color="text.secondary">
-                  {product.description}
-                </Typography>
-              </CardContent>
-            </Card>
-          ))
-        ) : (
-          <Typography color="text.secondary">No products available</Typography>
-        )}
-
+        {/* Generate product cards for three featured products. */}
+        {products.length > 0 ? products.map(product => {
+          return (
+          <ProductCard product={product}
+                       width={250}
+                       height={350}
+          />)})
+          : <Typography color="text.secondary">No featured products available</Typography>}
         </Box>
 
         <Button
