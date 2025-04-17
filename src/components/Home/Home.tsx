@@ -1,3 +1,4 @@
+import Navbar from "../Navigation/Navigation";
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 
@@ -30,6 +31,7 @@ export default function Home() {
 
   return (
     <>
+      <Navbar />
       {/* Hero Section */}
       <Box
         sx={{
