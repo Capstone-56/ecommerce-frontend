@@ -6,6 +6,15 @@ import { grey } from '@mui/material/colors';
 
 // You can also target specific components with component prop and globally override MUI components
 export const themeOptions: ThemeOptions = {
+  breakpoints: {
+    values: {
+      xs: 0,
+      sm: 576,
+      md: 768,
+      lg: 992,
+      xl: 1200,
+    },
+  },
   // components: {
   //   // override components here
   // },

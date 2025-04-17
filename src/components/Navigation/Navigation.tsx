@@ -1,24 +1,33 @@
-import React from "react";
-import { KeyboardCommandKey, Trolley, Person } from "@mui/icons-material";
+import React, { useState } from "react";
+import { KeyboardCommandKey, Menu as MenuIcon } from "@mui/icons-material";
 import {
   AppBar,
   Box,
   Button,
-  Container,
   IconButton,
   Menu,
   Toolbar,
   Typography,
+  MenuItem,
+  Paper,
 } from "@mui/material";
 
-import { grey, red } from "@mui/material/colors";
+import { Link as RouterLink } from "react-router-dom";
 
-const menus = ["Home", "Products", "Categories", "About"];
+import { grey } from "@mui/material/colors";
+
+// Should move to another file
+// const menus = ["Home", "Products", "Categories", "About"];
+const menus = [
+  { name: "Home", route: "/" },
+  { name: "Products", route: "/products" },
+  { name: "Categories", route: "/categories" },
+  { name: "About", route: "/about" },
+];
 
 const LogoStyle = {
   minHeight: "48px",
   minWidth: "48px",
-  mr: 1,
   color: grey[900],
   display: {
     xs: "none",
@@ -27,9 +36,7 @@ const LogoStyle = {
 };
 
 const TitleStyling = {
-  fontWeight: "700",
-  fontSize: "20px",
-  textDecoration: "none",
+  fontSize: { xs: "32px", md: "24px" },
   color: grey[900],
   "&:hover": {
     color: grey[900],
@@ -40,17 +47,68 @@ const TitleStyling = {
 const ButtonStyling = {
   color: grey[900],
   "&:hover": {
-    backgroundColor: red,
+    backgroundColor: "none",
   },
 };
 
 const Navbar: React.FC = () => {
+  const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
+
+  // basically anchor is HTML element where mouse click happened
+  const handleMenuOpen = (event: React.MouseEvent<HTMLElement>) => {
+    setAnchorEl(event.currentTarget);
+  };
+
+  const handleMenuClose = () => {
+    setAnchorEl(null);
+  };
+
   return (
     <AppBar position="static">
-      <Container maxWidth={false} disableGutters>
+      <Paper>
         <Toolbar
-          sx={{ backgroundColor: grey[50], justifyContent: "space-between" }}
+          sx={{
+            backgroundColor: grey[50],
+            justifyContent: { md: "space-evenly", xs: "space-between" },
+            px: 2,
+          }}
         >
+          {/* Nav Menu on < md (uses MUI Menu component) */}
+          <Box
+            sx={{
+              display: { xs: "flex", md: "none" },
+              alignItems: "center",
+            }}
+          >
+            <IconButton
+              size="large"
+              edge="end"
+              color="inherit"
+              onClick={handleMenuOpen}
+            >
+              <MenuIcon />
+            </IconButton>
+            <Menu
+              anchorEl={anchorEl}
+              open={!!anchorEl}
+              onClose={handleMenuClose}
+            >
+              {menus.map((menuItem) => (
+                <MenuItem>
+                  <Typography
+                    component={RouterLink}
+                    variant="body1"
+                    to={menuItem.route}
+                    sx={{ color: grey[900] }}
+                  >
+                    {menuItem.name}
+                  </Typography>
+                </MenuItem>
+              ))}
+            </Menu>
+          </Box>
+
+          {/* Company Name - Logo */}
           <Box
             sx={{
               display: "flex",
@@ -62,32 +120,74 @@ const Navbar: React.FC = () => {
               <KeyboardCommandKey sx={{ ...LogoStyle }} />
             </IconButton>
             <Typography variant="h1" noWrap sx={{ ...TitleStyling }}>
-              Company name
+              BDNX
             </Typography>
           </Box>
 
-          <Box>
+          {/* Nav Menu on > md */}
+          <Box
+            sx={{
+              display: { xs: "none", md: "flex" },
+              flexDirection: "row",
+              gap: 1,
+            }}
+          >
             {menus.map((menuItem) => (
               <Button
-                key={menuItem}
-                onClick={() => console.log(`${menuItem} clicked!`)}
+                key={menuItem.name}
+                component={RouterLink}
+                to={menuItem.route}
                 sx={{ ...ButtonStyling }}
+                disableTouchRipple
               >
-                {menuItem}
+                <Typography
+                  textTransform="none"
+                  variant="subtitle1"
+                  fontWeight="500"
+                >
+                  {menuItem.name}
+                </Typography>
               </Button>
             ))}
           </Box>
 
-          <Box>
-            <IconButton size="large">
-              <Trolley />
-            </IconButton>
-            <IconButton size="large">
-              <Person />
-            </IconButton>
+          {/* User Buttons */}
+          <Box
+            sx={{
+              display: "flex",
+              flexDirection: "row",
+              gap: 1,
+            }}
+          >
+            {/* TODO: apply logic to show "logged-in state" options */}
+            <Button
+              variant="outlined"
+              sx={{
+                bgcolor: grey[50],
+                color: grey[900],
+                borderColor: grey[900],
+                borderRadius: "8px",
+              }}
+            >
+              <Typography fontWeight="500" textTransform="none">
+                Login
+              </Typography>
+            </Button>
+            <Button
+              variant="outlined"
+              sx={{
+                bgcolor: grey[900],
+                color: grey[50],
+                borderRadius: "8px",
+              }}
+            >
+              <Typography fontWeight="500" textTransform="none">
+                Sign up
+              </Typography>
+            </Button>
           </Box>
         </Toolbar>
-      </Container>
+      </Paper>
     </AppBar>
   );
 };
