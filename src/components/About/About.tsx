@@ -1,5 +1,4 @@
 import { useEffect } from "react";
-import Navbar from "../Navigation/Navigation";
 
 export default function About() {
   useEffect(() => {
@@ -8,8 +7,7 @@ export default function About() {
 
   return (
     <>
-      <Navbar />
       <div>About</div>
     </>
   );
-}
+};
