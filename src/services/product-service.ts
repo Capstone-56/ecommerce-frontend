@@ -28,7 +28,19 @@ export class ProductService {
     }
   }
 
-  async getProduct(productId: string) : Promise<ProductModel> {
-    return Promise.reject();
+  /**
+   * An endpoint to retrieve a particular product based on an ID.
+   * @param productId An ID of a product to be retrieved.
+   * @returns A product's related information.
+   */
+  async getProduct(productId: string): Promise<ProductModel> {
+    try {
+      const baseUrl = `/api/product/${productId}`;
+      const products = await api.get(baseUrl);
+      
+      return products.data;
+    } catch (error) {
+      return Promise.reject(error);
+    }
   }
 }

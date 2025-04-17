@@ -2,9 +2,10 @@ import Navbar from "../Navigation/Navigation";
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 
-import { Box, Button, Typography, Container } from "@mui/material";
+import { Box, Button, Typography, Container, Card, CardContent, CardMedia  } from "@mui/material";
 import { ProductService } from "@/services/product-service";
 import { ProductModel } from "@/domain/models/ProductModel";
+import Footer from "../Footer/Footer";
 
 export default function Home() {
   const [products, setProducts] = useState<Array<ProductModel>>([]);
@@ -63,7 +64,6 @@ export default function Home() {
         >
           Lorem ipsum dolor sit amet, consectetur adipiscing
         </Typography>
-        {products && <p>{JSON.stringify(products[0])}</p>}
         <Box sx={{ display: "flex", gap: 2 }}>
           <Button
             variant="outlined"
@@ -122,6 +122,7 @@ export default function Home() {
             fontWeight: 500,
             mb: 1,
           }}
+          color="text.primary"
         >
           Featured Products
         </Typography>
@@ -134,12 +135,37 @@ export default function Home() {
           sx={{
             display: "flex",
             justifyContent: "center",
-            mb: 4,
+            gap: 2,
+            flexWrap: "wrap",
+            marginBottom: 4,
           }}
         >
-          <Typography color="text.secondary">
-            [Product cards would go here]
-          </Typography>
+          {/* REPLACE: sample cards for testing, replace with card component*/}
+          {products.length > 0 ? (
+          products.map((product) => (
+            <Card key={product.id} sx={{ maxWidth: 345, boxShadow: 3 }}>
+              {product.images && product.images.length > 0 && (
+                <CardMedia
+                  component="img"
+                  height="140"
+                  image={product.images[0]}
+                  alt={product.name}
+                />
+              )}
+              <CardContent>
+                <Typography variant="h6" component="div">
+                  {product.name}
+                </Typography>
+                <Typography variant="body2" color="text.secondary">
+                  {product.description}
+                </Typography>
+              </CardContent>
+            </Card>
+          ))
+        ) : (
+          <Typography color="text.secondary">No products available</Typography>
+        )}
+
         </Box>
 
         <Button
@@ -181,6 +207,7 @@ export default function Home() {
             fontWeight: 500,
             mb: 1,
           }}
+          color="text.primary"
         >
           Shop By Category
         </Typography>
@@ -201,11 +228,8 @@ export default function Home() {
           </Typography>
         </Box>
       </Box>
-
       {/* Footer Section */}
-      <Box sx={{ mt: 4, py: 2 }}>
-        <Typography>Footer</Typography>
-      </Box>
+      <Footer />
     </>
   );
 }

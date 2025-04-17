@@ -1,88 +1,75 @@
-import React from 'react';
-import {
-  Card,
-  CardMedia,
-  CardContent,
-  Typography,
-  Box
-} from '@mui/material';
-import { Product } from '../../types/Product';
+import React from "react";
+import { Card, CardMedia, CardContent, Typography, Box } from "@mui/material";
+import { ProductModel } from "domain/models/ProductModel";
+import placeholderImage from '/src/assets/ProductCard/product_card_placeholder.svg';
 
 interface ProductCardProps {
-    product: Product;
-    onClick: (productId: string) => void; // callback to handle redirection
-  }
+  /* Details relating to a particular product. */
+  product: ProductModel,
+  /* The width to set the product card. */
+  width: number,
+  /* The height to set the product card. */
+  height: number,
+}
 
-    const ProductCard: React.FC<ProductCardProps> = ({ product, onClick }) => {
-    const { id, name, price, thumbnail, brand, category, inStock } = product;
-  
-    const handleClick = () => {
-        onClick(id); // triggers navigation to product info page
-    };
-  
-    return (
-        <Card
-            sx={{
-            maxWidth: 300,
-            height: '100%',
-            display: 'flex',
-            flexDirection: 'column',
-            transition: 'transform 0.2s',
-            '&:hover': { transform: 'scale(1.009)' }, // tiny hover effect, may not use in final design
-            cursor: 'pointer',
-            }}
-            onClick={handleClick}
-        >
-        {/* product image */}
-        <CardMedia
-            component="img"
-            height="200"
-            image={thumbnail}
-            alt={name}
-            sx={{ objectFit: 'cover' }}
-        />
-  
-        {/* product details */}
-        <CardContent sx={{ flexGrow: 1 }}>
+/**
+ * The product card component. Will be used to display products throughout the website
+ * to users and have the ability to transfer them to the product's detail page.
+ */
+const ProductCard: React.FC<ProductCardProps> = ({ product, width, height }) => {
+  const { id, name, description, images } = product;
 
-            {/* brand & category */}
-            {(brand || category) && (
-                <Typography variant="body2" color="text.secondary">
-                {brand && category ? `${brand} • ${category}` : brand || category}
-                </Typography>
-            )}
-
-            {/* product name */}
-            <Typography gutterBottom variant="h6" component="div" noWrap>
-                {name}
-            </Typography>
-
-            {/* price and stock status */}
-            <Box sx={{ display: 'flex', alignItems: 'center', mt: 1 }}>
-                <Typography
-                    variant="h6"
-                    sx={{
-                    color: 'black',
-                    fontWeight: 'bold',
-                    textDecoration: inStock ? 'none' : 'line-through', // strikethrough if out of stock
-                    }}
-                >
-                    ${price.toFixed(2)}
-                </Typography>
-
-                {!inStock && (
-                    <Typography
-                    variant="body2"
-                    color="error"
-                    sx={{ ml: 1 }} // margin-left for spacing
-                    >
-                    Out of Stock
-                    </Typography>
-                )}
-            </Box>
-        </CardContent>
-      </Card>
-    );
+  /**
+   * When clicked direct the user to the product's detail page.
+   */
+  const handleClick = () => {
+    window.location.href = `/products/${id}/details`;
   };
-  
-  export default ProductCard;
+
+  // Currently choose the first image, otherwise if no image specified display a placeholder image.
+  const thumbnail = (Array.isArray(images) && images.length > 0) ? images[0] : placeholderImage;
+
+  return (
+    <Card
+      sx={{
+        width: width,
+        height: height,
+        display: "flex",
+        flexDirection: "column",
+        justifyContent: "space-between",
+        transition: "transform 0.2s",
+        "&:hover": { transform: "scale(1.009)" },
+        cursor: "pointer",
+        overflow: "hidden",
+      }}
+      onClick={handleClick}
+    >
+      {/* product image */}
+      <Box sx={{ flexGrow: 1 }}>
+        <CardMedia
+          component="img"
+          image={thumbnail}
+          alt={name}
+          sx={{
+            width: "100%",
+            height: "100%",
+            objectFit: "cover",
+          }}
+        />
+      </Box>
+
+      {/* product name & description */}
+      <CardContent sx={{ textAlign: "left", paddingY: 1, paddingX: 1.5 }}>
+        <Typography gutterBottom variant="h6" component="div" noWrap sx={{ mb: 0 }}>
+          {name}
+        </Typography>
+
+        <Typography variant="body2" color="text.secondary" noWrap>
+          {description}
+        </Typography>
+      </CardContent>
+    </Card>
+  );
+};
+
+export default ProductCard;
