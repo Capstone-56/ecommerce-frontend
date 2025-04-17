@@ -7,9 +7,9 @@ interface ProductCardProps {
   /* Details relating to a particular product. */
   product: ProductModel,
   /* The width to set the product card. */
-  width: number,
+  width: string,
   /* The height to set the product card. */
-  height: number,
+  height: string,
 }
 
 /**

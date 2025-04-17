@@ -9,6 +9,7 @@ import { PagedList } from "@/domain/abstract-models/PagedList";
 import { ProductModel } from "@/domain/models/ProductModel";
 
 import Paginator from "@/components/Pagination/Paginator";
+import ProductCard from "../ProductCard/ProductCard";
 import Footer from "../Footer/Footer";
 
 export default function Products() {
@@ -19,14 +20,14 @@ export default function Products() {
    * A useEffect required to get product data upon mount.
    */
   useEffect(() => {
-    document.title = "eCommerce | Home";
+    document.title = "eCommerce | Products";
     fetchProducts(currentPage);
   }, [currentPage]);
 
   const fetchProducts = async (page: number) => {
     const productService = new ProductService();
 
-    const result = await productService.listProducts(page, 4);
+    const result = await productService.listProducts(page, 12);
     setProducts(result);
   };
 
@@ -110,11 +111,24 @@ export default function Products() {
               </Box>
 
               <Grid container spacing={3}>
-                {/* Product Grid to be inserted here*/}
+                {products?.results.map((product) => (
+                  <Grid size={{xs:12, sm:6, md:4, lg:3}} key={product.id}>
+                    <Box sx={{ 
+                      display: "flex",
+                      justifyContent: "center"
+                    }}>
+                      <ProductCard 
+                        product={product}
+                        width="100%"
+                        height="100%"
+                      />
+                    </Box>
+                  </Grid>
+                ))}
               </Grid>
             </Box>
           </Box>
-
+          
           {/* Pagination component */}
           <Box sx={{ display: "flex", justifyContent: "center", mt: 4 }}>
             <Paginator
