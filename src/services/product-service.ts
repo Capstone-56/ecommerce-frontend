@@ -43,4 +43,19 @@ export class ProductService {
       return Promise.reject(error);
     }
   }
+
+  /**
+   * An endpoint to retrieve a set of featured products.
+   * @returns A set of featured products.
+   */
+  async getFeaturedProducts(): Promise<ProductModel[]> {
+    try {
+      const baseUrl = `/api/product/featured`;
+      const products = await api.get(baseUrl);
+      
+      return products.data;
+    } catch (error) {
+      return Promise.reject(error);
+    }
+  }
 }
