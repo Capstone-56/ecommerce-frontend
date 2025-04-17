@@ -12,7 +12,7 @@ import {
   Paper,
 } from "@mui/material";
 
-import { Link as RouterLink } from "react-router-dom";
+import { Link as RouterLink, useLocation } from "react-router-dom";
 
 import { grey } from "@mui/material/colors";
 
@@ -21,7 +21,7 @@ import { grey } from "@mui/material/colors";
 const menus = [
   { name: "Home", route: "/" },
   { name: "Products", route: "/products" },
-  { name: "Categories", route: "/" },
+  { name: "Categories", route: "/categories" },
   { name: "About", route: "/about" },
 ];
 
@@ -43,16 +43,9 @@ const TitleStyling = {
   },
 };
 
-// Navigation Buttons
-const ButtonStyling = {
-  color: grey[900],
-  "&:hover": {
-    backgroundColor: "none",
-  },
-};
-
 const Navbar: React.FC = () => {
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
+  const location = useLocation();
 
   // basically anchor is HTML element where mouse click happened
   const handleMenuOpen = (event: React.MouseEvent<HTMLElement>) => {
@@ -99,7 +92,19 @@ const Navbar: React.FC = () => {
                     component={RouterLink}
                     variant="body1"
                     to={menuItem.route}
-                    sx={{ color: grey[900] }}
+                    sx={{
+                      color:
+                        location.pathname === menuItem.route
+                          ? grey[900]
+                          : grey[600],
+                      fontWeight:
+                        location.pathname === menuItem.route
+                          ? "bold"
+                          : "normal",
+                      "&:hover": {
+                        color: "inherit",
+                      },
+                    }}
                   >
                     {menuItem.name}
                   </Typography>
@@ -116,10 +121,16 @@ const Navbar: React.FC = () => {
               alignItems: "center",
             }}
           >
-            <IconButton disableRipple>
+            <IconButton component={RouterLink} to={"/"} disableRipple>
               <KeyboardCommandKey sx={{ ...LogoStyle }} />
             </IconButton>
-            <Typography variant="h1" noWrap sx={{ ...TitleStyling }}>
+            <Typography
+              variant="h1"
+              component={RouterLink}
+              to={"/"}
+              noWrap
+              sx={{ ...TitleStyling }}
+            >
               BDNX
             </Typography>
           </Box>
@@ -137,7 +148,17 @@ const Navbar: React.FC = () => {
                 key={menuItem.name}
                 component={RouterLink}
                 to={menuItem.route}
-                sx={{ ...ButtonStyling }}
+                sx={{
+                  color:
+                    location.pathname === menuItem.route
+                      ? grey[900]
+                      : grey[600],
+                  fontWeight:
+                    location.pathname === menuItem.route ? "bold" : "normal",
+                  "&:hover": {
+                    backgroundColor: "inherit",
+                  },
+                }}
                 disableTouchRipple
               >
                 <Typography
