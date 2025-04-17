@@ -1,7 +1,8 @@
+import Navbar from "../Navigation/Navigation";
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 
-import { Box, Button, Typography, Container, Card, CardContent, CardMedia  } from "@mui/material";
+import { Box, Button, Typography, Container, Card, CardContent, CardMedia, Grid  } from "@mui/material";
 import { ProductService } from "@/services/product-service";
 import { ProductModel } from "@/domain/models/ProductModel";
 import Footer from "../Footer/Footer";
@@ -30,6 +31,7 @@ export default function Home() {
 
   return (
     <>
+      <Navbar />
       {/* Hero Section */}
       <Box
         sx={{
@@ -129,25 +131,29 @@ export default function Home() {
         <Typography variant="body1" color="text.secondary" sx={{ mb: 6 }}>
           Discover apparel from a wide variety of brands
         </Typography>
-
-        <Box
-          sx={{
-            display: "flex",
-            justifyContent: "center",
-            gap: 2,
-            flexWrap: "wrap",
-            marginBottom: 4,
-          }}
-        >
-        {/* Generate product cards for three featured products. */}
-        {products.length > 0 ? products.map(product => {
-          return (
-          <ProductCard product={product}
-                       width={250}
-                       height={350}
-          />)})
-          : <Typography color="text.secondary">No featured products available</Typography>}
-        </Box>
+        <Grid container spacing={3} sx={{ mb: 4, justifyContent: "center" }}>
+          {/* Generate product cards for three featured products. */}
+          {products.length > 0 ? (
+            products.map((product) => {
+              return (
+                <Grid size={{ xs: 12, sm: 6, md: 4, lg: 3 }} key={product.id}>
+                  <Box
+                    sx={{
+                      display: "flex",
+                      justifyContent: "center",
+                    }}
+                  >
+                    <ProductCard product={product} width="100%" height="100%" />
+                  </Box>
+                </Grid>
+              );
+            })
+          ) : (
+            <Typography color="text.secondary">
+              No featured products available
+            </Typography>
+          )}
+        </Grid>
 
         <Button
           variant="outlined"
@@ -214,3 +220,5 @@ export default function Home() {
     </>
   );
 }
+
+
