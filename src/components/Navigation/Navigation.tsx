@@ -21,7 +21,7 @@ import { grey } from "@mui/material/colors";
 const menus = [
   { name: "Home", route: "/" },
   { name: "Products", route: "/products" },
-  { name: "Categories", route: "/categories" },
+  { name: "Categories", route: "/" },
   { name: "About", route: "/about" },
 ];
 
