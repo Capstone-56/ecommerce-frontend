@@ -130,22 +130,20 @@ export default function Home() {
           Discover apparel from a wide variety of brands
         </Typography>
         <Grid container spacing={3} sx={{ mb: 4, justifyContent: "center" }}>
-{/* Generate product cards for three featured products. */}
+          {/* Generate product cards for three featured products. */}
           {products.length > 0 ? (
             products.map((product) => {
               return (
-                <Grid size={{xs:12, sm:6, md:4, lg:3}} key={product.id}>
-                    <Box sx={{ 
+                <Grid size={{ xs: 12, sm: 6, md: 4, lg: 3 }} key={product.id}>
+                  <Box
+                    sx={{
                       display: "flex",
-                      justifyContent: "center"
-                    }}>
-                      <ProductCard 
-                        product={product}
-                        width="100%"
-                        height="100%"       
-                      />
-                    </Box>
-                  </Grid>
+                      justifyContent: "center",
+                    }}
+                  >
+                    <ProductCard product={product} width="100%" height="100%" />
+                  </Box>
+                </Grid>
               );
             })
           ) : (
@@ -154,9 +152,6 @@ export default function Home() {
             </Typography>
           )}
         </Grid>
-
-          
-
 
         <Button
           variant="outlined"
@@ -223,4 +218,5 @@ export default function Home() {
     </>
   );
 }
+
 
