@@ -1,4 +1,4 @@
-import { ThemeOptions, ButtonPropsVariantOverrides } from '@mui/material/styles';
+import { ThemeOptions } from '@mui/material/styles';
 import { OverridableStringUnion } from '@mui/types';
 
 // Extend ButtonPropsVariantOverrides to include custom variants
