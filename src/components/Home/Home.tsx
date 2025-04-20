@@ -37,7 +37,7 @@ export default function Home() {
         sx={{
           bgcolor: "#D9D9D9",
           minHeight: "550px",
-          width: "100vw",
+          width: "100%",
           display: "flex",
           flexDirection: "column",
           justifyContent: "center",
