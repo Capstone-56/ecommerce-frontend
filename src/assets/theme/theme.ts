@@ -10,9 +10,6 @@ declare module '@mui/material/Button' {
 }
 import { grey } from '@mui/material/colors';
 
-
-// TODO: theme provider should replace index.css as a global styler
-
 // You can also target specific components with component prop and globally override MUI components
 export const themeOptions: ThemeOptions = {
   breakpoints: {
