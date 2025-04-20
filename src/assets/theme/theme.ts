@@ -1,4 +1,13 @@
-import { ThemeOptions } from '@mui/material/styles';
+import { ThemeOptions, ButtonPropsVariantOverrides } from '@mui/material/styles';
+import { OverridableStringUnion } from '@mui/types';
+
+// Extend ButtonPropsVariantOverrides to include custom variants
+declare module '@mui/material/Button' {
+  interface ButtonPropsVariantOverrides {
+    primary: true;
+    secondary: true;
+  }
+}
 import { grey } from '@mui/material/colors';
 
 
@@ -29,5 +38,45 @@ export const themeOptions: ThemeOptions = {
       // color: 'black'
       color: grey['800']
     }
+  },
+  components: {
+    MuiButton: {
+      styleOverrides: {
+        root: {
+          borderRadius: '8px',
+          textTransform: 'none',
+          fontWeight: 500,
+          fontFamily: 'inherit',
+          fontSize: '1rem',
+          padding: '0.4rem 1.3rem',
+        },
+      },
+      variants: [
+        {
+          props: { variant: 'primary' },
+          style: {
+            backgroundColor: '#1a1a1a',
+            color: '#fff',
+            border: '1px solid #1a1a1a',
+            '&:hover': {
+              backgroundColor: '#333',
+              borderColor: '#333',
+            },
+          },
+        },
+        {
+          props: { variant: 'secondary' },
+          style: {
+            backgroundColor: '#fff',
+            color: '#1a1a1a',
+            border: '1px solid #1a1a1a',
+            '&:hover': {
+              backgroundColor: '#f5f5f5',
+              borderColor: '#333',
+            },
+          },
+        },
+      ],
+    },
   },
 };
