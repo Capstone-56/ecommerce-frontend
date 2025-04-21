@@ -41,5 +41,5 @@ export const cartState = create<cartStore>()(
             name: 'cart-storage',
             storage: createJSONStorage(() => sessionStorage),
         },
-      ),
+    ),
 )
