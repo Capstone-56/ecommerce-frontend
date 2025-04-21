@@ -12,13 +12,13 @@ type cartStore = {
      * @param addedProduct The selected product to add to the cart.
      * @returns A cart containing the selected product.
      */
-    addToCart: (product: ProductModel) => void,
+    addToCart: (addedProduct: ProductModel) => void,
     /**
      * A function to remove a selected product from the cart state.
      * @param removedProduct The selected product to remove from the cart.
      * @returns A cart not containing the selected product.
      */
-    removeFromCart: (product: ProductModel) => void
+    removeFromCart: (removedProduct: ProductModel) => void
 }
 
 /**
