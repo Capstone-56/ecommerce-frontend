@@ -19,6 +19,7 @@ import Paginator from "@/components/Pagination/Paginator";
 import ProductCard from "../ProductCard/ProductCard";
 import Footer from "../Footer/Footer";
 import Navbar from "../Navigation/Navigation";
+import ProductDetails from "./ProductDetails";
 
 export default function Products() {
   const [products, setProducts] = useState<PagedList<ProductModel>>();
