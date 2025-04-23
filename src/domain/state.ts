@@ -1,7 +1,7 @@
 import { ProductModel } from "@/domain/models/ProductModel";
 import { create } from "zustand";
 import { persist, createJSONStorage } from "zustand/middleware";
-import { cartStorage } from "./constants";
+import { Constants } from "./constants";
 
 type cartStore = {
     /**
@@ -39,7 +39,7 @@ export const cartState = create<cartStore>()(
         }),
         {
             // Name of the item in the storage.
-            name: cartStorage,
+            name: Constants.LOCAL_STORAGE_CART_STORAGE,
             storage: createJSONStorage(() => localStorage),
         },
     ),
