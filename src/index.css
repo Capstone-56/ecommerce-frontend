@@ -46,6 +46,10 @@ body {
   background-color: #ffffff;
 }
 
+.layout {
+  min-height: 80vh;
+}
+
 h1 {
   font-size: 3.2em;
   line-height: 1.1;
