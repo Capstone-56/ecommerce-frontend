@@ -67,9 +67,15 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, width, height }) => 
         <Typography variant="body2" color="text.secondary" noWrap>
           {description}
         </Typography>
-
-        <Typography noWrap sx={{marginTop: 1}}>
-          {price}
+        <Typography 
+          variant="subtitle1" 
+          sx={{ 
+            fontWeight: 'bold',
+            mt: 1, 
+            color: '#000',
+          }}
+        >
+          {(price)}
         </Typography>
       </CardContent>
     </Card>
