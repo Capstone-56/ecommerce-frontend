@@ -1,12 +1,10 @@
-import Navbar from "../Navigation/Navigation";
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 
 import { Box, Button, Typography, Container, Card, CardContent, CardMedia, Grid  } from "@mui/material";
 import { ProductService } from "@/services/product-service";
 import { ProductModel } from "@/domain/models/ProductModel";
-import Footer from "../Footer/Footer";
-import ProductCard from "../ProductCard/ProductCard";
+import ProductCard from "@/resources/components/ProductCard/ProductCard";
 
 export default function Home() {
   const [products, setProducts] = useState<Array<ProductModel>>([]);
@@ -31,7 +29,6 @@ export default function Home() {
 
   return (
     <>
-      <Navbar />
       {/* Hero Section */}
       <Box
         sx={{
@@ -215,8 +212,6 @@ export default function Home() {
           </Typography>
         </Box>
       </Box>
-      {/* Footer Section */}
-      <Footer />
     </>
   );
 }

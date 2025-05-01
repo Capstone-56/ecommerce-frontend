@@ -15,11 +15,8 @@ import { ProductService } from "@/services/product-service";
 import { PagedList } from "@/domain/abstract-models/PagedList";
 import { ProductModel } from "@/domain/models/ProductModel";
 
-import Paginator from "@/components/Pagination/Paginator";
-import ProductCard from "../ProductCard/ProductCard";
-import Footer from "../Footer/Footer";
-import Navbar from "../Navigation/Navigation";
-import ProductDetails from "./ProductDetails";
+import Paginator from "@/resources/components/Pagination/Paginator";
+import ProductCard from "@/resources/components/ProductCard/ProductCard";
 
 export default function Products() {
   const [products, setProducts] = useState<PagedList<ProductModel>>();
@@ -46,7 +43,6 @@ export default function Products() {
 
   return (
     <>
-      <Navbar />
       <Box
         sx={{
           display: "flex",
@@ -185,9 +181,6 @@ export default function Products() {
             </Box>
           </Container>
         </Box>
-
-        {/* Footer Section */}
-        <Footer />
       </Box>
     </>
   );
