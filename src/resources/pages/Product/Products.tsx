@@ -83,12 +83,14 @@ export default function Products() {
   };
 
   const sortLabels = {
+    'featured': 'Featured',
     'priceAsc': 'Low to High',
     'priceDesc': 'High to Low'
   };
   
   const getSortLabel = () => {
     switch (sortOption) {
+      case 'featured': return 'Featured';
       case 'priceAsc': return 'Low to High';
       case 'priceDesc': return 'High to Low';
       default: return 'Default';
@@ -169,6 +171,9 @@ export default function Products() {
                       open={Boolean(anchorEl)}
                       onClose={handleSortMenuClose}
                     >
+                      <MenuItem onClick={() => handleSortChange('featured')}>
+                        Featured
+                      </MenuItem>
                       <MenuItem onClick={() => handleSortChange('priceAsc')}>
                         Low to High
                       </MenuItem>
@@ -182,7 +187,7 @@ export default function Products() {
                 <Grid container spacing={3}>
                   {products?.results.map((product) => (
                     <Grid
-                      size={{ xs: 12, sm: 6, md: 4, lg: 3 }}
+                      size={{ xs: 12, sm: 12, md: 6, lg: 6, xl: 4 }}
                       key={product.id}
                     >
                       <Box
