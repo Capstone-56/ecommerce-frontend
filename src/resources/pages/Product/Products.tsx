@@ -12,6 +12,7 @@ import {
   Button,
   Menu,
 } from "@mui/material";
+import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 
 import { ProductService } from "@/services/product-service";
 
@@ -162,7 +163,7 @@ export default function Products() {
                       variant="outlined"
                       size="small"
                       onClick={handleSortMenuOpen}
-                      endIcon={<span>▼</span>}
+                      endIcon={<ExpandMoreIcon />}
                     >
                       {getSortLabel()}
                     </Button>
