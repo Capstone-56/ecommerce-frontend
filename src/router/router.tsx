@@ -10,6 +10,7 @@ import Products from "@/resources/pages/Product/Products";
 import ProductDetails from "@/resources/pages/Product/ProductDetails";
 import Categories from "@/resources/pages/Categories/Categories";
 import NotFound from "@/resources/pages/NotFound/NotFound";
+import Cart from "@/resources/pages/Cart/Cart";
 
 export const router = createBrowserRouter([
   {
@@ -40,6 +41,10 @@ export const router = createBrowserRouter([
         path: "categories",
         element: <Categories />,
       },
+      {
+        path: "cart",
+        element: <Cart />
+      }
     ],
   },
   {
