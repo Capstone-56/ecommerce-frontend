@@ -58,4 +58,14 @@ export class ProductService {
       return Promise.reject(error);
     }
   }
+
+  async listProductsWithParams(params: URLSearchParams): Promise<PagedList<ProductModel>> {
+    try {
+      const baseUrl = `/api/product?${params.toString()}`;
+      const products = await api.get(baseUrl);
+      return products.data;
+    } catch (error) {
+      return Promise.reject(error);
+    }
+  }
 }
