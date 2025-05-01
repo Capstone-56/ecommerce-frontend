@@ -9,34 +9,25 @@ export class CategoryService {
    * @param pageSize Size of the page / number of categories to be returned.
    * @returns A paged result of categories.
    */
-  async listCategories(
-    page?: number,
-    pageSize?: number
-  ): Promise<PagedList<CategoryModel>> {
+  async listCategories(): Promise<CategoryModel[]> {
     try {
-      const params = new URLSearchParams();
-      if (page) params.append("page", page.toString());
-      if (pageSize) params.append("page_size", pageSize.toString());
-
-      const baseUrl = `/api/category?${params.toString()}`;
-
-      const categories = await api.get(baseUrl);
-      return categories.data;
+      const response = await api.get('/api/category');
+      return response.data;
     } catch (error) {
       return Promise.reject(error);
     }
   }
   /**
    * Get a specific category by ID
-   * @param id The category ID to retrieve
+   * @param internalName The category internalName to retrieve
    * @returns The category model
    */
-  async getCategory(id: string): Promise<CategoryModel> {
+  async getCategory(internalName: string): Promise<CategoryModel> {
     try {
-      const response = await api.get(`/api/category/${id}`);
+      const response = await api.get(`/api/category/${internalName}`);
       return response.data;
     } catch (error) {
-      console.error(`Failed to get category ${id}:`, error);
+      console.error(`Failed to get category ${internalName}:`, error);
       return Promise.reject(error);
     }
   }
