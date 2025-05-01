@@ -17,7 +17,7 @@ interface ProductCardProps {
  * to users and have the ability to transfer them to the product's detail page.
  */
 const ProductCard: React.FC<ProductCardProps> = ({ product, width, height }) => {
-  const { id, name, description, images } = product;
+  const { id, name, description, images, price } = product;
 
   /**
    * When clicked direct the user to the product's detail page.
@@ -66,6 +66,16 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, width, height }) => 
 
         <Typography variant="body2" color="text.secondary" noWrap>
           {description}
+        </Typography>
+        <Typography 
+          variant="subtitle1" 
+          sx={{ 
+            fontWeight: 'bold',
+            mt: 1, 
+            color: '#000',
+          }}
+        >
+          {(price)}
         </Typography>
       </CardContent>
     </Card>
