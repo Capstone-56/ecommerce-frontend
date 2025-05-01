@@ -344,6 +344,7 @@ export default function Filter() {
             >
             <Button
                 variant="contained"
+                color="primary"
                 sx={{
                 width: "100%", // Make the button full width
                 }}
