@@ -332,19 +332,26 @@ export default function Filter() {
           </Stack>
         </AccordionDetails>
         </Accordion>
+        {/* Clear Filters Button */}
         {hasActiveFilters && (
-          <>
-            <Divider />
-            <CardActions>
-              <Button
-                variant="outlined"
-                sx={{ width: "100%" }}
+            <Box
+            sx={{
+                
+                borderTop: "1px solid rgba(0, 0, 0, 0.12)",
+                paddingTop: 2,
+                textAlign: "center",
+            }}
+            >
+            <Button
+                variant="contained"
+                sx={{
+                width: "100%", // Make the button full width
+                }}
                 onClick={clearFilters}
-              >
+            >
                 Clear filters
-              </Button>
-            </CardActions>
-          </>
+            </Button>
+            </Box>
         )}
     </Box>
   );

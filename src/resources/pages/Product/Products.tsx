@@ -92,8 +92,8 @@ export default function Products() {
   const getSortLabel = () => {
     switch (sortOption) {
       case 'featured': return 'Featured';
-      case 'priceAsc': return 'Low to High';
-      case 'priceDesc': return 'High to Low';
+      case 'priceAsc': return 'Price: Low to High';
+      case 'priceDesc': return 'Price: High to Low';
       default: return 'Default';
     }
   };
@@ -134,7 +134,7 @@ export default function Products() {
                     display: "flex",
                     flexDirection: { xs: "column", sm: "row" },
                     justifyContent: "space-between",
-                    alignItems: { xs: "flex-start", sm: "center" },
+                    alignItems: { xs: "center", sm: "center" },
                     mb: 2.5,
                   }}
                 >
@@ -152,39 +152,68 @@ export default function Products() {
                       mt: { xs: 1, sm: 0 },
                     }}
                   >
-                    <Typography
-                      variant="body2"
-                      sx={{ mr: 1 }}
-                      color="text.primary"
-                    >
-                      Sort by:
-                    </Typography>
                     <Button
-                      variant="outlined"
-                      size="small"
+                      size="medium"
                       onClick={handleSortMenuOpen}
                       endIcon={<ExpandMoreIcon />}
+                      sx={{
+                        border: '1px solidrgb(255, 255, 255)', // Golden border like in Image 1
+                        borderRadius: '8px',
+                        color: 'text.primary',
+                        padding: '8px 16px',
+                        textTransform: 'none',
+                        fontWeight: 'normal',
+                        boxShadow: 'none',
+                        '&:hover': {
+                          borderColor: '#F2D48F',
+                          backgroundColor: 'rgba(242, 212, 143, 0.04)'
+                        }
+                      }}
                     >
-                      {getSortLabel()}
+                      <Typography variant="body2" component="span" sx={{ fontWeight: 'normal', mr: 1 }}>
+                        Sort By:
+                      </Typography>
+                      <Typography variant="body2" component="span" sx={{ color: 'text.secondary' }}>
+                        {getSortLabel()}
+                      </Typography>
                     </Button>
                     <Menu
                       anchorEl={anchorEl}
                       open={Boolean(anchorEl)}
                       onClose={handleSortMenuClose}
+                      slotProps={{
+                        paper: {
+                          sx: {
+                            width: '200px',
+                            borderRadius: '8px',
+                            mt: 1,
+                            boxShadow: '0 4px 12px rgba(0,0,0,0.1)'
+                          }
+                        }
+                      }}
+                      transformOrigin={{ horizontal: 'center', vertical: 'top' }}
+                      anchorOrigin={{ horizontal: 'center', vertical: 'bottom' }}
                     >
-                      <MenuItem onClick={() => handleSortChange('featured')}>
+                      <MenuItem 
+                        onClick={() => handleSortChange('featured')}
+                        sx={{ py: 1.5 }}
+                      >
                         Featured
                       </MenuItem>
-                      <MenuItem onClick={() => handleSortChange('priceAsc')}>
-                        Low to High
+                      <MenuItem 
+                        onClick={() => handleSortChange('priceDesc')}
+                        sx={{ 
+                          py: 1.5, 
+                        }}
+                      >
+                        Price: High-Low
                       </MenuItem>
-                      <MenuItem onClick={() => handleSortChange('priceDesc')}>
-                        High to Low
+                      <MenuItem onClick={() => handleSortChange('priceAsc')} sx={{ py: 1.5 }}>
+                        Price: Low-High
                       </MenuItem>
                     </Menu>
                   </Box>
                 </Box>
-
                 <Grid container spacing={3}>
                   {products?.results.map((product) => (
                     <Grid
