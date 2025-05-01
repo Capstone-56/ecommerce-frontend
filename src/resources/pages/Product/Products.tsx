@@ -1,5 +1,5 @@
 // A Products page component that displays the list of products
-import { Link } from "react-router-dom";
+import { Link, useSearchParams } from "react-router-dom";
 import { useEffect, useState } from "react";
 import {
   Box,
@@ -8,6 +8,9 @@ import {
   Container,
   Grid,
   Paper,
+  MenuItem,
+  Button,
+  Menu,
 } from "@mui/material";
 
 import { ProductService } from "@/services/product-service";
@@ -17,28 +20,79 @@ import { ProductModel } from "@/domain/models/ProductModel";
 
 import Paginator from "@/resources/components/Pagination/Paginator";
 import ProductCard from "@/resources/components/ProductCard/ProductCard";
+import Filter from "@/resources/components/Filter/Filter";
 
 export default function Products() {
   const [products, setProducts] = useState<PagedList<ProductModel>>();
-  const [currentPage, setCurrentPage] = useState(1);
+  const [searchParams, setSearchParams] = useSearchParams();
+  const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
+  
+  const currentPage = parseInt(searchParams.get('page') || '1', 10);
+  const sortOption = searchParams.get('sort');
 
   /**
-   * A useEffect required to get product data upon mount.
+   * A useEffect required to get product data upon mount and when URL changes.
    */
+  // Fetch products when search params change
   useEffect(() => {
     document.title = "eCommerce | Products";
-    fetchProducts(currentPage);
-  }, [currentPage]);
+    fetchProducts();
+  }, [searchParams]);
 
-  const fetchProducts = async (page: number) => {
+  // Fetch products based on current search params
+  const fetchProducts = async () => {
     const productService = new ProductService();
-
-    const result = await productService.listProducts(page, 12);
-    setProducts(result);
+    const params = new URLSearchParams(searchParams);
+    
+    if (!params.has('page')) {
+      params.set('page', '1');
+    }
+    
+    try {
+      const result = await productService.listProductsWithParams(params);
+      setProducts(result);
+    } catch (error) {
+      console.error("Failed to fetch products", error);
+    }
   };
 
+  // Update page parameter
   const handlePageChange = (page: number) => {
-    setCurrentPage(page);
+    setSearchParams(params => {
+      params.set('page', page.toString());
+      return params;
+    });
+  };
+
+  const handleSortMenuOpen = (event: React.MouseEvent<HTMLButtonElement>) => {
+    setAnchorEl(event.currentTarget);
+  };
+
+  const handleSortMenuClose = () => {
+    setAnchorEl(null);
+  };
+
+  // Update sort parameter, reset page to 1
+  const handleSortChange = (sort: string) => {
+    setSearchParams(params => {
+      params.set('sort', sort);
+      params.set('page', '1');
+      return params;
+    });
+    handleSortMenuClose();
+  };
+
+  const sortLabels = {
+    'priceAsc': 'Low to High',
+    'priceDesc': 'High to Low'
+  };
+  
+  const getSortLabel = () => {
+    switch (sortOption) {
+      case 'priceAsc': return 'Low to High';
+      case 'priceDesc': return 'High to Low';
+      default: return 'Default';
+    }
   };
 
   return (
@@ -68,49 +122,7 @@ export default function Products() {
               }}
             >
               {/* Filters section */}
-              <Box
-                sx={{
-                  width: { xs: "100%", md: "240px" },
-                  flexShrink: 0,
-                }}
-              >
-                {/* Categories filter would be implemented here */}
-                <Paper
-                  elevation={0}
-                  sx={{ p: 2, border: "1px solid #e0e0e0", borderRadius: 3 }}
-                >
-                  <Typography variant="h6" sx={{ mb: 2 }}>
-                    Filters
-                  </Typography>
-                  <Box sx={{ mb: 3 }}>
-                    <Typography variant="subtitle1" sx={{ mb: 1 }}>
-                      Categories
-                    </Typography>
-                    <Typography variant="subtitle1" sx={{ mb: 1 }}>
-                      Category 1
-                    </Typography>
-                    <Typography variant="subtitle1" sx={{ mb: 1 }}>
-                      Category 2
-                    </Typography>
-                    <Typography variant="subtitle1" sx={{ mb: 1 }}>
-                      Category 3
-                    </Typography>
-                    <Typography variant="subtitle1" sx={{ mb: 1 }}>
-                      Category 4
-                    </Typography>
-                    <Typography variant="subtitle1" sx={{ mb: 1 }}>
-                      Category 5
-                    </Typography>
-                    <Typography variant="subtitle1" sx={{ mb: 1 }}>
-                      Category 6
-                    </Typography>
-                  </Box>
-
-                  <Box sx={{ mb: 3 }}>
-                    {/* Price range filter would be implemented here */}
-                  </Box>
-                </Paper>
-              </Box>
+                <Filter />
 
               {/* Product listing */}
               <Box sx={{ flex: 1 }}>
@@ -129,6 +141,7 @@ export default function Products() {
                     </Typography>
                   )}
 
+                  {/* Sort options UI */}
                   <Box
                     sx={{
                       display: "flex",
@@ -143,7 +156,26 @@ export default function Products() {
                     >
                       Sort by:
                     </Typography>
-                    {/* Sort options to be implemented */}
+                    <Button
+                      variant="outlined"
+                      size="small"
+                      onClick={handleSortMenuOpen}
+                      endIcon={<span>▼</span>}
+                    >
+                      {getSortLabel()}
+                    </Button>
+                    <Menu
+                      anchorEl={anchorEl}
+                      open={Boolean(anchorEl)}
+                      onClose={handleSortMenuClose}
+                    >
+                      <MenuItem onClick={() => handleSortChange('priceAsc')}>
+                        Low to High
+                      </MenuItem>
+                      <MenuItem onClick={() => handleSortChange('priceDesc')}>
+                        High to Low
+                      </MenuItem>
+                    </Menu>
                   </Box>
                 </Box>
 
