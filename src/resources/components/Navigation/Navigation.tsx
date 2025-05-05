@@ -11,12 +11,10 @@ import {
   Typography,
   MenuItem,
   Paper,
-  Badge,
 } from "@mui/material";
 import { Link as RouterLink, useLocation } from "react-router-dom";
 import { grey, common } from "@mui/material/colors";
 import { Constants } from "@/domain/constants";
-import { cartState } from "@/domain/state";
 
 // Should move to another file
 // const menus = ["Home", "Products", "Categories", "About"];
@@ -48,7 +46,6 @@ const TitleStyling = {
 const Navbar: React.FC = () => {
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const location = useLocation();
-  const cart = cartState((state) => state.cart);
 
   // basically anchor is HTML element where mouse click happened
   const handleMenuOpen = (event: React.MouseEvent<HTMLElement>) => {
@@ -187,23 +184,7 @@ const Navbar: React.FC = () => {
               <ShoppingCartIcon 
                 sx={{ 
                   color: location.pathname === Constants.CART_ROUTE ? common.black : grey
-                }}
-                fontSize="medium">
-              </ShoppingCartIcon>
-              <Badge 
-                badgeContent={cart.length}
-                color="primary"
-                sx={{
-                  '& .MuiBadge-badge': {
-                    top: -15, 
-                    fontSize: '0.6rem',
-                    height: '16px',
-                    minWidth: '16px',
-                    padding: '0 4px',
-                  },
-                }}
-                >
-              </Badge>
+                }}></ShoppingCartIcon>
             </IconButton>
             {/* TODO: apply logic to show "logged-in state" options */}
             <Button
