@@ -23,7 +23,7 @@ interface ProductCardProps {
  * The card component to display products when users view their cart. 
  */
 const CartProductCard: React.FC<ProductCardProps> = ({ product }) => {
-  const { name, description, images } = product;
+  const { name, description, images, price } = product;
   const [quantity, setQuantity] = useState(1);
   const removeProduct = cartState((state) => state.removeFromCart);
 
@@ -89,7 +89,7 @@ const CartProductCard: React.FC<ProductCardProps> = ({ product }) => {
                   fontWeight={"bold"}
                   component="div"
                 >
-                  $19.99
+                  {price}
                 </Typography>
               </CardContent>
             </Grid>
