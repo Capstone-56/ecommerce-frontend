@@ -28,8 +28,16 @@ export default function Products() {
   const [searchParams, setSearchParams] = useSearchParams();
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   
+  /**
+   * Extract values from URL search parameters.
+   */
   const currentPage = parseInt(searchParams.get('page') || '1', 10);
-  const sortOption = searchParams.get('sort');
+  const pageSize = parseInt(searchParams.get('page_size') || '10', 10);
+  const sortOption = searchParams.get('sort') || undefined;
+  const colourFilter = searchParams.get('colour') || undefined;
+  const categoriesFilter = searchParams.get('categories') || undefined;
+  const priceMinFilter = searchParams.get('price_min') ? parseFloat(searchParams.get('price_min')!) : undefined;
+  const priceMaxFilter = searchParams.get('price_max') ? parseFloat(searchParams.get('price_max')!) : undefined;
 
   /**
    * A useEffect required to get product data upon mount and when URL changes.
@@ -43,14 +51,17 @@ export default function Products() {
   // Fetch products based on current search params
   const fetchProducts = async () => {
     const productService = new ProductService();
-    const params = new URLSearchParams(searchParams);
-    
-    if (!params.has('page')) {
-      params.set('page', '1');
-    }
-    
+    // Fetch products with filters and sorting
     try {
-      const result = await productService.listProductsWithParams(params);
+      const result = await productService.listProducts(
+        currentPage,
+        pageSize,
+        priceMinFilter,
+        priceMaxFilter,
+        sortOption,
+        colourFilter,
+        categoriesFilter
+      );
       setProducts(result);
     } catch (error) {
       console.error("Failed to fetch products", error);
