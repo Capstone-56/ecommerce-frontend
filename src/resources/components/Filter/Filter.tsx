@@ -1,18 +1,13 @@
 import React, { useCallback, useState, useEffect } from "react";
-import Card from "@mui/material/Card";
-import CardContent from "@mui/material/CardContent";
 import {
   Button,
   Box,
-  CardActions,
   Typography,
   FormGroup,
   FormControlLabel,
   Checkbox,
   CircularProgress,
-  Divider,
-  Stack,
-  Chip,
+  Grid,
   Accordion,
   AccordionSummary,
   AccordionDetails,
@@ -66,8 +61,6 @@ export default function Filter() {
         setLoading(true);
         const categoryService = new CategoryService();
         const categories = await categoryService.listCategories();
-
-        console.log("Categories response:", categories);
 
         setCategories(categories);
         setError(null);
@@ -212,7 +205,10 @@ export default function Filter() {
     maxPrice !== null;
 
   return (
-    <Box sx={{}}>
+    <Box sx={{
+      width: '100%',
+      maxWidth: '250px',
+    }}>
         
       <Accordion defaultExpanded>
         <AccordionSummary
@@ -295,6 +291,7 @@ export default function Filter() {
         </Accordion>
 
         {/* Colours section */}
+        {/* TODO: Allow multiple colours to be selected at once. Requires backend changes */}
         <Accordion>
         <AccordionSummary
             expandIcon={<ExpandMoreIcon />}
@@ -306,30 +303,47 @@ export default function Filter() {
           </Typography>
         </AccordionSummary>
         <AccordionDetails>
-          <Stack
-            direction="row"
-            spacing={1}
-            flexWrap="wrap"
-            useFlexGap
-            sx={{ mt: 2 }}
-          >
+        <Grid container spacing={2} sx={{ mt: 2 }}>
             {availableColours.map((colour) => (
-              <Chip
-                key={colour.value}
-                label={colour.label}
-                onClick={(e) => handleColourChange(e, colour.value)}
-                sx={{
-                  backgroundColor: colour.colour,
-                  border:
-                    selectedColour === colour.value ? "2px solid black" : "none",
-                  "&:hover": {
-                    backgroundColor: colour.colour,
-                    opacity: 0.9,
-                  },
-                }}
-              />
+              // For 4 items per row: xs={3}, for  3 items per row: xs={4}
+              <Grid size={{xs:3 }} key={colour.value}> 
+                <Box
+                  key={colour.value}
+                  onClick={(e) => handleColourChange(e, colour.value)}
+                  sx={{
+                    display: 'flex',
+                    flexDirection: 'column',
+                    alignItems: 'center',
+                    cursor: 'pointer',
+                    padding: 0.5,
+                    borderRadius: 1, 
+                    flexWrap: 'wrap',
+                  }}
+                >
+                  <Box
+                    sx={{
+                      width: 30, 
+                      height: 30,
+                      borderRadius: '50%',
+                      backgroundColor: colour.colour,
+                      mb: 0.5,
+                      border: selectedColour === colour.value ? '2px solid black' : '1px solid rgba(0,0,0,0.23)',
+                      boxSizing: 'border-box',
+                    }}
+                  />
+                  <Typography
+                    variant="caption"
+                    sx={{
+                      color: selectedColour === colour.value ? 'primary.main' : 'text.secondary',
+                      fontWeight: selectedColour === colour.value ? 'bold' : 'normal',
+                    }}
+                  >
+                    {colour.label}
+                  </Typography>
+                </Box>
+              </Grid>
             ))}
-          </Stack>
+            </Grid>
         </AccordionDetails>
         </Accordion>
         {/* Clear Filters Button */}
