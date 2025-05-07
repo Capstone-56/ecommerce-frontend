@@ -75,7 +75,7 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, width, height }) => 
             color: '#000',
           }}
         >
-          {(price)}
+          {price}
         </Typography>
       </CardContent>
     </Card>

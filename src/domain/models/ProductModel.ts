@@ -7,5 +7,5 @@ export interface ProductModel {
   images: Array<string> | null,
   featured: boolean,
   avgRating: number,
-  price?: number,  
+  price: number,  
 };

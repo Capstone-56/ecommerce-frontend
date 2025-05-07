@@ -93,12 +93,6 @@ export default function Products() {
     });
     handleSortMenuClose();
   };
-
-  const sortLabels = {
-    'featured': 'Featured',
-    'priceAsc': 'Low to High',
-    'priceDesc': 'High to Low'
-  };
   
   const getSortLabel = () => {
     switch (sortOption) {
