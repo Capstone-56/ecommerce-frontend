@@ -22,9 +22,8 @@ const ProductCard: React.FC<ProductCardProps> = ({
   width,
   height,
 }) => {
-  const { id, name, description, images } = product;
-  let navigate = useNavigate();
-
+  const { id, name, description, images, price } = product;
+  const navigate = useNavigate();
   /**
    * When clicked direct the user to the product's detail page.
    */
@@ -80,6 +79,10 @@ const ProductCard: React.FC<ProductCardProps> = ({
 
         <Typography variant="body2" color="text.secondary" noWrap>
           {description}
+        </Typography>
+
+        <Typography noWrap sx={{ marginTop: 1 }}>
+          {price}
         </Typography>
       </CardContent>
     </Card>

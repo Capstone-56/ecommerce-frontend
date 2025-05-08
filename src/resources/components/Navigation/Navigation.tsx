@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { KeyboardCommandKey, Menu as MenuIcon } from "@mui/icons-material";
+import ShoppingCartIcon from "@mui/icons-material/ShoppingCartOutlined";
 import {
   AppBar,
   Box,
@@ -10,11 +11,12 @@ import {
   Typography,
   MenuItem,
   Paper,
+  Badge,
 } from "@mui/material";
-
 import { Link as RouterLink, useLocation } from "react-router-dom";
-
-import { grey } from "@mui/material/colors";
+import { grey, common } from "@mui/material/colors";
+import { Constants } from "@/domain/constants";
+import { cartState } from "@/domain/state";
 
 // Should move to another file
 // const menus = ["Home", "Products", "Categories", "About"];
@@ -46,6 +48,7 @@ const TitleStyling = {
 const Navbar: React.FC = () => {
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const location = useLocation();
+  const cart = cartState((state) => state.cart);
 
   // basically anchor is HTML element where mouse click happened
   const handleMenuOpen = (event: React.MouseEvent<HTMLElement>) => {
@@ -172,7 +175,7 @@ const Navbar: React.FC = () => {
             ))}
           </Box>
 
-          {/* User Buttons */}
+          {/* Cart and User related Buttons */}
           <Box
             sx={{
               display: "flex",
@@ -180,6 +183,28 @@ const Navbar: React.FC = () => {
               gap: 1,
             }}
           >
+            <IconButton component={RouterLink} to={Constants.CART_ROUTE}>
+              <ShoppingCartIcon 
+                sx={{ 
+                  color: location.pathname === Constants.CART_ROUTE ? common.black : grey
+                }}
+                fontSize="medium">
+              </ShoppingCartIcon>
+              <Badge 
+                badgeContent={cart.length}
+                color="primary"
+                sx={{
+                  '& .MuiBadge-badge': {
+                    top: -15, 
+                    fontSize: '0.6rem',
+                    height: '16px',
+                    minWidth: '16px',
+                    padding: '0 4px',
+                  },
+                }}
+                >
+              </Badge>
+            </IconButton>
             {/* TODO: apply logic to show "logged-in state" options */}
             <Button
               variant="outlined"

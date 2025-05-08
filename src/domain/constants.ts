@@ -5,4 +5,7 @@ export class Constants {
 
   /** Storage name to be used in browser for state.  */
   public static readonly LOCAL_STORAGE_CART_STORAGE : string = "cart-storage";
+
+  // routes for navigation
+  public static readonly CART_ROUTE: string = "/cart";
 }
