@@ -84,7 +84,7 @@ export default function Footer() {
                   sx={{ flex: 1, minWidth: "150px",'& .MuiOutlinedInput-root': {borderRadius: '8px'}
                   }}
                 />
-                <Button variant="primary" type="submit" size="medium" sx={{height: "40px"}}>
+                <Button variant="contained" type="submit" size="medium" sx={{height: "40px"}}>
                   Submit
                 </Button>
               </Box>

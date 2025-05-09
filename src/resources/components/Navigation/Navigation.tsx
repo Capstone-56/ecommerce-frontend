@@ -60,8 +60,8 @@ const Navbar: React.FC = () => {
   };
 
   return (
-    <AppBar position="static">
-      <Paper>
+    <AppBar position="static" elevation={0}>
+      <Paper elevation={0} sx={{ boxShadow: "0px 4px 8px rgba(55, 55, 55, 0.15)" }}>
         <Toolbar
           sx={{
             backgroundColor: grey[50],
@@ -208,24 +208,13 @@ const Navbar: React.FC = () => {
             {/* TODO: apply logic to show "logged-in state" options */}
             <Button
               variant="outlined"
-              sx={{
-                bgcolor: grey[50],
-                color: grey[900],
-                borderColor: grey[900],
-                borderRadius: "8px",
-              }}
             >
               <Typography fontWeight="500" textTransform="none">
                 Login
               </Typography>
             </Button>
             <Button
-              variant="outlined"
-              sx={{
-                bgcolor: grey[900],
-                color: grey[50],
-                borderRadius: "8px",
-              }}
+              variant="contained"
             >
               <Typography fontWeight="500" textTransform="none">
                 Sign up

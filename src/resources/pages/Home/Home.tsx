@@ -64,7 +64,8 @@ export default function Home() {
         </Typography>
         <Box sx={{ display: "flex", gap: 2 }}>
           <Button
-            variant="secondary"
+            variant="outlined"
+            color="primary"
             component={Link}
             to="/products"
           >
@@ -72,7 +73,7 @@ export default function Home() {
           </Button>
 
           <Button
-            variant="primary"
+            variant="contained"
             component={Link}
             to="/categories"
           >
@@ -130,7 +131,7 @@ export default function Home() {
         </Grid>
 
         <Button
-          variant="secondary"
+          variant="outlined"
           component={Link}
           to="/products"
         >

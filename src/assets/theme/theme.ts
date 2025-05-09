@@ -1,14 +1,11 @@
 import { ThemeOptions } from '@mui/material/styles';
-import { OverridableStringUnion } from '@mui/types';
-
-// Extend ButtonPropsVariantOverrides to include custom variants
-declare module '@mui/material/Button' {
-  interface ButtonPropsVariantOverrides {
-    primary: true;
-    secondary: true;
-  }
-}
 import { grey } from '@mui/material/colors';
+
+/*
+  * This file contains the theme options for the MUI theme.
+  * You can override the default MUI theme here.
+  * This file should be used to define the theme options for repetitive, global elements such as text, buttons, color palette, etc.
+*/
 
 // You can also target specific components with component prop and globally override MUI components
 export const themeOptions: ThemeOptions = {
@@ -31,12 +28,27 @@ export const themeOptions: ThemeOptions = {
     fontFamily: 'Inter',
     h1: {
       fontWeight: 700,
-      // need an opinion on using default css vs MUI palette
-      // color: 'black'
       color: grey['800']
     }
   },
+  palette: {
+    // Define primary and secondary colours here
+    // you can define colours of element by specifying colour = primary/secondary
+    // colours can also be used in sx prop such as sx={{ color: 'primary.main' }}
+    primary: {
+      light: '#d1c1ff', // light colour
+      main: '#4F61FF', // main colour
+      dark: '#1f40fb', // hover colour
+      contrastText: '#fff', // text colour
+    },
+    secondary: {
+      main: '#262626',
+      dark: '#000',
+      contrastText: '#fff',
+    },
+  },
   components: {
+    // Define global styles for buttons here:
     MuiButton: {
       styleOverrides: {
         root: {
@@ -48,32 +60,6 @@ export const themeOptions: ThemeOptions = {
           padding: '0.4rem 1.3rem',
         },
       },
-      variants: [
-        {
-          props: { variant: 'primary' },
-          style: {
-            backgroundColor: '#1a1a1a',
-            color: '#fff',
-            border: '1px solid #1a1a1a',
-            '&:hover': {
-              backgroundColor: '#333',
-              borderColor: '#333',
-            },
-          },
-        },
-        {
-          props: { variant: 'secondary' },
-          style: {
-            backgroundColor: '#fff',
-            color: '#1a1a1a',
-            border: '1px solid #1a1a1a',
-            '&:hover': {
-              backgroundColor: '#f5f5f5',
-              borderColor: '#333',
-            },
-          },
-        },
-      ],
     },
   },
 };
