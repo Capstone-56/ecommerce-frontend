@@ -37,6 +37,10 @@ body {
   background-color: #ffffff;
 }
 
+.layout {
+  min-height: 80vh;
+}
+
 a {
   text-decoration: none;
   cursor: pointer;
