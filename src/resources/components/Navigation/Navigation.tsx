@@ -12,6 +12,7 @@ import {
   MenuItem,
   Paper,
   Badge,
+  Link,
 } from "@mui/material";
 import { Link as RouterLink, useLocation } from "react-router-dom";
 import { grey, common } from "@mui/material/colors";
@@ -65,77 +66,83 @@ const Navbar: React.FC = () => {
         <Toolbar
           sx={{
             backgroundColor: grey[50],
-            justifyContent: { md: "space-evenly", xs: "space-between" },
+            justifyContent: { md: "space-evenly", xs: "space-between" , sm: "space-between"},
             px: 2,
           }}
         >
           {/* Nav Menu on < md (uses MUI Menu component) */}
-          <Box
+          <Box 
             sx={{
-              display: { xs: "flex", md: "none" },
-              alignItems: "center",
+            display: "flex"
             }}
           >
-            <IconButton
-              size="large"
-              edge="end"
-              color="inherit"
-              onClick={handleMenuOpen}
+            <Box
+              sx={{
+                display: { xs: "flex", md: "none" },
+                alignItems: "center",
+              }}
             >
-              <MenuIcon />
-            </IconButton>
-            <Menu
-              anchorEl={anchorEl}
-              open={!!anchorEl}
-              onClose={handleMenuClose}
-            >
-              {menus.map((menuItem) => (
-                <MenuItem>
-                  <Typography
-                    component={RouterLink}
-                    variant="body1"
-                    to={menuItem.route}
-                    sx={{
-                      color:
-                        location.pathname === menuItem.route
-                          ? grey[900]
-                          : grey[600],
-                      fontWeight:
-                        location.pathname === menuItem.route
-                          ? "bold"
-                          : "normal",
-                      "&:hover": {
-                        color: "inherit",
-                      },
-                    }}
-                  >
-                    {menuItem.name}
-                  </Typography>
-                </MenuItem>
-              ))}
-            </Menu>
-          </Box>
+              <IconButton
+                size="large"
+                edge="end"
+                color="inherit"
+                onClick={handleMenuOpen}
+              >
+                <MenuIcon />
+              </IconButton>
+              <Menu
+                anchorEl={anchorEl}
+                open={!!anchorEl}
+                onClose={handleMenuClose}
+              >
+                {menus.map((menuItem) => (
+                  <MenuItem>
+                    <Typography
+                      component={RouterLink}
+                      variant="body1"
+                      to={menuItem.route}
+                      sx={{
+                        color:
+                          location.pathname === menuItem.route
+                            ? grey[900]
+                            : grey[600],
+                        fontWeight:
+                          location.pathname === menuItem.route
+                            ? "bold"
+                            : "normal",
+                        "&:hover": {
+                          color: "inherit",
+                        },
+                      }}
+                    >
+                      {menuItem.name}
+                    </Typography>
+                  </MenuItem>
+                ))}
+              </Menu>
+            </Box>
 
-          {/* Company Name - Logo */}
-          <Box
-            sx={{
-              display: "flex",
-              flexDirection: "row",
-              alignItems: "center",
-            }}
-          >
-            <IconButton component={RouterLink} to={"/"} disableRipple>
-              <KeyboardCommandKey sx={{ ...LogoStyle }} />
-            </IconButton>
-            <Typography
-              variant="h1"
-              component={RouterLink}
-              to={"/"}
-              noWrap
-              sx={{ ...TitleStyling }}
+            {/* Company Name - Logo */}
+            <Box
+              sx={{
+                display: "flex",
+                flexDirection: "row",
+                alignItems: "center",
+              }}
             >
-              BDNX
-            </Typography>
+              <IconButton component={RouterLink} to={"/"} disableRipple>
+                <KeyboardCommandKey sx={{ ...LogoStyle }} />
+              </IconButton>
+              <Typography
+                variant="h1"
+                component={RouterLink}
+                to={"/"}
+                noWrap
+                sx={{ ...TitleStyling }}
+              >
+                BDNX
+              </Typography>
+            </Box>
           </Box>
 
           {/* Nav Menu on > md */}
@@ -143,35 +150,36 @@ const Navbar: React.FC = () => {
             sx={{
               display: { xs: "none", md: "flex" },
               flexDirection: "row",
-              gap: 1,
+              justifyContent: "center", // Center the middle links
+              gap: { md: 2, lg: 6}, // Add spacing between links
             }}
           >
             {menus.map((menuItem) => (
-              <Button
-                key={menuItem.name}
-                component={RouterLink}
-                to={menuItem.route}
-                sx={{
-                  color:
-                    location.pathname === menuItem.route
-                      ? grey[900]
-                      : grey[600],
-                  fontWeight:
-                    location.pathname === menuItem.route ? "bold" : "normal",
-                  "&:hover": {
-                    backgroundColor: "inherit",
-                  },
-                }}
-                disableTouchRipple
+              <Link
+              key={menuItem.name}
+              component={RouterLink}
+              to={menuItem.route}
+              sx={{
+                textDecoration: "none",
+                color:
+                  location.pathname === menuItem.route
+                    ? grey[900]
+                    : grey[600],
+                fontWeight:
+                  location.pathname === menuItem.route ? "bold" : "normal",
+                "&:hover": {
+                  backgroundColor: "inherit",
+                },
+              }}
+            >
+              <Typography
+                textTransform="none"
+                variant="subtitle1"
+                fontWeight="500"
               >
-                <Typography
-                  textTransform="none"
-                  variant="subtitle1"
-                  fontWeight="500"
-                >
-                  {menuItem.name}
-                </Typography>
-              </Button>
+                {menuItem.name}
+              </Typography>
+            </Link>
             ))}
           </Box>
 
