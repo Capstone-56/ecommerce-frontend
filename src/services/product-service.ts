@@ -27,9 +27,9 @@ export class ProductService {
     try {
       const params = new URLSearchParams();
       if (page) params.append("page", page.toString());
-      if (pageSize) params.append("page_size", pageSize.toString());
-      if (priceMin) params.append("price_min", priceMin.toString());
-      if (priceMax) params.append("price_max", priceMax.toString());
+      if (pageSize) params.append("pageSize", pageSize.toString());
+      if (priceMin) params.append("priceMin", priceMin.toString());
+      if (priceMax) params.append("priceMax", priceMax.toString());
       if (sort) params.append("sort", sort);
       if (colour) params.append("colour", colour);
       if (categories) params.append("categories", categories);

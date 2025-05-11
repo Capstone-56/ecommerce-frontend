@@ -32,12 +32,12 @@ export default function Products() {
    * Extract values from URL search parameters.
    */
   const currentPage = parseInt(searchParams.get('page') || '1', 10);
-  const pageSize = parseInt(searchParams.get('page_size') || '10', 10);
+  const pageSize = parseInt(searchParams.get('pageSize') || '10', 10);
   const sortOption = searchParams.get('sort') || undefined;
   const colourFilter = searchParams.get('colour') || undefined;
   const categoriesFilter = searchParams.get('categories') || undefined;
-  const priceMinFilter = searchParams.get('price_min') ? parseFloat(searchParams.get('price_min')!) : undefined;
-  const priceMaxFilter = searchParams.get('price_max') ? parseFloat(searchParams.get('price_max')!) : undefined;
+  const priceMinFilter = searchParams.get('priceMin') ? parseFloat(searchParams.get('priceMin')!) : undefined;
+  const priceMaxFilter = searchParams.get('priceMax') ? parseFloat(searchParams.get('priceMax')!) : undefined;
 
   /**
    * A useEffect required to get product data upon mount and when URL changes.

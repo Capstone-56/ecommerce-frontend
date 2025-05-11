@@ -51,8 +51,8 @@ export default function Filter() {
     ? selectedCategoriesParam.split(",")
     : [];
   const selectedColour = searchParams.get("colour");
-  const minPrice = searchParams.get("price_min");
-  const maxPrice = searchParams.get("price_max");
+  const minPrice = searchParams.get("priceMin");
+  const maxPrice = searchParams.get("priceMax");
 
   // Fetch categories on component mount
   useEffect(() => {
@@ -152,12 +152,12 @@ export default function Filter() {
       setSearchParams((params) => {
         if (isChecked) {
           // Add price range
-          params.set("price_min", selectedRange.min.toString());
-          params.set("price_max", selectedRange.max.toString());
+          params.set("priceMin", selectedRange.min.toString());
+          params.set("priceMax", selectedRange.max.toString());
         } else {
           // Remove price range
-          params.delete("price_min");
-          params.delete("price_max");
+          params.delete("priceMin");
+          params.delete("priceMax");
         }
 
         params.set("page", "1");
@@ -190,8 +190,8 @@ export default function Filter() {
     setSearchParams((params) => {
       params.delete("categories");
       params.delete("colour");
-      params.delete("price_min");
-      params.delete("price_max");
+      params.delete("priceMin");
+      params.delete("priceMax");
       params.set("page", "1");
       return params;
     });
