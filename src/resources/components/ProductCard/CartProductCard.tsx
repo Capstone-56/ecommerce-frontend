@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 import {
   Card,
   CardMedia,
@@ -24,8 +24,10 @@ interface ProductCardProps {
  */
 const CartProductCard: React.FC<ProductCardProps> = ({ product }) => {
   const { name, description, images, price } = product;
-  const [quantity, setQuantity] = useState(1);
   const removeProduct = cartState((state) => state.removeFromCart);
+  const updateProduct = cartState((state) => state.updateQuantity);
+  const getProductQuantity = cartState((state) => state.getQuantity);
+  const quantity = getProductQuantity(product);
 
   const thumbnail =
     Array.isArray(images) && images.length > 0 ? images[0] : placeholderImage;
@@ -34,7 +36,6 @@ const CartProductCard: React.FC<ProductCardProps> = ({ product }) => {
     <Card
       sx={{
         width: "100%",
-        maxWidth: 600,
         display: "flex",
         flexDirection: "column",
         mb: 3
@@ -103,7 +104,8 @@ const CartProductCard: React.FC<ProductCardProps> = ({ product }) => {
                   color="inherit"
                   size="small"
                   sx={{ minWidth: "30px", padding: "4px 8px" }}
-                  onClick={() => quantity > 1 ? setQuantity(quantity - 1) : undefined}
+                  onClick={() => quantity ? quantity > 1 ? updateProduct(product, -1) : 0 : 0}
+                  disabled={quantity == 1}
                 >
                   -
                 </Button>
@@ -129,7 +131,7 @@ const CartProductCard: React.FC<ProductCardProps> = ({ product }) => {
                   color="inherit"
                   size="small"
                   sx={{ minWidth: "30px", padding: "4px 8px" }}
-                  onClick={() => setQuantity(quantity + 1)}
+                  onClick={() => updateProduct(product, 1)}
                 >
                   +
                 </Button>
