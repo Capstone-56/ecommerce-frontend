@@ -1,114 +1,133 @@
 import {
-    Box,
-    Button,
-    Checkbox,
-    FormControlLabel,
-    Link,
-    TextField,
-    Typography,
-  } from '@mui/material';
-  import { Visibility, VisibilityOff } from '@mui/icons-material';
-  import React, { useState } from 'react';
-  
-  
-  const Login: React.FC = () => {
-    const [showPassword, setShowPassword] = useState(false);
-  
-    return (
-      <>
-        {}
-  
-        <Box
-          sx={{
-            maxWidth: 400,
-            mx: 'auto',
-            mt: 10,
-            px: 3,
-            py: 4,
-            boxShadow: 3,
-            borderRadius: 2,
-            bgcolor: 'background.paper',
-            textAlign: 'center',
-          }}
-        >
-          {/*Black-colored heading */}
-          <Typography variant="h4" fontWeight="bold" gutterBottom sx={{ color: 'black' }}>
-            Login
-          </Typography>
-  
-          <TextField
-            fullWidth
-            margin="normal"
-            label="Email"
-            type="email"
-            placeholder="Your email"
-          />
-  
-          <Box position="relative">
-            <TextField
-              fullWidth
-              margin="normal"
-              label="Password"
-              type={showPassword ? 'text' : 'password'}
-              placeholder="Password"
-            />
-            <Box
-              sx={{
-                position: 'absolute',
-                top: '50%',
-                right: 16,
-                transform: 'translateY(-50%)',
-                cursor: 'pointer',
-              }}
-              onClick={() => setShowPassword(!showPassword)}
-            >
+  Box,
+  Button,
+  Checkbox,
+  FormControlLabel,
+  Link,
+  TextField,
+  Typography,
+  CircularProgress,
+} from "@mui/material";
+import { Visibility, VisibilityOff } from "@mui/icons-material";
+import React, { useState } from "react";
+import axios from "axios";
+
+const Login: React.FC = () => {
+  const [form, setForm] = useState({
+    username: "",
+    password: "",
+  });
+  const [showPassword, setShowPassword] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setForm({ ...form, [e.target.name]: e.target.value });
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setError("");
+    setLoading(true);
+
+    try {
+      const res = await axios.post("http://localhost:8000/auth/login", form);
+      const { accessToken, refreshToken } = res.data;
+      localStorage.setItem("accessToken", accessToken);
+      localStorage.setItem("refreshToken", refreshToken);
+      alert("Login successful");
+      // navigate to dashboard
+      
+    } catch (err: any) {
+      console.error("Login error:", err?.response?.data || err);
+      setError("Login failed. Check your credentials.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  return (
+    <Box
+      component="form"
+      onSubmit={handleSubmit}
+      sx={{
+        maxWidth: 400,
+        mx: "auto",
+        mt: 10,
+        px: 3,
+        py: 4,
+        boxShadow: 3,
+        borderRadius: 2,
+        bgcolor: "background.paper",
+        textAlign: "center",
+      }}
+    >
+      <Typography variant="h4" fontWeight="bold" gutterBottom sx={{ color: "black" }}>
+        Login
+      </Typography>
+
+      <TextField
+        fullWidth
+        required
+        margin="normal"
+        label="Username"
+        name="username"
+        value={form.username}
+        onChange={handleChange}
+      />
+
+      <TextField
+        fullWidth
+        required
+        margin="normal"
+        label="Password"
+        name="password"
+        type={showPassword ? "text" : "password"}
+        value={form.password}
+        onChange={handleChange}
+        InputProps={{
+          endAdornment: (
+            <Box sx={{ cursor: "pointer" }} onClick={() => setShowPassword(!showPassword)}>
               {showPassword ? <VisibilityOff fontSize="small" /> : <Visibility fontSize="small" />}
             </Box>
-          </Box>
-  
-          <Box textAlign="left" mt={1}>
-            <Link href="#" variant="body2">
-              Forgot password?
-            </Link>
-          </Box>
-  
-          {/*Black-colored "Remember me" */}
-          <FormControlLabel
-            control={<Checkbox defaultChecked />}
-            label={
-              <Typography sx={{ color: 'black' }}>
-                Remember me
-              </Typography>
-            }
-            sx={{ mt: 2 }}
-          />
-  
-          <Button
-            variant="contained"
-            fullWidth
-            sx={{
-              mt: 2,
-              backgroundColor: 'black',
-              color: 'white',
-              '&:hover': {
-                backgroundColor: '#333',
-              },
-            }}
-          >
-            LOG IN
-          </Button>
-  
-          <Box mt={2}>
-            <Link href="#" variant="body2">
-              Create a new account
-            </Link>
-          </Box>
-        </Box>
-  
-        {/* <Footer /> */}
-      </>
-    );
-  };
-  
-  export default Login;
-  
+          ),
+        }}
+      />
+
+      <FormControlLabel
+        control={<Checkbox defaultChecked />}
+        label={<Typography sx={{ color: "black" }}>Remember me</Typography>}
+        sx={{ mt: 2 }}
+      />
+
+      {error && (
+        <Typography color="error" mt={1}>
+          {error}
+        </Typography>
+      )}
+
+      <Button
+        type="submit"
+        variant="contained"
+        fullWidth
+        disabled={loading}
+        sx={{
+          mt: 2,
+          backgroundColor: "black",
+          color: "white",
+          "&:hover": { backgroundColor: "#333" },
+        }}
+      >
+        {loading ? <CircularProgress size={24} sx={{ color: "white" }} /> : "LOG IN"}
+      </Button>
+
+      <Box mt={2}>
+        <Link href="/signup" variant="body2">
+          Create a new account
+        </Link>
+      </Box>
+    </Box>
+  );
+};
+
+export default Login;
