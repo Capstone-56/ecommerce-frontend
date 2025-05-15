@@ -10,6 +10,7 @@ import {
 } from "@mui/material";
 import { Visibility, VisibilityOff } from "@mui/icons-material";
 import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import axios from "axios";
 
 const Login: React.FC = () => {
@@ -20,6 +21,8 @@ const Login: React.FC = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+
+  const navigate = useNavigate();
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setForm({ ...form, [e.target.name]: e.target.value });
@@ -35,8 +38,8 @@ const Login: React.FC = () => {
       const { accessToken, refreshToken } = res.data;
       localStorage.setItem("accessToken", accessToken);
       localStorage.setItem("refreshToken", refreshToken);
-      alert("Login successful");
       // navigate to dashboard
+      navigate("/");
       
     } catch (err: any) {
       console.error("Login error:", err?.response?.data || err);

@@ -10,8 +10,8 @@ import {
   CircularProgress
 } from '@mui/material';
 import { Visibility, VisibilityOff } from '@mui/icons-material';
-import axios from 'axios';
-import debounce from 'lodash/debounce'; // npm install lodash
+import api from "@/api";
+import debounce from 'lodash/debounce';
 
 const SignUp: React.FC = () => {
   const [form, setForm] = useState({
@@ -29,19 +29,19 @@ const SignUp: React.FC = () => {
   const [loading, setLoading] = useState(false);
   const [usernameTaken, setUsernameTaken] = useState(false);
 
-  // 🔄 Debounced API call to check if username is taken
-  const checkUsername = debounce(async (username: string) => {
+  // Debounced API call to check if username is taken
+  /* const checkUsername = debounce(async (username: string) => {
     try {
-      const res = await axios.get(`http://localhost:8000/api/user/${username}`);
+      const res = await api.get(`api/user/${username}`);
       if (res.status === 200) setUsernameTaken(true);
     } catch (err) {
       setUsernameTaken(false); // not found = available
     }
-  }, 500);
+  }, 500); */
 
-  useEffect(() => {
+ /*  useEffect(() => {
     if (form.username) checkUsername(form.username);
-  }, [form.username]);
+  }, [checkUsername, form.username]); */
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setForm({ ...form, [e.target.name]: e.target.value });
@@ -51,7 +51,7 @@ const SignUp: React.FC = () => {
     if (form.password !== form.confirmPassword) return alert("Passwords don't match");
     setLoading(true);
     try {
-      await axios.post('http://localhost:8000/auth/signup', {
+      await api.post("/auth/signup", {
         username: form.username,
         email: form.email,
         firstName: form.firstName,

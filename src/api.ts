@@ -50,7 +50,7 @@ axios.interceptors.response.use(
       
       try {
         // Try to refresh the access token.
-        const response = await api.post("http://localhost:8000/auth/refresh", {refresh: refreshToken });
+        const response = await api.post("/auth/refresh", {refresh: refreshToken });
         const newAccessToken = response.data.access;
         
         // If successful set the new access token in state.
