@@ -213,16 +213,42 @@ const Navbar: React.FC = () => {
                 >
               </Badge>
             </IconButton>
-            {/* TODO: apply logic to show "logged-in state" options */}
+            {/* LOGIN button with RouterLink to /login */}
             <Button
+              component={RouterLink}
+              to="/login"
               variant="outlined"
+              sx={{
+                bgcolor: grey[50],
+                color: grey[900],
+                borderColor: grey[900],
+                borderRadius: "8px",
+                textDecoration: "none",
+                "&:hover": {
+                  bgcolor: grey[100],
+                  borderColor: grey[900],
+                },
+              }}
             >
               <Typography fontWeight="500" textTransform="none">
                 Login
               </Typography>
             </Button>
+
+            {/*SIGN UP button with RouterLink to /signup */}
             <Button
+              component={RouterLink}
+              to="/signup"
               variant="contained"
+              sx={{
+                bgcolor: grey[900],
+                color: grey[50],
+                borderRadius: "8px",
+                textDecoration: "none",
+                "&:hover": {
+                  bgcolor: grey[800],
+                },
+              }}
             >
               <Typography fontWeight="500" textTransform="none">
                 Sign up

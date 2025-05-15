@@ -12,6 +12,9 @@ import Categories from "@/resources/pages/Categories/Categories";
 import NotFound from "@/resources/pages/NotFound/NotFound";
 import Cart from "@/resources/pages/Cart/Cart";
 
+import Login from "@/resources/pages/Auth/Login";
+import SignUp from "@/resources/pages/Auth/SignUp";
+
 export const router = createBrowserRouter([
   {
     path: "/",
@@ -44,7 +47,16 @@ export const router = createBrowserRouter([
       {
         path: "cart",
         element: <Cart />
+      },
+      {
+        path: "login",
+        element: <Login />
+      },
+      {
+        path: "signup",
+        element: <SignUp />
       }
+
     ],
   },
   {
