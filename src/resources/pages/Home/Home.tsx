@@ -34,7 +34,7 @@ export default function Home() {
         sx={{
           bgcolor: "#D9D9D9",
           minHeight: "550px",
-          width: "100vw",
+          width: "100%",
           display: "flex",
           flexDirection: "column",
           justifyContent: "center",
@@ -65,20 +65,9 @@ export default function Home() {
         <Box sx={{ display: "flex", gap: 2 }}>
           <Button
             variant="outlined"
+            color="primary"
             component={Link}
             to="/products"
-            sx={{
-              bgcolor: "White",
-              color: "#1a1a1a",
-              boxShadow: "none",
-              textTransform: "none",
-              borderColor: "#1a1a1a",
-              borderRadius: "8px",
-              padding: "0.4rem 1.3rem",
-              fontSize: "1rem",
-              fontWeight: "500",
-              fontFamily: "inherit",
-            }}
           >
             Shop Now
           </Button>
@@ -87,17 +76,6 @@ export default function Home() {
             variant="contained"
             component={Link}
             to="/categories"
-            sx={{
-              bgcolor: "#2D2D2D",
-              color: "White",
-              boxShadow: "none",
-              textTransform: "none",
-              borderRadius: "8px",
-              padding: "0.4rem 1.3rem",
-              fontSize: "1rem",
-              fontWeight: "500",
-              fontFamily: "inherit",
-            }}
           >
             Categories
           </Button>
@@ -156,18 +134,6 @@ export default function Home() {
           variant="outlined"
           component={Link}
           to="/products"
-          sx={{
-            bgcolor: "White",
-            color: "#1a1a1a",
-            boxShadow: "none",
-            textTransform: "none",
-            borderColor: "#1a1a1a",
-            borderRadius: "8px",
-            padding: "0.4rem 1.3rem",
-            fontSize: "1rem",
-            fontWeight: "500",
-            fontFamily: "inherit",
-          }}
         >
           View All Products
         </Button>
