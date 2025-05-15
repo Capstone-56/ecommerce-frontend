@@ -5,38 +5,46 @@ import { useEffect, useState } from "react";
 import { ProductService } from "@/services/product-service";
 import {
   Box,
-  Breadcrumbs,
-  Container,
   Typography,
   ImageList,
   ImageListItem,
   Divider,
   ButtonBase,
   Input,
-  TextField,
   Button,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  Grid,
+  IconButton,
 } from "@mui/material";
+
 import { grey } from "@mui/material/colors";
 
+import { Close } from "@mui/icons-material";
+
+import { cartState } from "@/domain/state";
+import { ZoomIn } from "@mui/icons-material";
+
 const PLACEHOLDER_COLORS = ["green", "red", "blue", "brown"];
-const PLACEHOLDER_SIZES = ["sm", "md", "lg"];
 const PLACEHOLDER_SIZES_NUMBERS = ["28", "30", "32", "34", "36", "38"];
+const maxImageListLength = 4;
 
 export default function ProductDetails() {
   const [productDetails, setProductDetails] = useState<ProductModel>();
-  const [collection, setCollection] = useState<string[]>();
+  const [collection, setCollection] = useState<string[]>([]);
+  const [dialogOpen, setDialogOpen] = useState<boolean>(false);
+  const [imageOpen, setImageOpen] = useState<boolean>(false);
+  const [selectedImage, setSelectedImage] = useState<string | null>(null);
   const [colour, setColour] = useState<string>();
-  const [size, setSize] = useState<string>();
+  const [itemSize, setItemSize] = useState<string>();
   const [qty, setQty] = useState<number>(1);
   const { id: productId = "null" } = useParams();
-  const { name, description, images, price } = productDetails || {};
+  const { name, description, images, price, avgRating, featured } =
+    productDetails || {};
+  const { addToCart } = cartState();
 
-  // // DEBUG
-  // console.log(productDetails);
-  // console.log("Collection: ", collection);
-  // console.log("Length of images list:", images?.length);
-
-  // Event handlers for num input
+  // Event handlers for number input
   function handleChange(
     event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) {
@@ -57,29 +65,74 @@ export default function ProductDetails() {
     }
   }
 
+  // Image list Dialog handlers
+  function handleCloseDialog() {
+    setDialogOpen(false);
+    setSelectedImage(null);
+  }
+
+  // Single Image Dialog handler
+  function handleOpenImage(image: string) {
+    setSelectedImage(image);
+    setImageOpen(true);
+  }
+
+  function handleCloseImage() {
+    setSelectedImage(null);
+    setImageOpen(false);
+  }
+
+  // TODO: consider making some fields optional as they aren't all relevant to purchases
+  function handleAddToCart() {
+    if (
+      qty &&
+      itemSize &&
+      colour &&
+      name &&
+      featured &&
+      avgRating &&
+      description &&
+      images
+    ) {
+      const product: ProductModel = {
+        id: productId,
+        name,
+        description,
+        avgRating: avgRating,
+        featured: featured,
+        images: images,
+        price: 25,
+      };
+      addToCart(product);
+    }
+  }
+
   useEffect(() => {
     fetchProductDetails(productId);
   }, []);
 
   // If surpassing 4 image links, the 4th image in list will be a collection
   useEffect(() => {
-    if (Array.isArray(images) && images.length > 4) {
-      setCollection(images.slice(3));
+    if (Array.isArray(images) && images.length > maxImageListLength) {
+      setCollection(images.slice(maxImageListLength - 1));
     }
   }, [images]);
 
   const fetchProductDetails = async (id: string) => {
     const productService = new ProductService();
     const result = await productService.getProduct(id);
-    if (result) setProductDetails(result);
-    else console.log(`Nothing found for ${id}`);
+    if (result) {
+      setProductDetails(result);
+      // temporary - needs to be based on variants
+      setItemSize(PLACEHOLDER_SIZES_NUMBERS[0]);
+      setColour(PLACEHOLDER_COLORS[0]);
+    } else console.error(`Nothing found for ${id}`); // frontend API error handling required?
   };
 
   // Loading state - might look into this as a component in the future when APIs take longer to call
   if (!productDetails) {
     return <div>Loading...</div>;
   }
-  // Error state? Bring this up with the guys
 
   return (
     <Box
@@ -105,11 +158,11 @@ export default function ProductDetails() {
           }}
         >
           {Array.isArray(images) && images.length > 0 ? (
-            images.map((link, index) =>
+            images.slice(0, maxImageListLength - 1).map((link, index) =>
               index === 0 ? (
                 <ImageListItem key={`image-${index}`} cols={3} rows={3}>
                   <img
-                    src={`${link}`}
+                    src={link}
                     alt="image alt text"
                     style={{ objectFit: "cover", borderRadius: "16px" }}
                   />
@@ -129,7 +182,89 @@ export default function ProductDetails() {
               <Typography>No images available</Typography>
             </Box>
           )}
+          {collection.length > 0 && (
+            <ImageListItem key="panel" onClick={() => setDialogOpen(true)}>
+              <div
+                style={{
+                  width: "100%",
+                  height: "100%",
+                  backgroundColor: "#ccc",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  textAlign: "center",
+                  cursor: "pointer",
+                  borderRadius: "8px",
+                }}
+              >
+                <Typography variant="h6" color="white">
+                  +{collection.length} More
+                </Typography>
+              </div>
+            </ImageListItem>
+          )}
         </ImageList>
+
+        <Dialog open={dialogOpen} onClose={handleCloseDialog}>
+          <DialogTitle>More images for {name}</DialogTitle>
+          <DialogContent>
+            <Grid container spacing={2}>
+              {collection.map((image, index) => (
+                <Grid size={4} key={index}>
+                  <div
+                    style={{
+                      position: "relative",
+                      cursor: "pointer",
+                      overflow: "hidden",
+                      borderRadius: 8,
+                    }}
+                    onClick={() => handleOpenImage(image)}
+                  >
+                    <img
+                      src={image}
+                      alt={name}
+                      style={{ width: "100%", height: "auto" }}
+                    />
+                    <IconButton
+                      style={{
+                        position: "absolute",
+                        top: 8,
+                        right: 8,
+                        color: "white",
+                      }}
+                      onClick={() => handleOpenImage(image)}
+                    >
+                      <ZoomIn />
+                    </IconButton>
+                  </div>
+                </Grid>
+              ))}
+            </Grid>
+          </DialogContent>
+        </Dialog>
+
+        {/* for clicking on individual images */}
+        <Dialog open={imageOpen} onClose={handleCloseImage}>
+          <IconButton
+            aria-label="close"
+            onClick={handleCloseImage}
+            sx={(theme) => ({
+              position: "absolute",
+              right: 8,
+              top: 8,
+              color: theme.palette.grey[500],
+            })}
+          >
+            <Close />
+          </IconButton>
+          <DialogContent>
+            <img
+              src={selectedImage || ""}
+              alt="Selected Image"
+              style={{ width: "100%" }}
+            />
+          </DialogContent>
+        </Dialog>
       </Box>
 
       {/* details section (populated based on api resp) */}
@@ -193,7 +328,6 @@ export default function ProductDetails() {
             <ButtonBase
               key={color}
               onClick={() => {
-                console.log(color);
                 setColour(color);
               }}
               sx={{
@@ -202,17 +336,12 @@ export default function ProductDetails() {
                 backgroundColor: color,
                 borderRadius: "8px",
                 margin: "2px",
+                border:
+                  colour === color
+                    ? `3px solid ${grey[900]}`
+                    : "1px solid transparent",
               }}
-            >
-              <Box
-                sx={{
-                  color: { color },
-                  width: "40px",
-                  height: "40px",
-                  objectFit: "cover",
-                }}
-              ></Box>
-            </ButtonBase>
+            ></ButtonBase>
           ))}
         </Box>
 
@@ -223,15 +352,14 @@ export default function ProductDetails() {
               variant="body1"
               sx={{ display: "inline", fontWeight: "600" }}
             >
-              {size}
+              {itemSize}
             </Typography>
           </Typography>
           {PLACEHOLDER_SIZES_NUMBERS.map((size) => (
             <ButtonBase
               key={size}
               onClick={() => {
-                console.log(size);
-                setSize(size);
+                setItemSize(size);
               }}
               sx={{
                 width: "40px",
@@ -239,6 +367,10 @@ export default function ProductDetails() {
                 borderRadius: "8px",
                 margin: "2px",
                 backgroundColor: "#E7E7E7",
+                border:
+                  size === itemSize
+                    ? `2px solid ${grey[900]}`
+                    : "1px solid transparent",
               }}
             >
               <Typography>{size}</Typography>
@@ -285,6 +417,7 @@ export default function ProductDetails() {
               width: "100%",
               maxWidth: "100%",
             }}
+            onClick={handleAddToCart}
           >
             <Typography fontWeight="500" textTransform="none">
               Add to Cart
