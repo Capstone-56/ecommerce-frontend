@@ -36,6 +36,33 @@ type cartStore = {
     getQuantity: (product: ProductModel) => number | undefined
 }
 
+type JWTStore = {
+    /**
+     * User's access token.
+     */
+    accessToken: string | null,
+    /**
+     * User's refresh token.
+     */
+    refreshToken: string | null,
+    /**
+     * A function to set both refresh and access token after logging in.
+     * @param accessToken  The access token to save in state.
+     * @param refreshToken The refresh token to save in state.
+     */
+    setTokens: (accessToken: string, refreshToken: string) => void,
+    /**
+     * A function to set only an access token when refreshed through the interceptor.
+     * @param accessToken The access token to be set.
+     */
+    setAccessToken: (accessToken: string) => void,
+    /**
+     * A function to clear both tokens stored in state. Required for when a user's tokens
+     * are expired and needs to be logged out.
+     */
+    clearTokens: () => void
+}
+
 /**
  * Cart global state to be used for non-registered users. Since non-registered
  * users won't have any related information stored in the DB, having it
@@ -62,6 +89,27 @@ export const cartState = create<cartStore>()(
         {
             // Name of the item in the storage.
             name: Constants.LOCAL_STORAGE_CART_STORAGE,
+            storage: createJSONStorage(() => localStorage),
+        },
+    ),
+)
+
+/**
+ * JWT global state to store user's tokens. Is required to be used within interceptors
+ * to hit endpoints that need verification and to assess a user's permissions.
+ */
+export const JWTState = create<JWTStore>()(
+    persist(
+        (set) => ({
+            accessToken: null,
+            refreshToken: null,
+            setTokens: (accessToken: string, refreshToken: string) => set({accessToken, refreshToken}),
+            setAccessToken: (accessToken: string) => set({accessToken}),
+            clearTokens: () => set({ accessToken: null, refreshToken: null}),
+        }),
+        {
+            // Name of the item in the storage.
+            name: Constants.LOCAL_STORAGE_JWT_STORAGE,
             storage: createJSONStorage(() => localStorage),
         },
     ),
