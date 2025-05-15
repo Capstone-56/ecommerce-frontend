@@ -315,15 +315,16 @@ export default function ProductDetails() {
         </Box>
 
         <Box>
-          <Typography variant="body1">
-            Colour:{"  "}
+          <Box sx={{ display: "flex" }}>
+            <Typography variant="body1">Colour:{"  "}</Typography>
             <Typography
               variant="body1"
               sx={{ display: "inline", fontWeight: "600" }}
             >
               {colour}
             </Typography>
-          </Typography>
+          </Box>
+
           {PLACEHOLDER_COLORS.map((color) => (
             <ButtonBase
               key={color}
@@ -346,15 +347,15 @@ export default function ProductDetails() {
         </Box>
 
         <Box>
-          <Typography variant="body1">
-            Size:{"  "}
+          <Box sx={{ display: "flex" }}>
+            <Typography variant="body1">Size:{"  "}</Typography>
             <Typography
               variant="body1"
               sx={{ display: "inline", fontWeight: "600" }}
             >
               {itemSize}
             </Typography>
-          </Typography>
+          </Box>
           {PLACEHOLDER_SIZES_NUMBERS.map((size) => (
             <ButtonBase
               key={size}
