@@ -11,7 +11,7 @@ import {
 import { Visibility, VisibilityOff } from "@mui/icons-material";
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import axios from "axios";
+import api from "@/api";
 
 const Login: React.FC = () => {
   const [form, setForm] = useState({
@@ -34,7 +34,7 @@ const Login: React.FC = () => {
     setLoading(true);
 
     try {
-      const res = await axios.post("http://localhost:8000/auth/login", form);
+      const res = await api.post("/auth/login", form);
       const { accessToken, refreshToken } = res.data;
       localStorage.setItem("accessToken", accessToken);
       localStorage.setItem("refreshToken", refreshToken);
