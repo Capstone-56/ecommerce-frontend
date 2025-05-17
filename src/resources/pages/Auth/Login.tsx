@@ -34,10 +34,7 @@ const Login: React.FC = () => {
     setLoading(true);
 
     try {
-      const res = await api.post("/auth/login", form);
-      const { accessToken, refreshToken } = res.data;
-      localStorage.setItem("accessToken", accessToken);
-      localStorage.setItem("refreshToken", refreshToken);
+      await api.post("/auth/login", form);
       // navigate to dashboard
       navigate("/");
       

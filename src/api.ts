@@ -3,13 +3,17 @@ import { JWTState } from "@/domain/state";
 
 const api = axios.create({
   baseURL: "http://localhost:8000",
+  withCredentials: true,
+  headers: {
+    "Content-Type": "application/json",
+  }
 });
 
 /**
  * The interceptor used on axios requests to add an Authorisation header with 
  * a bearer token for signed in users. 
  */
-axios.interceptors.request.use(
+api.interceptors.request.use(
   config => {
     // Gets token from state and appends it to a header within the request.
     const accessToken = JWTState.getState().accessToken;
@@ -31,10 +35,11 @@ axios.interceptors.request.use(
  * it means that the refresh token is invalid or expired upon which it will clear those in state
  * and a user is then redirected to the home page. TODO: Change it to sign in.
  */
-axios.interceptors.response.use(
+api.interceptors.response.use(
   (response) => {
     return response;
   },
+
   async (error) => {
     // Retrieve refresh token and related state functions.
     const refreshToken = JWTState.getState().refreshToken;
