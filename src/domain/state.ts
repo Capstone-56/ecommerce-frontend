@@ -63,6 +63,18 @@ type JWTStore = {
   clearTokens: () => void;
 };
 
+type LocationStore = {
+  /**
+   * User's country of origin.
+   */
+  userLocation: string | null;
+  /**
+   * Sets the users location.
+   * @param location The location of user to be set.
+   */
+  setLocation: (location: string) => void;
+}
+
 /**
  * Cart global state to be used for non-registered users. Since non-registered
  * users won't have any related information stored in the DB, having it
@@ -124,6 +136,23 @@ export const JWTState = create<JWTStore>()(
     {
       // Name of the item in the storage.
       name: Constants.LOCAL_STORAGE_JWT_STORAGE,
+      storage: createJSONStorage(() => localStorage),
+    }
+  )
+);
+
+/**
+ * Location state to store the user's active location. Will be used to get
+ * products that are available in the user's country.
+ */
+export const locationState = create<LocationStore>() (
+  persist(
+    (set) => ({
+      userLocation: null,
+      setLocation: (userLocation: string) => set({userLocation}),
+    }),
+    {
+      name: Constants.LOCAL_STORAGE_LOCATION_STORAGE,
       storage: createJSONStorage(() => localStorage),
     }
   )
