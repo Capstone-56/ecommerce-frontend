@@ -85,7 +85,7 @@ export default function ProductDetails() {
   // TODO: consider making some fields optional as they aren't all relevant to purchases
   function handleAddToCart() {
     if (
-      qty &&
+      qty > 0 &&
       itemSize &&
       colour &&
       name &&
@@ -103,7 +103,7 @@ export default function ProductDetails() {
         images: images,
         price: 25,
       };
-      addToCart(product);
+      addToCart(product, qty);
     }
   }
 
@@ -158,25 +158,32 @@ export default function ProductDetails() {
           }}
         >
           {Array.isArray(images) && images.length > 0 ? (
-            images.slice(0, maxImageListLength - 1).map((link, index) =>
-              index === 0 ? (
-                <ImageListItem key={`image-${index}`} cols={3} rows={3}>
-                  <img
-                    src={link}
-                    alt="image alt text"
-                    style={{ objectFit: "cover", borderRadius: "16px" }}
-                  />
-                </ImageListItem>
-              ) : (
-                <ImageListItem key={`image-${index}`}>
-                  <img
-                    src={`${link}`}
-                    alt="image alt text"
-                    style={{ objectFit: "cover", borderRadius: "8px" }}
-                  />
-                </ImageListItem>
+            images
+              .slice(
+                0,
+                collection.length > 0
+                  ? maxImageListLength - 1
+                  : maxImageListLength
               )
-            )
+              .map((link, index) =>
+                index === 0 ? (
+                  <ImageListItem key={`image-${index}`} cols={3} rows={3}>
+                    <img
+                      src={link}
+                      alt="image alt text"
+                      style={{ objectFit: "cover", borderRadius: "16px" }}
+                    />
+                  </ImageListItem>
+                ) : (
+                  <ImageListItem key={`image-${index}`}>
+                    <img
+                      src={`${link}`}
+                      alt="image alt text"
+                      style={{ objectFit: "cover", borderRadius: "8px" }}
+                    />
+                  </ImageListItem>
+                )
+              )
           ) : (
             <Box>
               <Typography>No images available</Typography>
@@ -316,7 +323,7 @@ export default function ProductDetails() {
 
         <Box>
           <Box sx={{ display: "flex" }}>
-            <Typography variant="body1">Colour:{"  "}</Typography>
+            <Typography variant="body1">Colour:</Typography>
             <Typography
               variant="body1"
               sx={{ display: "inline", fontWeight: "600" }}
@@ -348,7 +355,7 @@ export default function ProductDetails() {
 
         <Box>
           <Box sx={{ display: "flex" }}>
-            <Typography variant="body1">Size:{"  "}</Typography>
+            <Typography variant="body1">Size:</Typography>
             <Typography
               variant="body1"
               sx={{ display: "inline", fontWeight: "600" }}
@@ -384,11 +391,15 @@ export default function ProductDetails() {
           sx={{
             display: "flex",
             flexDirection: "row",
+            alignItems: "center",
             width: { xs: "100%", md: "65%" },
             maxWidth: "100%",
             marginY: "1rem",
           }}
         >
+          <Typography variant="body1" sx={{ marginRight: "8px" }}>
+            Quantity:
+          </Typography>
           <Input
             type="number"
             value={qty}
@@ -406,6 +417,7 @@ export default function ProductDetails() {
               "& input": {
                 textAlign: "center",
               },
+              padding: "4px",
             }}
           />
           <Button
