@@ -7,6 +7,8 @@ export class Constants {
   public static readonly LOCAL_STORAGE_CART_STORAGE : string = "cart-storage";
   /** Storage name to be used in browser for session state.  */
   public static readonly LOCAL_STORAGE_JWT_STORAGE: string = "session";
+  /** Storage name to be used in browser for location state. */
+  public static readonly LOCAL_STORAGE_LOCATION_STORAGE: string = "location-storage"
 
   // routes for navigation
   public static readonly CART_ROUTE: string = "/cart";
