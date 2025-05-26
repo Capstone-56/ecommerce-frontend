@@ -42,9 +42,8 @@ export default function Home() {
           async (position) => {
             const long = position.coords.longitude;
             const lat = position.coords.latitude;
-            const response = 
-              await axios.get(`https://api.opencagedata.com/geocode/v1/json?q=${lat}%2C+${long}&key=${Constants.GEOCODE_API_KEY}`);
-            setLocation(response.data.results[0].components.country)
+            const response = await axios.get(`https://api.opencagedata.com/geocode/v1/json?q=${lat}%2C+${long}&key=${import.meta.env.VITE_GEOCODE_API_KEY}`);
+            setLocation(response.data.results[0].components.country);
           },
           (error) => {
             console.log(error)

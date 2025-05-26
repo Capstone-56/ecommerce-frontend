@@ -10,9 +10,6 @@ export class Constants {
   /** Storage name to be used in browser for location state. */
   public static readonly LOCAL_STORAGE_LOCATION_STORAGE: string = "location-storage"
 
-  /** API key to be used for geocoding. */
-  public static readonly GEOCODE_API_KEY: string = "REPLACE_ME";
-
   // routes for navigation
   public static readonly CART_ROUTE: string = "/cart";
 }
