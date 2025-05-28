@@ -11,7 +11,7 @@ export default function Cart() {
   useEffect(() => {
     document.title = "eCommerce | Cart";
   });
-    
+
   return (
     <div>
       <Typography
@@ -32,22 +32,22 @@ export default function Cart() {
         marginLeft={"100px"}
         marginRight={"100px"}
       >
-        <Grid size={{xs: 12, md: 7}}>
+        <Grid size={{ xs: 12, md: 7 }}>
           <Box display="flex" flexDirection="column" gap={2}>
             {cart.length > 0 ? cart.map((product) => {
               return (
-                <CartProductCard product={product.product}></CartProductCard>
+                <CartProductCard key={product.product.id} product={product.product}></CartProductCard>
               )
-            }) : 
-            <Typography
-              variant="h5"
-              color={common.black}
-            >
-              Your cart is currently empty
-            </Typography>}
+            }) :
+              <Typography
+                variant="h5"
+                color={common.black}
+              >
+                Your cart is currently empty
+              </Typography>}
           </Box>
         </Grid>
-        <Grid size={{xs: 12, md: 5}}>
+        <Grid size={{ xs: 12, md: 5 }}>
           <OrderSummary cartState={cart}></OrderSummary>
         </Grid>
       </Grid>
