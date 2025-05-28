@@ -82,27 +82,7 @@ export default function ProductDetails() {
 
   // TODO: consider making some fields optional as they aren't all relevant to purchases
   function handleAddToCart() {
-    if (
-      qty > 0 &&
-      itemSize &&
-      colour &&
-      name &&
-      featured &&
-      avgRating &&
-      description &&
-      images
-    ) {
-      const product: ProductModel = {
-        id: productId,
-        name,
-        description,
-        avgRating: avgRating,
-        featured: featured,
-        images: images,
-        price: 25,
-      };
-      addToCart(product, qty);
-    }
+    addToCart(productDetails!, qty);
   }
 
   useEffect(() => {
