@@ -8,7 +8,7 @@ import { useEffect } from "react";
  */
 export default function AdminProfile() {
   useEffect(() => {
-    document.title = "Dashboard";
+    document.title = "Profile";
   }, []);
 
   return (
