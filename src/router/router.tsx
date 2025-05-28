@@ -14,6 +14,13 @@ import Cart from "@/resources/pages/Cart/Cart";
 
 import Login from "@/resources/pages/Auth/Login";
 import SignUp from "@/resources/pages/Auth/SignUp";
+import AdminDashboard from "@/resources/pages/Profile/AdminProfile";
+import Analytics from "@/resources/components/AdminPage/Analytics";
+import Dashboard from "@/resources/components/AdminPage/Dashboard";
+import ProductManagement from "@/resources/components/AdminPage/ProductManagement";
+import VendorManagement from "@/resources/components/AdminPage/VendorManagement";
+import CustomerSupport from "@/resources/components/AdminPage/CustomerSupport";
+import AdminSettings from "@/resources/components/AdminPage/AdminSettings";
 
 export const router = createBrowserRouter([
   {
@@ -68,6 +75,36 @@ export const router = createBrowserRouter([
         element: <Home />,
       }
     ],
+  },
+  {
+    path: "/admin/dashboard",
+    element: <AdminDashboard />,
+    children: [
+      {
+        index: true,
+        element: <Dashboard />
+      },
+      {
+        path: "analytics",
+        element: <Analytics />
+      },
+      {
+        path: "product/management",
+        element: <ProductManagement />
+      },
+      {
+        path: "vendor/management",
+        element: <VendorManagement />
+      },
+      {
+        path: "support",
+        element: <CustomerSupport />
+      },
+      {
+        path: "settings",
+        element: <AdminSettings />
+      },
+    ]
   },
   {
     path: "*",
