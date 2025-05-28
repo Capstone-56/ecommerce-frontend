@@ -23,7 +23,7 @@ const mainListItems = [
   { text: 'Product Management', icon: <ContentPasteSearchIcon />, to: Constants.ADMIN_DASHBOARD_ROUTE + "/product/management" },
   { text: 'Vendor Management', icon: <SupervisedUserCircleIcon />, to: Constants.ADMIN_DASHBOARD_ROUTE + "/vendor/management" },
   { text: 'Customer Support', icon: <SupportAgentIcon />, to: Constants.ADMIN_DASHBOARD_ROUTE + "/support" },
-  { text: 'Back to Website', icon: <ArrowBackIcon />, to: "/admin" },
+  { text: 'Back to Website', icon: <ArrowBackIcon />, to: "/" },
 ];
 
 const secondaryListItems = [

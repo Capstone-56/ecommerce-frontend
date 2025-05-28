@@ -20,6 +20,7 @@ import ProductManagement from "@/resources/components/AdminPage/ProductManagemen
 import VendorManagement from "@/resources/components/AdminPage/VendorManagement";
 import CustomerSupport from "@/resources/components/AdminPage/CustomerSupport";
 import AdminSettings from "@/resources/components/AdminPage/AdminSettings";
+import { Constants } from "@/domain/constants";
 
 export const router = createBrowserRouter([
   {
@@ -66,7 +67,7 @@ export const router = createBrowserRouter([
     ],
   },
   {
-    path: "/admin",
+    path: Constants.ADMIN_DASHBOARD_ROUTE,
     element: <AdminProfile />, // Admin layout for /admin routes
     children: [
       {
