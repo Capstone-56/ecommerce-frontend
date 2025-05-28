@@ -1,7 +1,7 @@
 /**
  * The main dashboard to be shown to admins.
  */
-export default function Dashboard() {
+export default function AdminDashboard() {
   return (
     <>
       <div>Dashboard</div>

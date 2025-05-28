@@ -18,7 +18,7 @@ import { Constants } from '@/domain/constants';
 import { useState } from 'react';
 
 const mainListItems = [
-  { text: 'Home', icon: <HomeRoundedIcon />, to: Constants.ADMIN_DASHBOARD_ROUTE + "/" },
+  { text: 'Home', icon: <HomeRoundedIcon />, to: Constants.ADMIN_DASHBOARD_ROUTE },
   { text: 'Analytics', icon: <AnalyticsRoundedIcon />, to: Constants.ADMIN_DASHBOARD_ROUTE + "/analytics" },
   { text: 'Product Management', icon: <ContentPasteSearchIcon />, to: Constants.ADMIN_DASHBOARD_ROUTE + "/product/management" },
   { text: 'Vendor Management', icon: <SupervisedUserCircleIcon />, to: Constants.ADMIN_DASHBOARD_ROUTE + "/vendor/management" },

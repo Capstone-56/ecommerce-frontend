@@ -1,7 +1,6 @@
 import { createBrowserRouter } from "react-router";
 
 import UserLayout from "@/resources/layouts/UserLayout";
-import AdminLayout from "@/resources/layouts/AdminLayout";
 
 import Home from "@/resources/pages/Home/Home";
 import About from "@/resources/pages/About/About";
@@ -14,9 +13,9 @@ import Cart from "@/resources/pages/Cart/Cart";
 
 import Login from "@/resources/pages/Auth/Login";
 import SignUp from "@/resources/pages/Auth/SignUp";
-import AdminDashboard from "@/resources/pages/Profile/AdminProfile";
+import AdminProfile from "@/resources/pages/Profile/AdminProfile";
 import Analytics from "@/resources/components/AdminPage/Analytics";
-import Dashboard from "@/resources/components/AdminPage/Dashboard";
+import AdminDashboard from "@/resources/components/AdminPage/AdminDashboard";
 import ProductManagement from "@/resources/components/AdminPage/ProductManagement";
 import VendorManagement from "@/resources/components/AdminPage/VendorManagement";
 import CustomerSupport from "@/resources/components/AdminPage/CustomerSupport";
@@ -68,21 +67,11 @@ export const router = createBrowserRouter([
   },
   {
     path: "/admin",
-    element: <AdminLayout />, // Admin layout for /admin routes
+    element: <AdminProfile />, // Admin layout for /admin routes
     children: [
       {
         index: true,
-        element: <Home />,
-      }
-    ],
-  },
-  {
-    path: "/admin/dashboard",
-    element: <AdminDashboard />,
-    children: [
-      {
-        index: true,
-        element: <Dashboard />
+        element: <AdminDashboard />
       },
       {
         path: "analytics",

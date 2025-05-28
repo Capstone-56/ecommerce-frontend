@@ -12,5 +12,5 @@ export class Constants {
 
   // routes for navigation
   public static readonly CART_ROUTE: string = "/cart";
-  public static readonly ADMIN_DASHBOARD_ROUTE: string = "/admin/dashboard";
+  public static readonly ADMIN_DASHBOARD_ROUTE: string = "/admin";
 }

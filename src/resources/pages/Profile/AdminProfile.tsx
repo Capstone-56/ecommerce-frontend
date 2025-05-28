@@ -6,7 +6,7 @@ import { useEffect } from "react";
  * The profile page to be showed to admins, where related
  * information will be displayed and can be updated.
  */
-export default function AdminDashboard() {
+export default function AdminProfile() {
   useEffect(() => {
     document.title = "Dashboard";
   }, []);
