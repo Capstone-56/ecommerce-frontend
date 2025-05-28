@@ -1,7 +1,6 @@
 import { createBrowserRouter } from "react-router";
 
 import UserLayout from "@/resources/layouts/UserLayout";
-import AdminLayout from "@/resources/layouts/AdminLayout";
 
 import Home from "@/resources/pages/Home/Home";
 import About from "@/resources/pages/About/About";
@@ -14,6 +13,14 @@ import Cart from "@/resources/pages/Cart/Cart";
 
 import Login from "@/resources/pages/Auth/Login";
 import SignUp from "@/resources/pages/Auth/SignUp";
+import AdminProfile from "@/resources/pages/Profile/AdminProfile";
+import Analytics from "@/resources/components/AdminPage/Analytics";
+import AdminDashboard from "@/resources/components/AdminPage/AdminDashboard";
+import ProductManagement from "@/resources/components/AdminPage/ProductManagement";
+import VendorManagement from "@/resources/components/AdminPage/VendorManagement";
+import CustomerSupport from "@/resources/components/AdminPage/CustomerSupport";
+import AdminSettings from "@/resources/components/AdminPage/AdminSettings";
+import { Constants } from "@/domain/constants";
 
 export const router = createBrowserRouter([
   {
@@ -60,14 +67,34 @@ export const router = createBrowserRouter([
     ],
   },
   {
-    path: "/admin",
-    element: <AdminLayout />, // Admin layout for /admin routes
+    path: Constants.ADMIN_DASHBOARD_ROUTE,
+    element: <AdminProfile />, // Admin layout for /admin routes
     children: [
       {
         index: true,
-        element: <Home />,
-      }
-    ],
+        element: <AdminDashboard />
+      },
+      {
+        path: "analytics",
+        element: <Analytics />
+      },
+      {
+        path: "product/management",
+        element: <ProductManagement />
+      },
+      {
+        path: "vendor/management",
+        element: <VendorManagement />
+      },
+      {
+        path: "support",
+        element: <CustomerSupport />
+      },
+      {
+        path: "settings",
+        element: <AdminSettings />
+      },
+    ]
   },
   {
     path: "*",
