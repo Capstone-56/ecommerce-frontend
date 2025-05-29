@@ -81,7 +81,16 @@ export default function Footer() {
                   placeholder="Enter your email"
                   type="email"
                   required
-                  sx={{ flex: 1, minWidth: "150px",'& .MuiOutlinedInput-root': {borderRadius: '8px'}
+                  sx={{
+                    flex: 1,
+                    minWidth: "150px",
+                    '& .MuiOutlinedInput-root': {
+                      borderRadius: '8px',
+                      backgroundColor: '#f9f9f9',
+                    },
+                    '& .MuiOutlinedInput-input:-webkit-autofill': {
+                      WebkitBoxShadow: '0 0 0 1000px #f9f9f9 inset !important',
+                    },
                   }}
                 />
                 <Button variant="contained" type="submit" size="medium" sx={{height: "40px"}}>
