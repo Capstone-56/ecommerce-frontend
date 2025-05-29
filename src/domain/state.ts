@@ -85,10 +85,15 @@ export const cartState = create<cartStore>()(
   persist(
     (set, get) => ({
       cart: [],
-      addToCart: (addedProduct: ProductModel, quantity: number) =>
-        set({
-          cart: [...get().cart, { product: addedProduct, quantity: quantity }],
-        }),
+      addToCart: (addedProduct: ProductModel, quantity: number) => {
+        if (get().cart.some((cartItem) => cartItem.product.id === addedProduct.id)) {
+          get().updateQuantity(addedProduct, quantity)
+        } else {
+          set({
+            cart: [...get().cart, { product: addedProduct, quantity: quantity }],
+          })
+        }
+      },
       removeFromCart: (removedProduct: ProductModel) =>
         set((state: any) => ({
           cart: get().cart.filter(
@@ -98,11 +103,11 @@ export const cartState = create<cartStore>()(
       updateQuantity: (product: ProductModel, amount: number) =>
         set((state: any) => ({
           cart: get().cart.map((currentProduct: cartItem) =>
-            currentProduct.product === product
+            currentProduct.product.id === product.id
               ? {
-                  ...currentProduct,
-                  quantity: (currentProduct.quantity += amount),
-                }
+                ...currentProduct,
+                quantity: (currentProduct.quantity += amount),
+              }
               : currentProduct
           ),
         })),
@@ -145,11 +150,11 @@ export const JWTState = create<JWTStore>()(
  * Location state to store the user's active location. Will be used to get
  * products that are available in the user's country.
  */
-export const locationState = create<LocationStore>() (
+export const locationState = create<LocationStore>()(
   persist(
     (set) => ({
       userLocation: null,
-      setLocation: (userLocation: string) => set({userLocation}),
+      setLocation: (userLocation: string) => set({ userLocation }),
     }),
     {
       name: Constants.LOCAL_STORAGE_LOCATION_STORAGE,
