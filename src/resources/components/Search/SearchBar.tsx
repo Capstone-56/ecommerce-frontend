@@ -24,7 +24,9 @@ const SearchBar: React.FC = () => {
   };
 
   useEffect(() => {
-    setSearchTerm("");
+    if (location.pathname !== "/products") {
+      setSearchTerm("");
+    }
   }, [location.pathname]);
 
   return (
