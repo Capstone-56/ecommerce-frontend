@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { KeyboardCommandKey, Menu as MenuIcon } from "@mui/icons-material";
+import { Flare, KeyboardCommandKey, Menu as MenuIcon } from "@mui/icons-material";
 import ShoppingCartIcon from "@mui/icons-material/ShoppingCartOutlined";
 import {
   AppBar,
@@ -17,6 +17,7 @@ import { Link as RouterLink, useLocation } from "react-router-dom";
 import { grey, common } from "@mui/material/colors";
 import { Constants } from "@/domain/constants";
 import { cartState } from "@/domain/state";
+import SearchBar from "@/resources/components/Search/SearchBar";
 
 // Should move to another file
 // const menus = ["Home", "Products", "Categories", "About"];
@@ -174,15 +175,20 @@ const Navbar: React.FC = () => {
               </Button>
             ))}
           </Box>
-
+          
           {/* Cart and User related Buttons */}
           <Box
             sx={{
               display: "flex",
               flexDirection: "row",
               gap: 1,
+              alignItems: "center",
             }}
           >
+            {/* Add SearchBar */}
+            <Box sx={{display: "flex",}}>
+              <SearchBar />
+            </Box>
             <IconButton component={RouterLink} to={Constants.CART_ROUTE}>
               <ShoppingCartIcon 
                 sx={{ 
