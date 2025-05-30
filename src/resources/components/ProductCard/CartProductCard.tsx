@@ -10,9 +10,8 @@ import {
   TextField
 } from "@mui/material";
 import { ProductModel } from "domain/models/ProductModel";
-import DeleteOutlineIcon from "@mui/icons-material/DeleteOutline";
+import DeleteForeverIcon from '@mui/icons-material/DeleteForever';
 import placeholderImage from "/src/assets/ProductCard/product_card_placeholder.svg";
-import { common } from "@mui/material/colors";
 import { cartState } from "@/domain/state";
 
 interface ProductCardProps {
@@ -39,7 +38,7 @@ const CartProductCard: React.FC<ProductCardProps> = ({ product }) => {
         display: "flex",
         flexDirection: "column",
         mb: 3
-        }}
+      }}
     >
       <Grid container spacing={2} alignItems="center">
         {/* Image */}
@@ -97,7 +96,7 @@ const CartProductCard: React.FC<ProductCardProps> = ({ product }) => {
 
             <Grid size={9}>
               <CardContent sx={{ display: "flex", alignItems: "center", gap: 1, px: 1 }}>
-                
+
                 {/* "-" button to remove quantities of that item. Cannot go below 0. */}
                 <Button
                   variant="outlined"
@@ -112,19 +111,19 @@ const CartProductCard: React.FC<ProductCardProps> = ({ product }) => {
 
                 {/* Field to show quantity of items to purchase. */}
                 <TextField
-                    variant="outlined"
-                    value={quantity}
-                    sx={{
-                        mx: 1,
-                        "& .MuiInputBase-input": {
-                        textAlign: "center",
-                        padding: "8px",
-                        width: "40px",
-                        minWidth: "40px",
-                        }
-                    }}
+                  variant="outlined"
+                  value={quantity}
+                  sx={{
+                    mx: 1,
+                    "& .MuiInputBase-input": {
+                      textAlign: "center",
+                      padding: "8px",
+                      width: "40px",
+                      minWidth: "40px",
+                    }
+                  }}
                 />
-                
+
                 {/* "+" button to add quantities of that item. */}
                 <Button
                   variant="outlined"
@@ -147,13 +146,13 @@ const CartProductCard: React.FC<ProductCardProps> = ({ product }) => {
                 alignItems: "flex-end"
               }}
               size={3}
-              >
+            >
               <CardContent sx={{ py: 1 }}>
                 <IconButton
                   onClick={() => removeProduct(product)}
                   sx={{ "&:focus": { outline: "none" } }}
-                  >
-                  <DeleteOutlineIcon sx={{ color: common.black }} />
+                >
+                  <DeleteForeverIcon color="error" />
                 </IconButton>
               </CardContent>
             </Grid>
