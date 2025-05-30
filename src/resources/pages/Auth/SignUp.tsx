@@ -12,6 +12,7 @@ import {
 import { Visibility, VisibilityOff } from '@mui/icons-material';
 import api from "@/api";
 import debounce from 'lodash/debounce';
+import { AuthenticationState } from "@/domain/state";
 
 const SignUp: React.FC = () => {
   const [form, setForm] = useState({
@@ -51,7 +52,7 @@ const SignUp: React.FC = () => {
     if (form.password !== form.confirmPassword) return alert("Passwords don't match");
     setLoading(true);
     try {
-      await api.post("/auth/signup", {
+      const response = await api.post("/auth/signup", {
         username: form.username,
         email: form.email,
         firstName: form.firstName,
@@ -60,6 +61,10 @@ const SignUp: React.FC = () => {
         password: form.password,
         role: 'customer',
       });
+      if (response.status === 200) {
+        AuthenticationState.setState({ authenticated: true });
+      }
+
       alert('Signup successful! Now log in.');
     } catch (err: any) {
       alert(err?.response?.data?.detail || 'Signup failed');

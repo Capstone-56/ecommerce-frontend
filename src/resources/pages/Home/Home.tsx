@@ -6,8 +6,7 @@ import { ProductService } from "@/services/product-service";
 import { ProductModel } from "@/domain/models/ProductModel";
 import ProductCard from "@/resources/components/ProductCard/ProductCard";
 import axios from "axios";
-import { locationState } from "@/domain/state";
-import { Constants } from "@/domain/constants";
+import { locationState, AuthenticationState } from "@/domain/state";
 
 export default function Home() {
   const [products, setProducts] = useState<Array<ProductModel>>([]);
@@ -19,6 +18,7 @@ export default function Home() {
    */
   useEffect(() => {
     document.title = "eCommerce | Home";
+    console.log(AuthenticationState.getState().authenticated);
 
     // The ProductService required to get product data.
     const productService = new ProductService();
