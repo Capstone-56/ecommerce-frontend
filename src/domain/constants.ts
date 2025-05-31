@@ -7,6 +7,8 @@ export class Constants {
   public static readonly LOCAL_STORAGE_CART_STORAGE: string = "cart-storage";
   /** Storage name to be used in browser for authentication state.  */
   public static readonly LOCAL_STORAGE_AUTHENTICATION_STORAGE: string = "authenticated";
+  /** Storage name to be used in browser for user state. */
+  public static readonly LOCAL_STORAGE_USER_STORAGE: string = "user-storage";
   /** Storage name to be used in browser for location state. */
   public static readonly LOCAL_STORAGE_LOCATION_STORAGE: string = "location-storage";
 

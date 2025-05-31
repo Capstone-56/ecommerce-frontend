@@ -3,6 +3,7 @@ import { create } from "zustand";
 import { persist, createJSONStorage } from "zustand/middleware";
 import { Constants } from "./constants";
 import { cartItem } from "./types";
+import { Role } from "./enum/role";
 
 type cartStore = {
   /**
@@ -48,6 +49,19 @@ type AuthenticationStore = {
    */
   setAuthenticated: (authenticated: boolean) => void;
 };
+
+type UserStore = {
+  /**
+   * The user's role.
+   */
+  role: Role;
+
+  /**
+   * A function to set the user's role.
+   * @param role The role to be set.
+   */
+  setRole: (role: Role) => void;
+}
 
 type LocationStore = {
   /**
@@ -122,6 +136,22 @@ export const AuthenticationState = create<AuthenticationStore>()(
     {
       // Name of the item in the storage.
       name: Constants.LOCAL_STORAGE_AUTHENTICATION_STORAGE,
+      storage: createJSONStorage(() => localStorage),
+    }
+  )
+);
+
+/**
+ * User state to store the user's role.
+ */
+export const UserState = create<UserStore>()(
+  persist(
+    (set) => ({
+      role: Role.CUSTOMER,
+      setRole: (role: Role) => set({ role }),
+    }),
+    {
+      name: Constants.LOCAL_STORAGE_USER_STORAGE,
       storage: createJSONStorage(() => localStorage),
     }
   )
