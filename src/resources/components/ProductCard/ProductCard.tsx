@@ -65,7 +65,7 @@ const ProductCard: React.FC<ProductCardProps> = ({
         />
       </Box>
 
-      {/* product name & description */}
+      {/* product details: name, description, colour count, and price */}
       <CardContent sx={{ textAlign: "left", paddingY: 1, paddingX: 1.5 }}>
         <Typography
           gutterBottom
@@ -80,6 +80,16 @@ const ProductCard: React.FC<ProductCardProps> = ({
         <Typography variant="body2" color="text.secondary" noWrap>
           {description}
         </Typography>
+        {product.variations?.Color && (
+          <Typography
+            variant="body2"
+            color="text.secondary"
+            sx={{ mt: 0.5, display: "block" }}
+          >
+            {product.variations.Color.length} colour
+            {product.variations.Color.length > 1 ? "s" : ""}
+          </Typography>
+        )}
         <Typography 
           variant="subtitle1" 
           sx={{ 
