@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 
-import { Box, Button, Typography, Container, Card, CardContent, CardMedia, Grid  } from "@mui/material";
+import { Box, Button, Typography, Container, Card, CardContent, CardMedia, Grid } from "@mui/material";
 import { ProductService } from "@/services/product-service";
 import { ProductModel } from "@/domain/models/ProductModel";
 import ProductCard from "@/resources/components/ProductCard/ProductCard";
@@ -12,14 +12,12 @@ export default function Home() {
   const [products, setProducts] = useState<Array<ProductModel>>([]);
   const location = locationState((state) => state.userLocation);
   const setLocation = locationState((state) => state.setLocation);
-  
+
   /**
    * A useEffect required to get product data upon mount.
    */
   useEffect(() => {
     document.title = "eCommerce | Home";
-    console.log(AuthenticationState.getState().authenticated);
-    console.log(UserState.getState().role);
 
     // The ProductService required to get product data.
     const productService = new ProductService();
@@ -30,31 +28,31 @@ export default function Home() {
       setProducts(products);
     };
 
-  /**
-   * Function to retrieve a users location based on their coordinates. Will only
-   * try to send a request given that their location isn't already defined
-   * within our state. Basic error handling, TODO: Have a disclaimer pop-up
-   * if they deny to share their location.
-   */
-  async function getGeolocation(): Promise<void> {
-    if (location == null) {
-      if (navigator.geolocation) {
-        navigator.geolocation.getCurrentPosition(
-          async (position) => {
-            const long = position.coords.longitude;
-            const lat = position.coords.latitude;
-            const response = await axios.get(`https://api.opencagedata.com/geocode/v1/json?q=${lat}%2C+${long}&key=${import.meta.env.VITE_GEOCODE_API_KEY}`);
-            setLocation(response.data.results[0].components.country);
-          },
-          (error) => {
-            console.log(error)
-          }
-        )
-      } else {
-        console.log("Geolocation not supported by browser")
+    /**
+     * Function to retrieve a users location based on their coordinates. Will only
+     * try to send a request given that their location isn't already defined
+     * within our state. Basic error handling, TODO: Have a disclaimer pop-up
+     * if they deny to share their location.
+     */
+    async function getGeolocation(): Promise<void> {
+      if (location == null) {
+        if (navigator.geolocation) {
+          navigator.geolocation.getCurrentPosition(
+            async (position) => {
+              const long = position.coords.longitude;
+              const lat = position.coords.latitude;
+              const response = await axios.get(`https://api.opencagedata.com/geocode/v1/json?q=${lat}%2C+${long}&key=${import.meta.env.VITE_GEOCODE_API_KEY}`);
+              setLocation(response.data.results[0].components.country);
+            },
+            (error) => {
+              console.log(error)
+            }
+          )
+        } else {
+          console.log("Geolocation not supported by browser")
+        }
       }
     }
-  }
 
     getProducts();
     getGeolocation();
