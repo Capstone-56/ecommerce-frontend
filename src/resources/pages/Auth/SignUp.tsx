@@ -11,7 +11,6 @@ import {
 } from '@mui/material';
 import { Visibility, VisibilityOff } from '@mui/icons-material';
 import api from "@/api";
-import debounce from 'lodash/debounce';
 import { AuthenticationState, UserState } from "@/domain/state";
 import { Role } from "@/domain/enum/role";
 import { UserSignUpModel } from "@/domain/models/UserModel";
@@ -42,9 +41,9 @@ const SignUp: React.FC = () => {
     }
   }, 500); */
 
- /*  useEffect(() => {
-    if (form.username) checkUsername(form.username);
-  }, [checkUsername, form.username]); */
+  /*  useEffect(() => {
+     if (form.username) checkUsername(form.username);
+   }, [checkUsername, form.username]); */
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setForm({ ...form, [e.target.name]: e.target.value });
@@ -63,11 +62,12 @@ const SignUp: React.FC = () => {
         password: form.password,
         role: Role.CUSTOMER,
       };
-      
+
       const response = await api.post("/auth/signup", user);
       if (response.status === 200) {
         AuthenticationState.setState({ authenticated: true });
         UserState.setState({ role: response.data.role });
+        UserState.setState({ userName: form.username });
       }
 
       alert('Signup successful! Now log in.');

@@ -1,33 +1,58 @@
 import MenuContent from "@/resources/components/AdminPage/MenuContent";
+import RequireAdmin from "@/resources/components/AdminPage/Authentication";
 import { Outlet } from "react-router";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
+import { UserState } from "@/domain/state";
+import '@/resources/components/AdminPage/Admin.css'
+import api from "@/api";
 
 /**
  * The profile page to be showed to admins, where related
  * information will be displayed and can be updated.
  */
 export default function AdminProfile() {
+  const userName = UserState((state) => state.userName)
+  const [userInformation, setUserInformation] = useState(null)
+
   useEffect(() => {
     document.title = "Profile";
+    getAdminInformation();
   }, []);
+
+  /**
+   * Function to retrieve user details specifically admin related data.
+   * @returns An admin's user details.
+   */
+  const getAdminInformation = async () => {
+    try {
+      const baseUrl = `/api/user/${userName}`;
+      const products = await api.get(baseUrl);
+
+      setUserInformation(products.data)
+    } catch (error) {
+      return Promise.reject(error);
+    }
+  }
 
   return (
     <>
-      <div style={{ display: 'flex', minHeight: '100vh' }}>
-        <div
-          style={{
-            width: '260px',
-            borderRight: '1px solid #ddd',
-            backgroundColor: '#212E4A',
-            color: "#8EB5C0"
-          }}>
-          <MenuContent />
-        </div>
+      <RequireAdmin>
+        <div style={{ display: 'flex', minHeight: '100vh' }}>
+          <div
+            style={{
+              minWidth: '260px',
+              borderRight: '1px solid #ddd',
+              backgroundColor: '#212E4A',
+              color: "#8EB5C0"
+            }}>
+            <MenuContent userInformation={userInformation} />
+          </div>
 
-        <div style={{ flexGrow: 1, padding: '1rem', backgroundColor: '#F0F4F8' }}>
-          <Outlet />
+          <div style={{ flexGrow: 1, padding: '1rem', backgroundColor: '#F0F4F8' }}>
+            <Outlet context={userInformation} />
+          </div>
         </div>
-      </div>
+      </RequireAdmin>
     </>
   );
 };
