@@ -3,6 +3,7 @@ import { create } from "zustand";
 import { persist, createJSONStorage } from "zustand/middleware";
 import { Constants } from "./constants";
 import { cartItem } from "./types";
+import { Role } from "./enum/role";
 
 type cartStore = {
   /**
@@ -36,32 +37,31 @@ type cartStore = {
   getQuantity: (product: ProductModel) => number | undefined;
 };
 
-type JWTStore = {
+type AuthenticationStore = {
   /**
-   * User's access token.
+   * User authenticated state.
    */
-  accessToken: string | null;
+  authenticated: boolean;
+
   /**
-   * User's refresh token.
+   * A function to set the authenticated state.
+   * @param authenticated The authenticated state to be set.
    */
-  refreshToken: string | null;
-  /**
-   * A function to set both refresh and access token after logging in.
-   * @param accessToken  The access token to save in state.
-   * @param refreshToken The refresh token to save in state.
-   */
-  setTokens: (accessToken: string, refreshToken: string) => void;
-  /**
-   * A function to set only an access token when refreshed through the interceptor.
-   * @param accessToken The access token to be set.
-   */
-  setAccessToken: (accessToken: string) => void;
-  /**
-   * A function to clear both tokens stored in state. Required for when a user's tokens
-   * are expired and needs to be logged out.
-   */
-  clearTokens: () => void;
+  setAuthenticated: (authenticated: boolean) => void;
 };
+
+type UserStore = {
+  /**
+   * The user's role.
+   */
+  role: Role;
+
+  /**
+   * A function to set the user's role.
+   * @param role The role to be set.
+   */
+  setRole: (role: Role) => void;
+}
 
 type LocationStore = {
   /**
@@ -125,22 +125,33 @@ export const cartState = create<cartStore>()(
 );
 
 /**
- * JWT global state to store user's tokens. Is required to be used within interceptors
- * to hit endpoints that need verification and to assess a user's permissions.
+ * Authentication global state to store user's authentication state. Is required to check on client side where user is authenticated.
  */
-export const JWTState = create<JWTStore>()(
+export const AuthenticationState = create<AuthenticationStore>()(
   persist(
     (set) => ({
-      accessToken: null,
-      refreshToken: null,
-      setTokens: (accessToken: string, refreshToken: string) =>
-        set({ accessToken, refreshToken }),
-      setAccessToken: (accessToken: string) => set({ accessToken }),
-      clearTokens: () => set({ accessToken: null, refreshToken: null }),
+      authenticated: false,
+      setAuthenticated: (authenticated: boolean) => set({ authenticated }),
     }),
     {
       // Name of the item in the storage.
-      name: Constants.LOCAL_STORAGE_JWT_STORAGE,
+      name: Constants.LOCAL_STORAGE_AUTHENTICATION_STORAGE,
+      storage: createJSONStorage(() => localStorage),
+    }
+  )
+);
+
+/**
+ * User state to store the user's role.
+ */
+export const UserState = create<UserStore>()(
+  persist(
+    (set) => ({
+      role: Role.CUSTOMER,
+      setRole: (role: Role) => set({ role }),
+    }),
+    {
+      name: Constants.LOCAL_STORAGE_USER_STORAGE,
       storage: createJSONStorage(() => localStorage),
     }
   )
