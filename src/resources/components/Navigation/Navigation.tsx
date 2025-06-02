@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { KeyboardCommandKey, Menu as MenuIcon } from "@mui/icons-material";
 import ShoppingCartIcon from "@mui/icons-material/ShoppingCartOutlined";
 import {
@@ -18,13 +18,15 @@ import { Link as RouterLink, useLocation } from "react-router-dom";
 import { grey, common } from "@mui/material/colors";
 import { Constants } from "@/domain/constants";
 import { cartState } from "@/domain/state";
+import { CategoryModel } from "@/domain/models/CategoryModel";
+import { CategoryService } from "@/services/category-service";
+import CategoryMenu from "./CategoryMenu";
 
 // Should move to another file
-// const menus = ["Home", "Products", "Categories", "About"];
+// const menus = ["Home", "Products", "About"];
 const menus = [
   { name: "Home", route: "/" },
   { name: "Products", route: "/products" },
-  { name: "Categories", route: "/categories" },
   { name: "About", route: "/about" },
 ];
 
@@ -50,6 +52,43 @@ const Navbar: React.FC = () => {
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const location = useLocation();
   const cart = cartState((state) => state.cart);
+
+  // Category related state
+  const [categories, setCategories] = useState<CategoryModel[]>([]);
+  const [categoriesLoading, setCategoriesLoading] = useState(true);
+  const [categoriesError, setCategoriesError] = useState<string | null>(null);
+
+  useEffect(() => {
+    const fetchCategories = async () => {
+      try {
+        setCategoriesLoading(true);
+        const categoryService = new CategoryService();
+        const fetchedCategories = await categoryService.listCategories();
+        
+        // Filter for categories that have no parent
+        const topLevelCategories = fetchedCategories.filter(
+          (category) => !category.parentCategory
+        );
+        
+        setCategories(topLevelCategories);
+        setCategoriesError(null);
+      } catch (err) {
+        console.error('Failed to fetch categories:', err);
+        setCategoriesError('Failed to load categories');
+        setCategories([]);
+      } finally {
+        setCategoriesLoading(false);
+      }
+    };
+
+    fetchCategories();
+  }, []);
+
+    const handleCategoryClick = (category: CategoryModel) => {
+    // Navigate to products page with category filter
+    const categoryParam = category.internalName;
+    window.location.href = `/products?categories=${categoryParam}`;
+  };
 
   // basically anchor is HTML element where mouse click happened
   const handleMenuOpen = (event: React.MouseEvent<HTMLElement>) => {
@@ -181,6 +220,24 @@ const Navbar: React.FC = () => {
               </Typography>
             </Link>
             ))}
+
+            {/* Categories with mega dropdown */}
+            {categoriesLoading ? (
+              <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                <Typography variant="subtitle1" color="text.secondary">
+                  Loading...
+                </Typography>
+              </Box>
+            ) : categoriesError ? (
+              <Typography variant="subtitle1" color="error">
+                Categories unavailable
+              </Typography>
+            ) : (
+              <CategoryMenu 
+                categories={categories} 
+                onCategoryClick={handleCategoryClick} 
+              />
+            )}
           </Box>
 
           {/* Cart and User related Buttons */}
@@ -262,3 +319,4 @@ const Navbar: React.FC = () => {
 };
 
 export default Navbar;
+
