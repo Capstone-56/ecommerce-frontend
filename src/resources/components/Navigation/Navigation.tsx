@@ -14,7 +14,7 @@ import {
   Badge,
   Link,
 } from "@mui/material";
-import { Link as RouterLink, useLocation } from "react-router-dom";
+import { NavLink, Link as RouterLink, useLocation } from "react-router-dom";
 import { grey, common } from "@mui/material/colors";
 import { Constants } from "@/domain/constants";
 import { cartState } from "@/domain/state";
@@ -26,7 +26,7 @@ import CategoryMenu from "./CategoryMenu";
 // const menus = ["Home", "Products", "About"];
 const menus = [
   { name: "Home", route: "/" },
-  { name: "Products", route: "/products" },
+  //{ name: "Products", route: "/products" },
   { name: "About", route: "/about" },
 ];
 
@@ -135,27 +135,20 @@ const Navbar: React.FC = () => {
                 onClose={handleMenuClose}
               >
                 {menus.map((menuItem) => (
-                  <MenuItem>
-                    <Typography
-                      component={RouterLink}
-                      variant="body1"
+                  <MenuItem key={menuItem.name} onClick={handleMenuClose}>
+                    <NavLink
                       to={menuItem.route}
-                      sx={{
-                        color:
-                          location.pathname === menuItem.route
-                            ? grey[900]
-                            : grey[600],
-                        fontWeight:
-                          location.pathname === menuItem.route
-                            ? "bold"
-                            : "normal",
-                        "&:hover": {
-                          color: "inherit",
-                        },
-                      }}
+                      style={({ isActive }) => ({
+                        textDecoration: "none",
+                        color: isActive ? grey[900] : grey[600],
+                        fontWeight: isActive ? "bold" : "normal",
+                        width: "100%"
+                      })}
                     >
-                      {menuItem.name}
-                    </Typography>
+                      <Typography variant="body1">
+                        {menuItem.name}
+                      </Typography>
+                    </NavLink>
                   </MenuItem>
                 ))}
               </Menu>
@@ -188,37 +181,35 @@ const Navbar: React.FC = () => {
           <Box
             sx={{
               display: { xs: "none", md: "flex" },
+              alignItems: "center",
               flexDirection: "row",
               justifyContent: "center", // Center the middle links
               gap: { md: 2, lg: 6}, // Add spacing between links
             }}
           >
             {menus.map((menuItem) => (
-              <Link
-              key={menuItem.name}
-              component={RouterLink}
-              to={menuItem.route}
-              sx={{
-                textDecoration: "none",
-                color:
-                  location.pathname === menuItem.route
-                    ? grey[900]
-                    : grey[600],
-                fontWeight:
-                  location.pathname === menuItem.route ? "bold" : "normal",
-                "&:hover": {
-                  backgroundColor: "inherit",
-                },
-              }}
-            >
-              <Typography
-                textTransform="none"
-                variant="subtitle1"
-                fontWeight="500"
+              <NavLink
+                key={menuItem.name}
+                to={menuItem.route}
+                style={({ isActive }) => ({
+                  textDecoration: "none",
+                  color: isActive ? grey[900] : grey[600],
+                  fontWeight: isActive ? "bold" : "normal",
+                })}
               >
-                {menuItem.name}
-              </Typography>
-            </Link>
+                <Typography
+                  textTransform="none"
+                  variant="subtitle1"
+                  fontWeight="500"
+                  sx={{
+                    "&:hover": {
+                      color: grey[800],
+                    }
+                  }}
+                >
+                  {menuItem.name}
+                </Typography>
+              </NavLink>
             ))}
 
             {/* Categories with mega dropdown */}
