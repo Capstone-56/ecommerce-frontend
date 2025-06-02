@@ -24,8 +24,6 @@ import { cartState } from "@/domain/state";
 import { ZoomIn } from "@mui/icons-material";
 import RelatedProducts from "@/resources/components/RelatedProducts/RelatedProducts";
 
-const PLACEHOLDER_COLORS = ["green", "red", "blue", "brown"];
-const PLACEHOLDER_SIZES_NUMBERS = ["28", "30", "32", "34", "36", "38"];
 const maxImageListLength = 4;
 
 export default function ProductDetails() {
@@ -101,9 +99,13 @@ export default function ProductDetails() {
     const result = await productService.getProduct(id);
     if (result) {
       setProductDetails(result);
-      // temporary - needs to be based on variants
-      setItemSize(PLACEHOLDER_SIZES_NUMBERS[0]);
-      setColour(PLACEHOLDER_COLORS[0]);
+      // updated to use variants api
+      if (result.variations?.Size?.length) {
+        setItemSize(result.variations.Size[0]);
+      }
+      if (result.variations?.Color?.length) {
+        setColour(result.variations.Color[0]);
+      }
     } else console.error(`Nothing found for ${id}`); // frontend API error handling required?
   };
 
@@ -300,70 +302,73 @@ export default function ProductDetails() {
             </Typography>
           </Box>
 
-          <Box>
-            <Box sx={{ display: "flex" }}>
-              <Typography variant="body1">Colour:</Typography>
-              <Typography
-                variant="body1"
-                sx={{ display: "inline", fontWeight: "600" }}
-              >
-                {colour}
-              </Typography>
+          {productDetails?.variations?.Color?.length > 0 && (
+            <Box>
+              <Box sx={{ display: "flex" }}>
+                <Typography variant="body1">Colour:</Typography>
+                <Typography
+                  variant="body1"
+                  sx={{ display: "inline", fontWeight: "600" }}
+                >
+                  {colour}
+                </Typography>
+              </Box>
+              {productDetails?.variations?.Color?.map((color) => (
+                <ButtonBase
+                  key={color}
+                  onClick={() => {
+                    setColour(color);
+                  }}
+                  sx={{
+                    width: "60px",
+                    height: "60px",
+                    backgroundColor: color,
+                    borderRadius: "8px",
+                    margin: "2px",
+                    border:
+                      colour === color
+                        ? `3px solid ${grey[900]}`
+                        : "1px solid transparent",
+                  }}
+                ></ButtonBase>
+              ))}
             </Box>
+          )}
 
-            {PLACEHOLDER_COLORS.map((color) => (
-              <ButtonBase
-                key={color}
-                onClick={() => {
-                  setColour(color);
-                }}
-                sx={{
-                  width: "60px",
-                  height: "60px",
-                  backgroundColor: color,
-                  borderRadius: "8px",
-                  margin: "2px",
-                  border:
-                    colour === color
-                      ? `3px solid ${grey[900]}`
-                      : "1px solid transparent",
-                }}
-              ></ButtonBase>
-            ))}
-          </Box>
-
-          <Box>
-            <Box sx={{ display: "flex" }}>
-              <Typography variant="body1">Size:</Typography>
-              <Typography
-                variant="body1"
-                sx={{ display: "inline", fontWeight: "600" }}
-              >
-                {itemSize}
-              </Typography>
+          {productDetails?.variations?.Size?.length > 0 && (
+            <Box>
+              <Box sx={{ display: "flex" }}>
+                <Typography variant="body1">Size:</Typography>
+                <Typography
+                  variant="body1"
+                  sx={{ display: "inline", fontWeight: "600" }}
+                >
+                  {itemSize}
+                </Typography>
+              </Box>
+              {productDetails?.variations?.Size?.map((size) => (
+                <ButtonBase
+                  key={size}
+                  onClick={() => {
+                    setItemSize(size);
+                  }}
+                  sx={{
+                    width: "40px",
+                    height: "40px",
+                    borderRadius: "8px",
+                    margin: "2px",
+                    backgroundColor: "#E7E7E7",
+                    border:
+                      size === itemSize
+                        ? `2px solid ${grey[900]}`
+                        : "1px solid transparent",
+                  }}
+                >
+                  <Typography>{size}</Typography>
+                </ButtonBase>
+              ))}
             </Box>
-            {PLACEHOLDER_SIZES_NUMBERS.map((size) => (
-              <ButtonBase
-                key={size}
-                onClick={() => {
-                  setItemSize(size);
-                }}
-                sx={{
-                  width: "40px",
-                  height: "40px",
-                  borderRadius: "8px",
-                  margin: "2px",
-                  backgroundColor: "#E7E7E7",
-                  border:
-                    size === itemSize
-                      ? `2px solid ${grey[900]}`
-                      : "1px solid transparent",
-                }}
-              >
-                <Typography>{size}</Typography>
-              </ButtonBase>
-            ))}
-          </Box>
+          )}
 
           {/* Qty and cart - number input is real finnicky as MUI does not support fully */}
           <Box
