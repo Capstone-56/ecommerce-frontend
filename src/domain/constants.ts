@@ -15,9 +15,11 @@ export class Constants {
   // routes for navigation
   public static readonly CART_ROUTE: string = "/cart";
   public static readonly ADMIN_DASHBOARD_ROUTE: string = "/admin";
-  public static readonly HOME_ROUTE: string = "/"
-  public static readonly PRODUCTS_ROUTE: string = "/products"
-  public static readonly CATEGORIES_ROUTE: string = "/categories"
-  public static readonly ABOUT_ROUTE: string = "/about"
-  public static readonly CHECKOUT_ROUTE: string = "/checkout"
+  public static readonly HOME_ROUTE: string = "/";
+  public static readonly PRODUCTS_ROUTE: string = "/products";
+  public static readonly CATEGORIES_ROUTE: string = "/categories";
+  public static readonly ABOUT_ROUTE: string = "/about";
+  public static readonly CHECKOUT_ROUTE: string = "/checkout";
+  public static readonly LOGIN_ROUTE: string = "/login";
+  public static readonly SIGNUP_ROUTE: string = "/signup"
 }

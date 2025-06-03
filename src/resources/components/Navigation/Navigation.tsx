@@ -76,7 +76,7 @@ const Navbar: React.FC = () => {
             px: 2,
           }}
         >
-          {/* Nav Menu on < md (uses MUI Menu component) */}
+          {/* Nav Menu on < md - uses MUI Menu (i.e. dropdown) component */}
           <Box
             sx={{
               display: "flex",
@@ -155,13 +155,13 @@ const Navbar: React.FC = () => {
             </Box>
           </Box>
 
-          {/* Nav Menu on > md */}
+          {/* Nav Menu on > md breakpoint (shows all menu items) */}
           <Box
             sx={{
               display: { xs: "none", md: "flex" },
               flexDirection: "row",
-              justifyContent: "center", // Center the middle links
-              gap: { md: 2, lg: 6 }, // Add spacing between links
+              justifyContent: "center",
+              gap: { md: 2, lg: 6 },
             }}
           >
             {menus.map((menuItem) => (
@@ -193,7 +193,7 @@ const Navbar: React.FC = () => {
             ))}
           </Box>
 
-          {/* Cart and User related Buttons */}
+          {/* Cart context */}
           <Box
             sx={{
               display: "flex",
@@ -225,10 +225,10 @@ const Navbar: React.FC = () => {
                 }}
               ></Badge>
             </IconButton>
-            {/* LOGIN button with RouterLink to /login */}
+            {/* LOGIN */}
             <Button
               component={RouterLink}
-              to="/login"
+              to={Constants.LOGIN_ROUTE}
               variant="outlined"
               sx={{
                 bgcolor: grey[50],
@@ -247,10 +247,10 @@ const Navbar: React.FC = () => {
               </Typography>
             </Button>
 
-            {/*SIGN UP button with RouterLink to /signup */}
+            {/* SIGNUP */}
             <Button
               component={RouterLink}
-              to="/signup"
+              to={Constants.SIGNUP_ROUTE}
               variant="contained"
               sx={{
                 bgcolor: grey[900],
