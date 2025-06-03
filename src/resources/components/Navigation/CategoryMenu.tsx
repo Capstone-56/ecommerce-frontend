@@ -1,9 +1,16 @@
-import React from 'react';
-import { Box, Typography } from '@mui/material';
-import { NavLink, Link as RouterLink } from 'react-router-dom';
-import { CategoryModel } from '@/domain/models/CategoryModel';
-import MegaDropdown from './MegaDropdown';
-import { grey } from '@mui/material/colors';
+import React, { useState, useEffect } from "react";
+import {
+  Box,
+  Typography,
+  List,
+  ListItem,
+  ListItemButton,
+  Paper,
+} from "@mui/material";
+import { NavLink } from "react-router-dom";
+import { ChevronRight } from "@mui/icons-material";
+import { CategoryModel } from "@/domain/models/CategoryModel";
+import { grey } from "@mui/material/colors";
 
 interface CategoryMenuProps {
   categories: CategoryModel[];
@@ -11,23 +18,43 @@ interface CategoryMenuProps {
 }
 
 /**
- * CategoryMenu component to render top-level categories with mega dropdown
+ * Combined CategoryMenu and MegaDropdown component
  */
-const CategoryMenu: React.FC<CategoryMenuProps> = ({ categories, onCategoryClick }) => {
+const CategoryMenu: React.FC<CategoryMenuProps> = ({categories, onCategoryClick,}) => {
+  const [hoveredCategory, setHoveredCategory] = useState<CategoryModel | null>(null);
+  const [hoveredPrimaryChild, setHoveredPrimaryChild] = useState<CategoryModel | null>(null);
+  const [secondaryCategories, setSecondaryCategories] = useState<CategoryModel[]>([]);
+
+  // Update secondary categories when hoveredPrimaryChild changes
+  useEffect(() => {
+    if (hoveredPrimaryChild && hoveredPrimaryChild.children) {
+      setSecondaryCategories(hoveredPrimaryChild.children);
+    } else {
+      setSecondaryCategories([]);
+    }
+  }, [hoveredPrimaryChild]);
+
+  const handleCategoryHover = (category: CategoryModel) => {
+    setHoveredCategory(category);
+    setHoveredPrimaryChild(null); // Reset when switching categories
+  };
+
+  const handleCategoryLeave = () => {
+    setHoveredCategory(null);
+    setHoveredPrimaryChild(null);
+  };
+
   return (
-    <Box sx={{ display: 'flex', gap: { md: 2, lg: 6}, }}>
+    <Box sx={{ display: "flex", gap: { md: 2, lg: 6 } }}>
       {categories.map((category) => (
-        <Box
-          key={category.internalName}
-          className="category-parent"
+        <Box key={category.internalName}
           sx={{
-            position: 'relative',
             py: 2,
-            '&:hover .mega-dropdown': {
-              display: 'flex',
-            },
           }}
+          onMouseEnter={() => handleCategoryHover(category)}
+          onMouseLeave={handleCategoryLeave}
         >
+          {/* Category Link */}
           <NavLink
             to={`/products?categories=${category.internalName}`}
             style={({}) => ({
@@ -35,8 +62,7 @@ const CategoryMenu: React.FC<CategoryMenuProps> = ({ categories, onCategoryClick
               color: grey[600],
               fontWeight: "normal",
             })}
-            onClick={(e: React.MouseEvent) => {
-              onCategoryClick(category);
+            onClick={(e: React.MouseEvent) => {onCategoryClick(category);
             }}
           >
             <Typography
@@ -45,22 +71,177 @@ const CategoryMenu: React.FC<CategoryMenuProps> = ({ categories, onCategoryClick
               sx={{
                 "&:hover": {
                   color: grey[800],
-                }
+                },
               }}
             >
               {category.name}
             </Typography>
           </NavLink>
-          
-          {/* Render MegaDropdown only if there are children */}
-          {category.children && category.children.length > 0 && (
-            <Box className="mega-dropdown">
-              <MegaDropdown 
-                primaryCategories={category.children} 
-                onCategoryClick={onCategoryClick} 
-              />
-            </Box>
-          )}
+
+          {/* Mega Dropdown */}
+          {hoveredCategory?.internalName === category.internalName &&
+            category.children &&
+            category.children.length > 0 && (
+              <Paper
+                elevation={1}
+                sx={{
+                  position: "absolute",
+                  top: "100%",
+                  left: 0,
+                  width: "100vw",
+                  minHeight: "300px",
+                  bgcolor: "white",
+                  zIndex: 10,
+                  overflow: "hidden",
+                  borderTop: "1px solid",
+                  borderColor: "grey.200",
+                }}
+              >
+                {/* Content container */}
+                <Box
+                  sx={{
+                    display: "flex",
+                    width: "100%",
+                    maxWidth: "1600px",
+                    margin: "0 auto",
+                    px: { xs: 2, md: 4 },
+                  }}
+                >
+                  {/* Left Column (Primary Children) */}
+                  <Box
+                    sx={{
+                      width: "50%",
+                      borderRight: "1px solid",
+                      borderColor: "grey.100",
+                      display: "flex",
+                      flexDirection: "column",
+                    }}
+                  >
+                    <List>
+                      {category.children.map((pCat) => (
+                        <ListItem key={pCat.internalName} disablePadding>
+                          <ListItemButton
+                            onMouseEnter={() => setHoveredPrimaryChild(pCat)}
+                            onClick={() => onCategoryClick(pCat)}
+                            sx={{
+                              px: 1.5,
+                              py: 1,
+                              borderRadius: 1,
+                              display: "flex",
+                              justifyContent: "space-between",
+                              alignItems: "center",
+                              backgroundColor:
+                                hoveredPrimaryChild?.internalName ===
+                                pCat.internalName
+                                  ? "blue.50"
+                                  : "transparent",
+                              color:
+                                hoveredPrimaryChild?.internalName ===
+                                pCat.internalName
+                                  ? "blue.700"
+                                  : "grey.800",
+                              fontWeight:
+                                hoveredPrimaryChild?.internalName ===
+                                pCat.internalName
+                                  ? 600
+                                  : 400,
+                              "&:hover": {
+                                backgroundColor: "grey.100",
+                              },
+                            }}
+                          >
+                            <Typography variant="body1">{pCat.name}</Typography>
+                            {pCat.children && pCat.children.length > 0 && (
+                              <ChevronRight
+                                sx={{ fontSize: 16, color: "grey.400" }}
+                              />
+                            )}
+                          </ListItemButton>
+                        </ListItem>
+                      ))}
+                    </List>
+                  </Box>
+
+                  {/* Right Column */}
+                  <Box sx={{ width: "50%", p: 2 }}>
+                    {secondaryCategories.length > 0 ? (
+                      <Box>
+                        {/* view all link */}
+                        {hoveredPrimaryChild && (
+                          <Box
+                            sx={{
+                              mb: 2,
+                              pb: 1,
+                              borderBottom: "1px solid",
+                              borderColor: "grey.100",
+                            }}
+                          >
+                            <ListItemButton
+                              onClick={() =>
+                                onCategoryClick(hoveredPrimaryChild)
+                              }
+                              sx={{
+                                px: 1.5,
+                                py: 1,
+                                borderRadius: 1,
+                                textDecoration: "underline",
+                                color: "blue.700",
+                                fontWeight: 600,
+                                "&:hover": {
+                                  backgroundColor: "grey.100",
+                                },
+                              }}
+                            >
+                              <Typography variant="body1">
+                                All {hoveredPrimaryChild.name}
+                              </Typography>
+                            </ListItemButton>
+                          </Box>
+                        )}
+
+                        {/* Grid layout for subcategories */}
+                        <Box
+                          sx={{
+                            gap: 2,
+                          }}
+                        >
+                          {secondaryCategories.map((sCat) => (
+                            <ListItem key={sCat.internalName} disablePadding>
+                              <ListItemButton
+                                onClick={() => onCategoryClick(sCat)}
+                                sx={{
+                                  px: 1.5,
+                                  py: 1,
+                                  borderRadius: 1,
+                                  color: "grey.700",
+                                  width: "100%",
+                                  "&:hover": {
+                                    backgroundColor: "grey.100",
+                                    color: "blue.700",
+                                  },
+                                }}
+                              >
+                                <Typography variant="body1">
+                                  {sCat.name}
+                                </Typography>
+                              </ListItemButton>
+                            </ListItem>
+                          ))}
+                        </Box>
+                      </Box>
+                    ) : (
+                      <Typography
+                        variant="body2"
+                        color="text.secondary"
+                        sx={{ p: 1.5, fontStyle: "italic" }}
+                      >
+                        Hover over a category on the left to see more options.
+                      </Typography>
+                    )}
+                  </Box>
+                </Box>
+              </Paper>
+            )}
         </Box>
       ))}
     </Box>
