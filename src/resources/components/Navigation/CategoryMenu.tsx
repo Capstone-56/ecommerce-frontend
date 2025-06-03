@@ -15,7 +15,7 @@ interface CategoryMenuProps {
  */
 const CategoryMenu: React.FC<CategoryMenuProps> = ({ categories, onCategoryClick }) => {
   return (
-    <Box sx={{ display: 'flex', gap: 3 }}>
+    <Box sx={{ display: 'flex', gap: { md: 2, lg: 6}, }}>
       {categories.map((category) => (
         <Box
           key={category.internalName}
