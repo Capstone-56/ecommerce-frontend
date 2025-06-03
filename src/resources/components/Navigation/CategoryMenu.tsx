@@ -118,6 +118,32 @@ const CategoryMenu: React.FC<CategoryMenuProps> = ({categories, onCategoryClick,
                     }}
                   >
                     <List>
+                      {/* View All Parent Category Link */}
+                      <ListItem disablePadding>
+                        <ListItemButton
+                          onClick={() => onCategoryClick(category)}
+                          sx={{
+                            px: 1.5,
+                            py: 1,
+                            pb: 1,
+                            borderRadius: 1,
+                            mb: 2,
+                            borderBottom: "1px solid",
+                            borderColor: "grey.100",
+                            color: "blue.700",
+                            fontWeight: 600,
+                            "&:hover": {
+                              backgroundColor: "blue.50",
+                            },
+                          }}
+                        >
+                          <Typography variant="body1">
+                            View All {category.name}
+                          </Typography>
+                        </ListItemButton>
+                      </ListItem>
+
+                      {/* List primary children*/}
                       {category.children.map((pCat) => (
                         <ListItem key={pCat.internalName} disablePadding>
                           <ListItemButton
@@ -199,7 +225,6 @@ const CategoryMenu: React.FC<CategoryMenuProps> = ({categories, onCategoryClick,
                           </Box>
                         )}
 
-                        {/* Grid layout for subcategories */}
                         <Box
                           sx={{
                             gap: 2,
