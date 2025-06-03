@@ -1,12 +1,22 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 
-import { Box, Button, Typography, Container, Card, CardContent, CardMedia, Grid } from "@mui/material";
+import {
+  Box,
+  Button,
+  Typography,
+  Container,
+  Card,
+  CardContent,
+  CardMedia,
+  Grid,
+} from "@mui/material";
 import { ProductService } from "@/services/product-service";
 import { ProductModel } from "@/domain/models/ProductModel";
 import ProductCard from "@/resources/components/ProductCard/ProductCard";
 import axios from "axios";
 import { locationState, AuthenticationState, UserState } from "@/domain/state";
+import { Constants } from "@/domain/constants";
 
 export default function Home() {
   const [products, setProducts] = useState<Array<ProductModel>>([]);
@@ -41,15 +51,19 @@ export default function Home() {
             async (position) => {
               const long = position.coords.longitude;
               const lat = position.coords.latitude;
-              const response = await axios.get(`https://api.opencagedata.com/geocode/v1/json?q=${lat}%2C+${long}&key=${import.meta.env.VITE_GEOCODE_API_KEY}`);
+              const response = await axios.get(
+                `https://api.opencagedata.com/geocode/v1/json?q=${lat}%2C+${long}&key=${
+                  import.meta.env.VITE_GEOCODE_API_KEY
+                }`
+              );
               setLocation(response.data.results[0].components.country);
             },
             (error) => {
-              console.log(error)
+              console.log(error);
             }
-          )
+          );
         } else {
-          console.log("Geolocation not supported by browser")
+          console.log("Geolocation not supported by browser");
         }
       }
     }
@@ -98,7 +112,7 @@ export default function Home() {
             variant="outlined"
             color="primary"
             component={Link}
-            to="/products"
+            to={Constants.PRODUCTS_ROUTE}
           >
             Shop Now
           </Button>
@@ -106,7 +120,7 @@ export default function Home() {
           <Button
             variant="contained"
             component={Link}
-            to="/categories"
+            to={Constants.CATEGORIES_ROUTE}
           >
             Categories
           </Button>
@@ -164,7 +178,7 @@ export default function Home() {
         <Button
           variant="outlined"
           component={Link}
-          to="/products"
+          to={Constants.PRODUCTS_ROUTE}
         >
           View All Products
         </Button>
@@ -212,5 +226,3 @@ export default function Home() {
     </>
   );
 }
-
-

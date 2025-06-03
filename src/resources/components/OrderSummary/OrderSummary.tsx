@@ -1,10 +1,18 @@
 import React from "react";
-import { Card, CardContent, Typography, Box, Divider, Button } from "@mui/material";
+import {
+  Card,
+  CardContent,
+  Typography,
+  Box,
+  Divider,
+  Button,
+} from "@mui/material";
 import { common } from "@mui/material/colors";
 import { cartItem } from "@/domain/types";
+import { Constants } from "@/domain/constants";
 
 interface ProductCardProps {
-  cartState: cartItem[]
+  cartState: cartItem[];
 }
 
 /**
@@ -13,7 +21,6 @@ interface ProductCardProps {
  * TODO: Implement tax and delivery.
  */
 const OrderSummary: React.FC<ProductCardProps> = ({ cartState }) => {
-
   /**
    * A function to calculate the total price of all items within the cart.
    * @param productList The list of products in the user's cart.
@@ -23,22 +30,22 @@ const OrderSummary: React.FC<ProductCardProps> = ({ cartState }) => {
     let price: number = 0;
     productList.forEach((cartItem) => {
       price += cartItem.product.price * cartItem.quantity;
-    })
+    });
     return price.toFixed(2);
-  };
+  }
 
   /**
    * Redirects user to products screen.
    */
   const handleContinueShopping = () => {
-    window.location.href = `/products`;
+    window.location.href = Constants.PRODUCTS_ROUTE;
   };
 
   /**
    * Redirects user to checkout screen.
    */
   const handleCheckout = () => {
-    window.location.href = `/checkout`;
+    window.location.href = Constants.CHECKOUT_ROUTE;
   };
 
   return (
@@ -54,7 +61,7 @@ const OrderSummary: React.FC<ProductCardProps> = ({ cartState }) => {
         cursor: "pointer",
         overflow: "hidden",
         border: "1px solid",
-        borderRadius: "10px"
+        borderRadius: "10px",
       }}
     >
       <CardContent>
@@ -63,45 +70,45 @@ const OrderSummary: React.FC<ProductCardProps> = ({ cartState }) => {
           sx={{
             textAlign: "center",
             fontWeight: "bold",
-            marginBottom: "30px"
+            marginBottom: "30px",
           }}
         >
           Order Summary
         </Typography>
-        <Box 
-          sx={{
-            display: "flex",
-            justifyContent: "space-between"
-          }}
-        >
-        <Typography
-          variant="body1"
-          sx={{
-            textAlign: "left"
-          }}
-        >
-          Items
-        </Typography>
-        <Typography
-          variant="body1"
-          sx={{
-            textAlign: "right"
-          }}
-        >
-          {cartState.length > 0 ? calculateTotalPrice(cartState) : "-"}
-        </Typography>
-      </Box>
-        <Box 
+        <Box
           sx={{
             display: "flex",
             justifyContent: "space-between",
-            marginBottom: "2px"
           }}
         >
           <Typography
             variant="body1"
             sx={{
-              textAlign: "left"
+              textAlign: "left",
+            }}
+          >
+            Items
+          </Typography>
+          <Typography
+            variant="body1"
+            sx={{
+              textAlign: "right",
+            }}
+          >
+            {cartState.length > 0 ? calculateTotalPrice(cartState) : "-"}
+          </Typography>
+        </Box>
+        <Box
+          sx={{
+            display: "flex",
+            justifyContent: "space-between",
+            marginBottom: "2px",
+          }}
+        >
+          <Typography
+            variant="body1"
+            sx={{
+              textAlign: "left",
             }}
           >
             GST
@@ -115,16 +122,16 @@ const OrderSummary: React.FC<ProductCardProps> = ({ cartState }) => {
             0
           </Typography>
         </Box>
-        <Box 
+        <Box
           sx={{
             display: "flex",
-            justifyContent: "space-between"
+            justifyContent: "space-between",
           }}
         >
           <Typography
             variant="body1"
             sx={{
-              textAlign: "left"
+              textAlign: "left",
             }}
           >
             Delivery
@@ -139,28 +146,28 @@ const OrderSummary: React.FC<ProductCardProps> = ({ cartState }) => {
           </Typography>
         </Box>
 
-        <Divider 
+        <Divider
           sx={{
             alignSelf: "center",
             borderBottomWidth: "1px",
             backgroundColor: common.black,
             marginTop: "10px",
-            marginBottom: "10px"
+            marginBottom: "10px",
           }}
         ></Divider>
 
-        <Box 
+        <Box
           sx={{
             display: "flex",
             justifyContent: "space-between",
-            marginBottom: "10px"
+            marginBottom: "10px",
           }}
         >
           <Typography
             variant="h6"
             sx={{
               textAlign: "left",
-              fontWeight: "bold"
+              fontWeight: "bold",
             }}
           >
             Total
@@ -169,7 +176,7 @@ const OrderSummary: React.FC<ProductCardProps> = ({ cartState }) => {
             variant="body1"
             sx={{
               textAlign: "right",
-              fontWeight: "bold"
+              fontWeight: "bold",
             }}
           >
             {calculateTotalPrice(cartState)}
@@ -182,7 +189,7 @@ const OrderSummary: React.FC<ProductCardProps> = ({ cartState }) => {
           sx={{
             width: "100%",
             alignSelf: "center",
-            marginBottom: "10px"
+            marginBottom: "10px",
           }}
           onClick={() => handleCheckout()}
         >
@@ -195,7 +202,7 @@ const OrderSummary: React.FC<ProductCardProps> = ({ cartState }) => {
             color: common.white,
             width: "100%",
             alignSelf: "center",
-            marginBottom: "10px"
+            marginBottom: "10px",
           }}
           onClick={() => handleContinueShopping()}
         >
