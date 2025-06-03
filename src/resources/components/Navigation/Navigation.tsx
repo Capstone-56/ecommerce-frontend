@@ -17,7 +17,8 @@ import {
 import { Link as RouterLink, useLocation } from "react-router-dom";
 import { grey, common } from "@mui/material/colors";
 import { Constants } from "@/domain/constants";
-import { cartState } from "@/domain/state";
+import { AuthenticationState, cartState, UserState } from "@/domain/state";
+import { Role } from "@/domain/enum/role";
 
 // Nav Menu Items
 const menus = [
@@ -49,6 +50,8 @@ const Navbar: React.FC = () => {
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const location = useLocation();
   const cart = cartState((state) => state.cart);
+  const userRole = UserState((state) => state.role);
+  const auth = AuthenticationState((state) => state.authenticated);
 
   // basically anchor is HTML element where mouse click happened
   const handleMenuOpen = (event: React.MouseEvent<HTMLElement>) => {
@@ -198,6 +201,7 @@ const Navbar: React.FC = () => {
             sx={{
               display: "flex",
               flexDirection: "row",
+              alignItems: "center",
               gap: 1,
             }}
           >
@@ -225,47 +229,52 @@ const Navbar: React.FC = () => {
                 }}
               ></Badge>
             </IconButton>
-            {/* LOGIN */}
-            <Button
-              component={RouterLink}
-              to={Constants.LOGIN_ROUTE}
-              variant="outlined"
-              sx={{
-                bgcolor: grey[50],
-                color: grey[900],
-                borderColor: grey[900],
-                borderRadius: "8px",
-                textDecoration: "none",
-                "&:hover": {
-                  bgcolor: grey[100],
-                  borderColor: grey[900],
-                },
-              }}
-            >
-              <Typography fontWeight="500" textTransform="none">
-                Login
-              </Typography>
-            </Button>
 
-            {/* SIGNUP */}
-            <Button
-              component={RouterLink}
-              to={Constants.SIGNUP_ROUTE}
-              variant="contained"
-              sx={{
-                bgcolor: grey[900],
-                color: grey[50],
-                borderRadius: "8px",
-                textDecoration: "none",
-                "&:hover": {
-                  bgcolor: grey[800],
-                },
-              }}
-            >
-              <Typography fontWeight="500" textTransform="none">
-                Sign up
-              </Typography>
-            </Button>
+            {userRole && auth ? (
+              <div>Hello I am logged in!</div>
+            ) : (
+              <>
+                <Button
+                  component={RouterLink}
+                  to={Constants.LOGIN_ROUTE}
+                  variant="outlined"
+                  sx={{
+                    bgcolor: grey[50],
+                    color: grey[900],
+                    borderColor: grey[900],
+                    borderRadius: "8px",
+                    textDecoration: "none",
+                    "&:hover": {
+                      bgcolor: grey[100],
+                      borderColor: grey[900],
+                    },
+                  }}
+                >
+                  <Typography fontWeight="500" textTransform="none">
+                    Login
+                  </Typography>
+                </Button>
+
+                <Button
+                  component={RouterLink}
+                  to={Constants.SIGNUP_ROUTE}
+                  variant="contained"
+                  sx={{
+                    bgcolor: grey[900],
+                    color: grey[50],
+                    borderRadius: "8px",
+                    textDecoration: "none",
+                    "&:hover": {
+                      bgcolor: grey[800],
+                    },
+                  }}
+                >
+                  <Typography fontWeight="500" textTransform="none">
+                    Sign up
+                  </Typography>
+                </Button>
+              </>
+            )}
           </Box>
         </Toolbar>
       </Paper>
