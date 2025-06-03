@@ -284,7 +284,8 @@ export default function ProductDetails() {
               {name}
             </Typography>
 
-            {/* price - returning as null so hardcoded for now */}
+            {/* retrieving price from backend now */}
+            {typeof price === "number" && (
             <Typography
               variant="caption"
               sx={{
@@ -292,8 +293,9 @@ export default function ProductDetails() {
                 fontSize: "1.5rem",
               }}
             >
-              $25
+              ${price.toFixed(2)}
             </Typography>
+          )}
 
             <Divider orientation="horizontal" flexItem />
 
@@ -316,19 +318,17 @@ export default function ProductDetails() {
               {productDetails?.variations?.Color?.map((color) => (
                 <ButtonBase
                   key={color}
-                  onClick={() => {
-                    setColour(color);
-                  }}
+                  onClick={() => setColour(color)}
                   sx={{
-                    width: "60px",
-                    height: "60px",
+                    width: 40,
+                    height: 40,
                     backgroundColor: color,
-                    borderRadius: "8px",
-                    margin: "2px",
-                    border:
-                      colour === color
-                        ? `3px solid ${grey[900]}`
-                        : "1px solid transparent",
+                    borderRadius: "50%",
+                    margin: "4px",
+                    border: colour === color
+                      ? '2px solid black'
+                      : '1px solid rgba(0, 0, 0, 0.23)',
+                    boxSizing: 'border-box',
                   }}
                 ></ButtonBase>
               ))}
