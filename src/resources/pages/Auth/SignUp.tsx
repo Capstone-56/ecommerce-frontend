@@ -59,7 +59,7 @@ const SignUp: React.FC = () => {
         UserState.setState({ role: response.data.role });
         UserState.setState({ userName: form.username });
         toast.success("Account created successfully");
-      }
+
         navigate("/");
       };
     } catch (err: any) {
