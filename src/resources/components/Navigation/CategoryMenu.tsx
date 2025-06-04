@@ -95,6 +95,18 @@ const CategoryMenu: React.FC<CategoryMenuProps> = ({categories, onCategoryClick,
                   overflow: "hidden",
                   borderTop: "1px solid",
                   borderColor: "grey.200",
+                  // Animation styles
+                  animation: "slideDown 0.2s ease-out",
+                  "@keyframes slideDown": {
+                    "0%": {
+                      transform: "translateY(-10px)",
+                      opacity: 0,
+                    },
+                    "100%": {
+                      transform: "translateY(0)",
+                      opacity: 1,
+                    },
+                  },
                 }}
               >
                 {/* Content container */}
@@ -107,7 +119,7 @@ const CategoryMenu: React.FC<CategoryMenuProps> = ({categories, onCategoryClick,
                     px: { xs: 2, md: 4 },
                   }}
                 >
-                  {/* Left Column (Primary Children) */}
+                  {/* Left Column */}
                   <Box
                     sx={{
                       width: "50%",
