@@ -5,4 +5,8 @@ export interface CategoryModel {
   description: string;
   parentCategory?: string | null;
   children?: CategoryModel[];
+  breadcrumb?: Array<{
+    name: string;
+    internalName: string;
+  }>;
 }
