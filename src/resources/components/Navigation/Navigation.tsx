@@ -21,6 +21,7 @@ import { cartState } from "@/domain/state";
 import { CategoryModel } from "@/domain/models/CategoryModel";
 import { CategoryService } from "@/services/category-service";
 import CategoryMenu from "./CategoryMenu";
+import MobileDrawer from "./MobileDrawer";
 
 // Should move to another file
 // const menus = ["Home", "Products", "About"];
@@ -49,7 +50,7 @@ const TitleStyling = {
 };
 
 const Navbar: React.FC = () => {
-  const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
+  const [mobileDrawerOpen, setMobileDrawerOpen] = useState(false);
   const location = useLocation();
   const cart = cartState((state) => state.cart);
 
@@ -90,13 +91,12 @@ const Navbar: React.FC = () => {
     window.location.href = `/products?categories=${categoryParam}`;
   };
 
-  // basically anchor is HTML element where mouse click happened
-  const handleMenuOpen = (event: React.MouseEvent<HTMLElement>) => {
-    setAnchorEl(event.currentTarget);
+  const handleMobileMenuOpen = () => {
+    setMobileDrawerOpen(true);
   };
 
-  const handleMenuClose = () => {
-    setAnchorEl(null);
+  const handleMobileMenuClose = () => {
+    setMobileDrawerOpen(false);
   };
 
   return (
@@ -105,55 +105,11 @@ const Navbar: React.FC = () => {
         <Toolbar
           sx={{
             backgroundColor: common.white,
-            justifyContent: { md: "space-evenly", xs: "space-between" , sm: "space-between"},
+            justifyContent: {xs: "space-between" , sm: "space-between", md: "space-between", lg: "space-evenly"},
             px: 2,
           }}
         >
           {/* Nav Menu on < md (uses MUI Menu component) */}
-          <Box 
-            sx={{
-            display: "flex"
-            }}
-          >
-            <Box
-              sx={{
-                display: { xs: "flex", md: "none" },
-                alignItems: "center",
-              }}
-            >
-              <IconButton
-                size="large"
-                edge="end"
-                color="inherit"
-                onClick={handleMenuOpen}
-              >
-                <MenuIcon />
-              </IconButton>
-              <Menu
-                anchorEl={anchorEl}
-                open={!!anchorEl}
-                onClose={handleMenuClose}
-              >
-                {menus.map((menuItem) => (
-                  <MenuItem key={menuItem.name} onClick={handleMenuClose}>
-                    <NavLink
-                      to={menuItem.route}
-                      style={({ isActive }) => ({
-                        textDecoration: "none",
-                        color: isActive ? grey[900] : grey[600],
-                        fontWeight: isActive ? "bold" : "normal",
-                        width: "100%"
-                      })}
-                    >
-                      <Typography variant="body1">
-                        {menuItem.name}
-                      </Typography>
-                    </NavLink>
-                  </MenuItem>
-                ))}
-              </Menu>
-            </Box>
-
             {/* Company Name - Logo */}
             <Box
               sx={{
@@ -162,9 +118,6 @@ const Navbar: React.FC = () => {
                 alignItems: "center",
               }}
             >
-              <IconButton component={RouterLink} to={"/"} disableRipple>
-                <KeyboardCommandKey sx={{ ...LogoStyle }} />
-              </IconButton>
               <Typography
                 variant="h1"
                 component={RouterLink}
@@ -175,12 +128,11 @@ const Navbar: React.FC = () => {
                 BDNX
               </Typography>
             </Box>
-          </Box>
 
           {/* Nav Menu on > md */}
           <Box
             sx={{
-              display: { xs: "none", md: "flex" },
+              display: { xs: "none", md: "none", lg: "flex" },
               alignItems: "center",
               flexDirection: "row",
               justifyContent: "center", // Center the middle links
@@ -305,9 +257,27 @@ const Navbar: React.FC = () => {
                 Sign up
               </Typography>
             </Button>
+            {/* Mobile Menu Button */}
+            <Box sx={{ display: { xs: "flex", md: "flex", lg: "none" } }}>
+              <IconButton
+                size="large"
+                edge="start"
+                color="inherit"
+                onClick={handleMobileMenuOpen}
+              >
+                <MenuIcon />
+              </IconButton>
+            </Box>
           </Box>
         </Toolbar>
       </Paper>
+      <MobileDrawer
+        open={mobileDrawerOpen}
+        onClose={handleMobileMenuClose}
+        categories={categories}
+        onCategoryClick={handleCategoryClick}
+        menuItems={menus}
+      />
     </AppBar>
   );
 };
