@@ -12,6 +12,7 @@ import { Visibility, VisibilityOff } from "@mui/icons-material";
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import api from "@/api";
+import { AuthenticationState, UserState } from "@/domain/state";
 
 const Login: React.FC = () => {
   const [form, setForm] = useState({
@@ -34,13 +35,14 @@ const Login: React.FC = () => {
     setLoading(true);
 
     try {
-      const res = await api.post("/auth/login", form);
-      const { accessToken, refreshToken } = res.data;
-      localStorage.setItem("accessToken", accessToken);
-      localStorage.setItem("refreshToken", refreshToken);
+      const response = await api.post("/auth/login", form);
+      if (response.status === 200) {
+        AuthenticationState.setState({ authenticated: true });
+        UserState.setState({ role: response.data.role });
+      }
+
       // navigate to dashboard
       navigate("/");
-      
     } catch (err: any) {
       console.error("Login error:", err?.response?.data || err);
       setError("Login failed. Check your credentials.");
