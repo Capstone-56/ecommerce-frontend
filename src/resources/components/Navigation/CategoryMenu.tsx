@@ -102,6 +102,11 @@ const CategoryMenu: React.FC<CategoryMenuProps> = ({categories, onCategoryClick,
               variant="subtitle1"
               fontWeight="500"
               sx={{
+                  textDecoration: hoveredCategory?.internalName === category.internalName 
+                    ? "underline" 
+                    : "none",
+                  textUnderlineOffset: "8px",
+                  textDecorationThickness: "2px",
                 "&:hover": {
                   color: grey[800],
                 },
