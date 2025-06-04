@@ -17,7 +17,7 @@ export default function Footer() {
       <Container maxWidth="xl">
         <Grid container spacing={4} >
           {/* Branding or Logo */}
-            <Grid size={{xs:12, sm:6, md:4}}>
+            <Grid size={{xs:12, sm:6, md:6, lg:4}}>
               <Typography variant="h5" gutterBottom sx={{ textAlign: { xs: "center", md: "left", sm: "left" }}} color="text.primary">
                 BDNX
               </Typography>
@@ -27,7 +27,7 @@ export default function Footer() {
             </Grid>
 
           {/* Footer links */}
-          <Grid size={{xs:6, sm:6, md:2}}>
+          <Grid size={{xs:6, sm:6, md:3, lg:2}}>
             <Box sx={{ textAlign: "left" }}>
               <Typography variant="h6" gutterBottom align="left" color="text.primary">
                 Shop Now
@@ -41,7 +41,7 @@ export default function Footer() {
           </Grid>
 
           {/* Footer links */}
-          <Grid size={{xs:6, sm:6, md:2}}>
+          <Grid size={{xs:6, sm:6, md:3, lg:2}}>
             <Box sx={{ textAlign: "left"}}>
               <Typography variant="h6" gutterBottom align="left" color="text.primary">
                 Company
@@ -57,7 +57,7 @@ export default function Footer() {
           </Grid>
 
           {/* Newsletter Subscription */}
-          <Grid size={{xs:12, sm:6, md:3}}>
+          <Grid size={{xs:12, sm:6, md:6, lg:4}}>
             <Box sx={{ textAlign: { xs: "center", md: "left", sm: "left"  } }}>
               <Typography variant="h6" gutterBottom color="text.primary">
                 Subscribe to Us
@@ -81,10 +81,19 @@ export default function Footer() {
                   placeholder="Enter your email"
                   type="email"
                   required
-                  sx={{ flex: 1, minWidth: "200px",'& .MuiOutlinedInput-root': {borderRadius: '8px'}
+                  sx={{
+                    flex: 1,
+                    minWidth: "150px",
+                    '& .MuiOutlinedInput-root': {
+                      borderRadius: '8px',
+                      backgroundColor: '#f9f9f9',
+                    },
+                    '& .MuiOutlinedInput-input:-webkit-autofill': {
+                      WebkitBoxShadow: '0 0 0 1000px #f9f9f9 inset !important',
+                    },
                   }}
                 />
-                <Button variant="contained" type="submit" size="medium" sx={{height: "40px", borderRadius: "8px",}}>
+                <Button variant="contained" type="submit" size="medium" sx={{height: "40px"}}>
                   Submit
                 </Button>
               </Box>

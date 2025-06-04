@@ -75,4 +75,19 @@ export class ProductService {
       return Promise.reject(error);
     }
   }
+
+  /**
+   * An endpoint to retrieve a set of related products.
+   * @returns A set of related products.
+   */
+  async getRelatedProducts(productId?: string): Promise<ProductModel[]> {
+    try {
+      const baseUrl = `/api/product/${productId}/related`;
+      const relatedProducts = await api.get(baseUrl);
+      
+      return relatedProducts.data;
+    } catch (error) {
+      return Promise.reject(error);
+    }
+  }
 }

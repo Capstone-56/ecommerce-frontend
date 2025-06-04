@@ -1,13 +1,17 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 
-import { Box, Button, Typography, Container, Card, CardContent, CardMedia, Grid  } from "@mui/material";
+import { Box, Button, Typography, Container, Card, CardContent, CardMedia, Grid } from "@mui/material";
 import { ProductService } from "@/services/product-service";
 import { ProductModel } from "@/domain/models/ProductModel";
 import ProductCard from "@/resources/components/ProductCard/ProductCard";
+import axios from "axios";
+import { locationState, AuthenticationState, UserState } from "@/domain/state";
 
 export default function Home() {
   const [products, setProducts] = useState<Array<ProductModel>>([]);
+  const location = locationState((state) => state.userLocation);
+  const setLocation = locationState((state) => state.setLocation);
 
   /**
    * A useEffect required to get product data upon mount.
@@ -24,8 +28,35 @@ export default function Home() {
       setProducts(products);
     };
 
+    /**
+     * Function to retrieve a users location based on their coordinates. Will only
+     * try to send a request given that their location isn't already defined
+     * within our state. Basic error handling, TODO: Have a disclaimer pop-up
+     * if they deny to share their location.
+     */
+    async function getGeolocation(): Promise<void> {
+      if (location == null) {
+        if (navigator.geolocation) {
+          navigator.geolocation.getCurrentPosition(
+            async (position) => {
+              const long = position.coords.longitude;
+              const lat = position.coords.latitude;
+              const response = await axios.get(`https://api.opencagedata.com/geocode/v1/json?q=${lat}%2C+${long}&key=${import.meta.env.VITE_GEOCODE_API_KEY}`);
+              setLocation(response.data.results[0].components.country);
+            },
+            (error) => {
+              console.log(error)
+            }
+          )
+        } else {
+          console.log("Geolocation not supported by browser")
+        }
+      }
+    }
+
     getProducts();
-  }, []);
+    getGeolocation();
+  }, [location, setLocation]);
 
   return (
     <>
@@ -34,7 +65,7 @@ export default function Home() {
         sx={{
           bgcolor: "#D9D9D9",
           minHeight: "550px",
-          width: "100vw",
+          width: "100%",
           display: "flex",
           flexDirection: "column",
           justifyContent: "center",
@@ -65,20 +96,9 @@ export default function Home() {
         <Box sx={{ display: "flex", gap: 2 }}>
           <Button
             variant="outlined"
+            color="primary"
             component={Link}
             to="/products"
-            sx={{
-              bgcolor: "White",
-              color: "#1a1a1a",
-              boxShadow: "none",
-              textTransform: "none",
-              borderColor: "#1a1a1a",
-              borderRadius: "8px",
-              padding: "0.4rem 1.3rem",
-              fontSize: "1rem",
-              fontWeight: "500",
-              fontFamily: "inherit",
-            }}
           >
             Shop Now
           </Button>
@@ -87,17 +107,6 @@ export default function Home() {
             variant="contained"
             component={Link}
             to="/categories"
-            sx={{
-              bgcolor: "#2D2D2D",
-              color: "White",
-              boxShadow: "none",
-              textTransform: "none",
-              borderRadius: "8px",
-              padding: "0.4rem 1.3rem",
-              fontSize: "1rem",
-              fontWeight: "500",
-              fontFamily: "inherit",
-            }}
           >
             Categories
           </Button>
@@ -156,18 +165,6 @@ export default function Home() {
           variant="outlined"
           component={Link}
           to="/products"
-          sx={{
-            bgcolor: "White",
-            color: "#1a1a1a",
-            boxShadow: "none",
-            textTransform: "none",
-            borderColor: "#1a1a1a",
-            borderRadius: "8px",
-            padding: "0.4rem 1.3rem",
-            fontSize: "1rem",
-            fontWeight: "500",
-            fontFamily: "inherit",
-          }}
         >
           View All Products
         </Button>

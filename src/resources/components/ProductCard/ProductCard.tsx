@@ -1,33 +1,40 @@
 import React from "react";
 import { Card, CardMedia, CardContent, Typography, Box } from "@mui/material";
 import { ProductModel } from "domain/models/ProductModel";
-import placeholderImage from '/src/assets/ProductCard/product_card_placeholder.svg';
+import placeholderImage from "/src/assets/ProductCard/product_card_placeholder.svg";
+import { useNavigate } from "react-router-dom";
 
 interface ProductCardProps {
   /* Details relating to a particular product. */
-  product: ProductModel,
+  product: ProductModel;
   /* The width to set the product card. */
-  width: string,
+  width: string;
   /* The height to set the product card. */
-  height: string,
+  height: string;
 }
 
 /**
  * The product card component. Will be used to display products throughout the website
  * to users and have the ability to transfer them to the product's detail page.
  */
-const ProductCard: React.FC<ProductCardProps> = ({ product, width, height }) => {
+const ProductCard: React.FC<ProductCardProps> = ({
+  product,
+  width,
+  height,
+}) => {
   const { id, name, description, images, price } = product;
-
+  const navigate = useNavigate();
   /**
    * When clicked direct the user to the product's detail page.
    */
   const handleClick = () => {
-    window.location.href = `/products/${id}/details`;
+    // window.location.href = `/products/${id}/details`;
+    navigate(`/products/${id}/details`);
   };
 
   // Currently choose the first image, otherwise if no image specified display a placeholder image.
-  const thumbnail = (Array.isArray(images) && images.length > 0) ? images[0] : placeholderImage;
+  const thumbnail =
+    Array.isArray(images) && images.length > 0 ? images[0] : placeholderImage;
 
   return (
     <Card
@@ -58,15 +65,31 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, width, height }) => 
         />
       </Box>
 
-      {/* product name & description */}
+      {/* product details: name, description, colour count, and price */}
       <CardContent sx={{ textAlign: "left", paddingY: 1, paddingX: 1.5 }}>
-        <Typography gutterBottom variant="h6" component="div" noWrap sx={{ mb: 0 }}>
+        <Typography
+          gutterBottom
+          variant="h6"
+          component="div"
+          noWrap
+          sx={{ mb: 0 }}
+        >
           {name}
         </Typography>
 
         <Typography variant="body2" color="text.secondary" noWrap>
           {description}
         </Typography>
+        {product.variations?.Color && (
+          <Typography
+            variant="body2"
+            color="text.secondary"
+            sx={{ mt: 0.5, display: "block" }}
+          >
+            {product.variations.Color.length} colour
+            {product.variations.Color.length > 1 ? "s" : ""}
+          </Typography>
+        )}
         <Typography 
           variant="subtitle1" 
           sx={{ 
