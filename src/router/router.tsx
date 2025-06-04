@@ -15,7 +15,7 @@ import Login from "@/resources/pages/Auth/Login";
 import SignUp from "@/resources/pages/Auth/SignUp";
 import AdminProfile from "@/resources/pages/Profile/AdminProfile";
 import Analytics from "@/resources/components/AdminPage/Analytics";
-import AdminDashboard from "@/resources/components/AdminPage/AdminDashboard";
+import AdminDashboard from "@/resources/components/AdminPage/AdminDashboard/AdminDashboard";
 import ProductManagement from "@/resources/components/AdminPage/ProductManagement";
 import VendorManagement from "@/resources/components/AdminPage/VendorManagement";
 import CustomerSupport from "@/resources/components/AdminPage/CustomerSupport";
