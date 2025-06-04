@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import {
   Box,
   Button,
@@ -11,9 +11,12 @@ import {
 } from '@mui/material';
 import { Visibility, VisibilityOff } from '@mui/icons-material';
 import api from "@/api";
+import { StatusCodes } from 'http-status-codes';
 import { AuthenticationState, UserState } from "@/domain/state";
 import { Role } from "@/domain/enum/role";
 import { UserSignUpModel } from "@/domain/models/UserModel";
+import { useNavigate } from 'react-router-dom';
+import { toast } from 'react-toastify';
 
 const SignUp: React.FC = () => {
   const [form, setForm] = useState({
@@ -30,27 +33,14 @@ const SignUp: React.FC = () => {
   const [showConfirm, setShowConfirm] = useState(false);
   const [loading, setLoading] = useState(false);
   const [usernameTaken, setUsernameTaken] = useState(false);
-
-  // Debounced API call to check if username is taken
-  /* const checkUsername = debounce(async (username: string) => {
-    try {
-      const res = await api.get(`api/user/${username}`);
-      if (res.status === 200) setUsernameTaken(true);
-    } catch (err) {
-      setUsernameTaken(false); // not found = available
-    }
-  }, 500); */
-
-  /*  useEffect(() => {
-     if (form.username) checkUsername(form.username);
-   }, [checkUsername, form.username]); */
+  const navigate = useNavigate();
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setForm({ ...form, [e.target.name]: e.target.value });
   };
 
   const handleSubmit = async () => {
-    if (form.password !== form.confirmPassword) return alert("Passwords don't match");
+    if (form.password !== form.confirmPassword) return toast.error('Passwords do not match');
     setLoading(true);
     try {
       const user: UserSignUpModel = {
@@ -64,15 +54,16 @@ const SignUp: React.FC = () => {
       };
 
       const response = await api.post("/auth/signup", user);
-      if (response.status === 200) {
+      if (response.status === StatusCodes.OK) {
         AuthenticationState.setState({ authenticated: true });
         UserState.setState({ role: response.data.role });
         UserState.setState({ userName: form.username });
-      }
+        toast.success("Account created successfully");
 
-      alert('Signup successful! Now log in.');
+        navigate("/");
+      };
     } catch (err: any) {
-      alert(err?.response?.data?.detail || 'Signup failed');
+      toast.error(err?.response?.data?.detail || 'Signup failed');
     } finally {
       setLoading(false);
     }
