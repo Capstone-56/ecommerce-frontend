@@ -3,8 +3,7 @@ import RequireAdmin from "@/resources/components/AdminPage/Authentication";
 import { Outlet } from "react-router";
 import { useEffect, useState } from "react";
 import { UserState } from "@/domain/state";
-import '@/resources/components/AdminPage/Admin.css'
-import api from "@/api";
+import { UserService } from "@/services/user-service";
 
 /**
  * The profile page to be showed to admins, where related
@@ -24,13 +23,9 @@ export default function AdminProfile() {
    * @returns An admin's user details.
    */
   const getAdminInformation = async () => {
-    try {
-      const baseUrl = `/api/user/${userName}`;
-      const products = await api.get(baseUrl);
-
-      setUserInformation(products.data)
-    } catch (error) {
-      return Promise.reject(error);
+    const userService = new UserService;
+    if (userName) {
+      setUserInformation(await userService.getUser(userName))
     }
   }
 
