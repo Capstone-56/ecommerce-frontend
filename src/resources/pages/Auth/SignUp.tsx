@@ -57,8 +57,9 @@ const SignUp: React.FC = () => {
       if (response.status === StatusCodes.OK) {
         AuthenticationState.setState({ authenticated: true });
         UserState.setState({ role: response.data.role });
+        UserState.setState({ userName: form.username });
         toast.success("Account created successfully");
-
+      }
         navigate("/");
       };
     } catch (err: any) {
