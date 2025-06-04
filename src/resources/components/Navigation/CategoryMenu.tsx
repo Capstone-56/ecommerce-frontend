@@ -32,7 +32,40 @@ const CategoryMenu: React.FC<CategoryMenuProps> = ({categories, onCategoryClick,
     } else {
       setSecondaryCategories([]);
     }
-  }, [hoveredPrimaryChild]);
+  }, [hoveredPrimaryChild]); 
+
+  // Add debug functions to window (remove before pushing)
+  useEffect(() => {
+    (window as any).debugCategory = {
+      setHoveredCategory: (categoryName: string) => {
+        const category = categories.find(c => c.internalName === categoryName);
+        if (category) {
+          setHoveredCategory(category);
+          console.log('Set hovered category:', category.name);
+        } else {
+          console.log('Category not found:', categoryName);
+        }
+      },
+      setHoveredPrimaryChild: (categoryName: string) => {
+        const allChildren = categories.flatMap(c => c.children || []);
+        const child = allChildren.find(c => c.internalName === categoryName);
+        if (child) {
+          setHoveredPrimaryChild(child);
+          console.log('Set hovered primary child:', child.name);
+        } else {
+          console.log('Primary child not found:', categoryName);
+        }
+      },
+      clearHover: () => {
+        setHoveredCategory(null);
+        setHoveredPrimaryChild(null);
+        console.log('Cleared all hover states');
+      },
+      listCategories: () => {
+        console.log('Available categories:', categories.map(c => ({ name: c.name, internalName: c.internalName })));
+      }
+    };
+  }, [categories]);
 
   const handleCategoryHover = (category: CategoryModel) => {
     setHoveredCategory(category);
@@ -94,9 +127,9 @@ const CategoryMenu: React.FC<CategoryMenuProps> = ({categories, onCategoryClick,
                   zIndex: 10,
                   overflow: "hidden",
                   borderTop: "1px solid",
-                  borderColor: "grey.200",
+                  borderColor: "grey.300",
                   // Animation styles
-                  animation: "slideDown 0.2s ease-out",
+                  animation: "slideDown 0.3s ease-out",
                   "@keyframes slideDown": {
                     "0%": {
                       transform: "translateY(-10px)",
@@ -117,6 +150,7 @@ const CategoryMenu: React.FC<CategoryMenuProps> = ({categories, onCategoryClick,
                     maxWidth: "1600px",
                     margin: "0 auto",
                     px: { xs: 2, md: 4 },
+                    py: 2, // padding above the subcategories
                   }}
                 >
                   {/* Left Column */}
@@ -124,12 +158,11 @@ const CategoryMenu: React.FC<CategoryMenuProps> = ({categories, onCategoryClick,
                     sx={{
                       width: "50%",
                       borderRight: "1px solid",
-                      borderColor: "grey.100",
-                      display: "flex",
-                      flexDirection: "column",
+                      borderColor: "grey.300",
+                      p: 2,
                     }}
                   >
-                    <List>
+                    <List sx={{ p: 0 }}>
                       {/* View All Parent Category Link */}
                       <ListItem disablePadding>
                         <ListItemButton
@@ -137,11 +170,10 @@ const CategoryMenu: React.FC<CategoryMenuProps> = ({categories, onCategoryClick,
                           sx={{
                             px: 1.5,
                             py: 1,
-                            pb: 1,
                             borderRadius: 1,
                             mb: 2,
                             borderBottom: "1px solid",
-                            borderColor: "grey.100",
+                            borderColor: "grey.300",
                             color: "blue.700",
                             fontWeight: 600,
                             "&:hover": {
@@ -149,7 +181,7 @@ const CategoryMenu: React.FC<CategoryMenuProps> = ({categories, onCategoryClick,
                             },
                           }}
                         >
-                          <Typography variant="body1">
+                          <Typography variant="body1" fontWeight={500} sx={{textDecoration: "underline", textUnderlineOffset: "4px"}}>
                             View All {category.name}
                           </Typography>
                         </ListItemButton>
@@ -200,72 +232,60 @@ const CategoryMenu: React.FC<CategoryMenuProps> = ({categories, onCategoryClick,
                     </List>
                   </Box>
 
-                  {/* Right Column */}
+                  {/* Right Column - Made consistent with left column */}
                   <Box sx={{ width: "50%", p: 2 }}>
                     {secondaryCategories.length > 0 ? (
-                      <Box>
-                        {/* view all link */}
+                      <List sx={{ p: 0 }}>
+                        {/* View All Primary Category Link */}
                         {hoveredPrimaryChild && (
-                          <Box
-                            sx={{
-                              mb: 2,
-                              pb: 1,
-                              borderBottom: "1px solid",
-                              borderColor: "grey.100",
-                            }}
-                          >
+                          <ListItem disablePadding>
                             <ListItemButton
-                              onClick={() =>
-                                onCategoryClick(hoveredPrimaryChild)
-                              }
+                              onClick={() => onCategoryClick(hoveredPrimaryChild)}
                               sx={{
                                 px: 1.5,
                                 py: 1,
                                 borderRadius: 1,
-                                textDecoration: "underline",
+                                mb: 2,
+                                borderBottom: "1px solid",
+                                borderColor: "grey.300",
                                 color: "blue.700",
                                 fontWeight: 600,
                                 "&:hover": {
+                                  backgroundColor: "blue.50",
+                                },
+                              }}
+                            >
+                              <Typography variant="body1" fontWeight={500} sx={{textDecoration: "underline", textUnderlineOffset: "4px"}}>
+                                All {hoveredPrimaryChild.name}
+                              </Typography>
+                            </ListItemButton>
+                          </ListItem>
+                        )}
+
+                        {/* List secondary children */}
+                        {secondaryCategories.map((sCat) => (
+                          <ListItem key={sCat.internalName} disablePadding>
+                            <ListItemButton
+                              onClick={() => onCategoryClick(sCat)}
+                              sx={{
+                                px: 1.5,
+                                py: 1,
+                                borderRadius: 1,
+                                color: "grey.700",
+                                width: "100%",
+                                "&:hover": {
                                   backgroundColor: "grey.100",
+                                  color: "blue.700",
                                 },
                               }}
                             >
                               <Typography variant="body1">
-                                All {hoveredPrimaryChild.name}
+                                {sCat.name}
                               </Typography>
                             </ListItemButton>
-                          </Box>
-                        )}
-
-                        <Box
-                          sx={{
-                            gap: 2,
-                          }}
-                        >
-                          {secondaryCategories.map((sCat) => (
-                            <ListItem key={sCat.internalName} disablePadding>
-                              <ListItemButton
-                                onClick={() => onCategoryClick(sCat)}
-                                sx={{
-                                  px: 1.5,
-                                  py: 1,
-                                  borderRadius: 1,
-                                  color: "grey.700",
-                                  width: "100%",
-                                  "&:hover": {
-                                    backgroundColor: "grey.100",
-                                    color: "blue.700",
-                                  },
-                                }}
-                              >
-                                <Typography variant="body1">
-                                  {sCat.name}
-                                </Typography>
-                              </ListItemButton>
-                            </ListItem>
-                          ))}
-                        </Box>
-                      </Box>
+                          </ListItem>
+                        ))}
+                      </List>
                     ) : (
                       <Typography
                         variant="body2"
