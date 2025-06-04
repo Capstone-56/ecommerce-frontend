@@ -104,7 +104,7 @@ const Navbar: React.FC = () => {
       <Paper elevation={0} sx={{ boxShadow: "0px 4px 8px rgba(55, 55, 55, 0.15)" }}>
         <Toolbar
           sx={{
-            backgroundColor: grey[50],
+            backgroundColor: common.white,
             justifyContent: { md: "space-evenly", xs: "space-between" , sm: "space-between"},
             px: 2,
           }}
@@ -204,6 +204,9 @@ const Navbar: React.FC = () => {
                   sx={{
                     "&:hover": {
                       color: grey[800],
+                      textDecoration: "underline",
+                      textUnderlineOffset: "8px",
+                      textDecorationThickness: "2px",
                     }
                   }}
                 >
