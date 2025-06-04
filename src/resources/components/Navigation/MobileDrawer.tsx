@@ -309,5 +309,5 @@ const MobileDrawer: React.FC<MobileDrawerProps> = ({
   );
 };
 
-export { type MenuItem }; // Exporting MenuItem type for external use if needed
+export { type MenuItem };
 export default MobileDrawer;
