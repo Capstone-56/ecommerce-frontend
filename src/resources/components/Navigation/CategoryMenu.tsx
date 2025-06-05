@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef} from "react";
 import {
   Box,
   Typography,
@@ -24,6 +24,7 @@ const CategoryMenu: React.FC<CategoryMenuProps> = ({categories, onCategoryClick,
   const [hoveredCategory, setHoveredCategory] = useState<CategoryModel | null>(null);
   const [hoveredPrimaryChild, setHoveredPrimaryChild] = useState<CategoryModel | null>(null);
   const [secondaryCategories, setSecondaryCategories] = useState<CategoryModel[]>([]);
+  const hideTimeout = useRef<NodeJS.Timeout | null>(null);
 
   // Update secondary categories when hoveredPrimaryChild changes
   useEffect(() => {
@@ -68,17 +69,20 @@ const CategoryMenu: React.FC<CategoryMenuProps> = ({categories, onCategoryClick,
   }, [categories]);
 
   const handleCategoryHover = (category: CategoryModel) => {
+    if (hideTimeout.current) clearTimeout(hideTimeout.current);
     setHoveredCategory(category);
     setHoveredPrimaryChild(null); // Reset when switching categories
   };
 
   const handleCategoryLeave = () => {
-    setHoveredCategory(null);
-    setHoveredPrimaryChild(null);
+    hideTimeout.current = setTimeout(() => {
+      setHoveredCategory(null);
+      setHoveredPrimaryChild(null); 
+    }, 120); // 120ms delay
   };
 
   return (
-    <Box sx={{ display: "flex", gap: { md: 2, lg: 6 } }}>
+    <Box sx={{ display: "flex", gap: { md: 2, lg: 2, xl: 4 }}}>
       {categories.map((category) => (
         <Box key={category.internalName}
           sx={{
@@ -122,6 +126,9 @@ const CategoryMenu: React.FC<CategoryMenuProps> = ({categories, onCategoryClick,
             category.children.length > 0 && (
               <Paper
                 elevation={1}
+                onMouseEnter={() => {
+                  if (hideTimeout.current) clearTimeout(hideTimeout.current);
+                }}
                 sx={{
                   position: "absolute",
                   top: "100%",
