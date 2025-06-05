@@ -1,6 +1,10 @@
-import React, { useState } from "react";
-import { Flare, KeyboardCommandKey, Menu as MenuIcon } from "@mui/icons-material";
-import ShoppingCartIcon from "@mui/icons-material/ShoppingCartOutlined";
+import React, { useEffect, useState } from "react";
+import {
+  KeyboardCommandKey,
+  Menu as MenuIcon,
+  ShoppingCartOutlined,
+  AccountCircle,
+} from "@mui/icons-material";
 import {
   AppBar,
   Box,
@@ -14,45 +18,42 @@ import {
   Badge,
   Link,
 } from "@mui/material";
-import { Link as RouterLink, useLocation } from "react-router-dom";
+import { Link as RouterLink, useLocation, useNavigate } from "react-router-dom";
 import { grey, common } from "@mui/material/colors";
 import { Constants } from "@/domain/constants";
-import { cartState } from "@/domain/state";
+import { AuthenticationState, cartState, UserState } from "@/domain/state";
+import { Role } from "@/domain/enum/role";
 import SearchBar from "@/resources/components/Search/SearchBar";
+import { AuthService } from "@/services/auth-service";
+import { StatusCodes } from "http-status-codes";
+import { UserService } from "@/services/user-service";
 
-// Should move to another file
-// const menus = ["Home", "Products", "Categories", "About"];
+// Menu Items
 const menus = [
-  { name: "Home", route: "/" },
-  { name: "Products", route: "/products" },
-  { name: "Categories", route: "/categories" },
-  { name: "About", route: "/about" },
+  { name: "Home", route: Constants.HOME_ROUTE },
+  { name: "Products", route: Constants.PRODUCTS_ROUTE },
+  { name: "Categories", route: Constants.CATEGORIES_ROUTE },
+  { name: "About", route: Constants.ABOUT_ROUTE },
 ];
-
-const LogoStyle = {
-  minHeight: "48px",
-  minWidth: "48px",
-  color: grey[900],
-  display: {
-    xs: "none",
-    md: "flex",
-  },
-};
-
-const TitleStyling = {
-  fontSize: { xs: "32px", md: "24px" },
-  color: grey[900],
-  "&:hover": {
-    color: grey[900],
-  },
-};
 
 const Navbar: React.FC = () => {
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
+  const [profileAnchorEl, setProfileAnchorEl] = useState<null | HTMLElement>(
+    null
+  );
+  const [userInformation, setUserInformation] = useState(null);
   const location = useLocation();
   const cart = cartState((state) => state.cart);
+  const isAuthenticated = AuthenticationState((state) => state.authenticated);
+  const username = UserState((state) => state.userName);
+  const authService = new AuthService();
+  const navigate = useNavigate();
 
-  // basically anchor is HTML element where mouse click happened
+  useEffect(() => {
+    fetchUser();
+  }, [isAuthenticated, username]);
+
+  // Menu handlers
   const handleMenuOpen = (event: React.MouseEvent<HTMLElement>) => {
     setAnchorEl(event.currentTarget);
   };
@@ -61,20 +62,57 @@ const Navbar: React.FC = () => {
     setAnchorEl(null);
   };
 
+  const handleProfileMenuOpen = (event: React.MouseEvent<HTMLElement>) => {
+    setProfileAnchorEl(event.currentTarget);
+  };
+
+  const handleProfileMenuClose = () => {
+    setProfileAnchorEl(null);
+  };
+
+  const handleLogout = async () => {
+    try {
+      const status = await authService.logout();
+
+      if (status === StatusCodes.OK) {
+        AuthenticationState.setState({ authenticated: false });
+        UserState.setState({ role: Role.CUSTOMER });
+        UserState.setState({ userName: null });
+        navigate(Constants.HOME_ROUTE);
+      }
+    } catch (error) {
+      console.error("Logout failed", error);
+    }
+  };
+
+  const fetchUser = async () => {
+    const userService = new UserService();
+    if (username) {
+      setUserInformation(await userService.getUser(username));
+    }
+  };
+
   return (
     <AppBar position="static" elevation={0}>
-      <Paper elevation={0} sx={{ boxShadow: "0px 4px 8px rgba(55, 55, 55, 0.15)" }}>
+      <Paper
+        elevation={0}
+        sx={{ boxShadow: "0px 4px 8px rgba(55, 55, 55, 0.15)" }}
+      >
         <Toolbar
           sx={{
             backgroundColor: grey[50],
-            justifyContent: { md: "space-evenly", xs: "space-between" , sm: "space-between"},
+            justifyContent: {
+              md: "space-evenly",
+              xs: "space-between",
+              sm: "space-between",
+            },
             px: 2,
           }}
         >
-          {/* Nav Menu on < md (uses MUI Menu component) */}
-          <Box 
+          {/* Nav Menu on < md - uses MUI Menu (i.e. dropdown) component */}
+          <Box
             sx={{
-            display: "flex"
+              display: "flex",
             }}
           >
             <Box
@@ -131,135 +169,188 @@ const Navbar: React.FC = () => {
                 alignItems: "center",
               }}
             >
-              <IconButton component={RouterLink} to={"/"} disableRipple>
-                <KeyboardCommandKey sx={{ ...LogoStyle }} />
+              <IconButton
+                component={RouterLink}
+                to={Constants.HOME_ROUTE}
+                disableRipple
+              >
+                <KeyboardCommandKey
+                  sx={{
+                    minHeight: "48px",
+                    minWidth: "48px",
+                    color: grey[900],
+                    display: {
+                      xs: "none",
+                      md: "flex",
+                    },
+                  }}
+                />
               </IconButton>
               <Typography
                 variant="h1"
                 component={RouterLink}
-                to={"/"}
+                to={Constants.HOME_ROUTE}
                 noWrap
-                sx={{ ...TitleStyling }}
+                sx={{
+                  fontSize: { xs: "32px", md: "24px" },
+                  color: grey[900],
+                  "&:hover": {
+                    color: grey[900],
+                  },
+                }}
               >
                 BDNX
               </Typography>
             </Box>
           </Box>
 
-          {/* Nav Menu on > md */}
+          {/* Nav Menu on > md breakpoint (shows all menu items) */}
           <Box
             sx={{
               display: { xs: "none", md: "flex" },
               flexDirection: "row",
-              justifyContent: "center", // Center the middle links
-              gap: { md: 2, lg: 6}, // Add spacing between links
+              justifyContent: "center",
+              gap: { md: 2, lg: 6 },
             }}
           >
             {menus.map((menuItem) => (
               <Link
-              key={menuItem.name}
-              component={RouterLink}
-              to={menuItem.route}
-              sx={{
-                textDecoration: "none",
-                color:
-                  location.pathname === menuItem.route
-                    ? grey[900]
-                    : grey[600],
-                fontWeight:
-                  location.pathname === menuItem.route ? "bold" : "normal",
-                "&:hover": {
-                  backgroundColor: "inherit",
-                },
-              }}
-            >
-              <Typography
-                textTransform="none"
-                variant="subtitle1"
-                fontWeight="500"
+                key={menuItem.name}
+                component={RouterLink}
+                to={menuItem.route}
+                sx={{
+                  textDecoration: "none",
+                  color:
+                    location.pathname === menuItem.route
+                      ? grey[900]
+                      : grey[600],
+                  fontWeight:
+                    location.pathname === menuItem.route ? "bold" : "normal",
+                  "&:hover": {
+                    backgroundColor: "inherit",
+                  },
+                }}
               >
-                {menuItem.name}
-              </Typography>
-            </Link>
+                <Typography
+                  textTransform="none"
+                  variant="subtitle1"
+                  fontWeight="500"
+                >
+                  {menuItem.name}
+                </Typography>
+              </Link>
             ))}
           </Box>
-          
+
           {/* Cart and User related Buttons */}
           <Box
             sx={{
               display: "flex",
               flexDirection: "row",
-              gap: 1,
               alignItems: "center",
+              gap: 1,
             }}
           >
             {/* Add SearchBar */}
-            <Box sx={{display: "flex",}}>
+            <Box sx={{ display: "flex" }}>
               <SearchBar />
             </Box>
             <IconButton component={RouterLink} to={Constants.CART_ROUTE}>
-              <ShoppingCartIcon 
-                sx={{ 
-                  color: location.pathname === Constants.CART_ROUTE ? common.black : grey
+              <ShoppingCartOutlined
+                sx={{
+                  color:
+                    location.pathname === Constants.CART_ROUTE
+                      ? common.black
+                      : grey,
                 }}
-                fontSize="medium">
-              </ShoppingCartIcon>
-              <Badge 
+                fontSize="medium"
+              ></ShoppingCartOutlined>
+              <Badge
                 badgeContent={cart.length}
                 color="primary"
                 sx={{
-                  '& .MuiBadge-badge': {
-                    top: -15, 
-                    fontSize: '0.6rem',
-                    height: '16px',
-                    minWidth: '16px',
-                    padding: '0 4px',
+                  "& .MuiBadge-badge": {
+                    top: -15,
+                    fontSize: "0.6rem",
+                    height: "16px",
+                    minWidth: "16px",
+                    padding: "0 4px",
                   },
                 }}
-                >
-              </Badge>
+              ></Badge>
             </IconButton>
-            {/* LOGIN button with RouterLink to /login */}
-            <Button
-              component={RouterLink}
-              to="/login"
-              variant="outlined"
-              sx={{
-                bgcolor: grey[50],
-                color: grey[900],
-                borderColor: grey[900],
-                borderRadius: "8px",
-                textDecoration: "none",
-                "&:hover": {
-                  bgcolor: grey[100],
-                  borderColor: grey[900],
-                },
-              }}
-            >
-              <Typography fontWeight="500" textTransform="none">
-                Login
-              </Typography>
-            </Button>
 
-            {/*SIGN UP button with RouterLink to /signup */}
-            <Button
-              component={RouterLink}
-              to="/signup"
-              variant="contained"
-              sx={{
-                bgcolor: grey[900],
-                color: grey[50],
-                borderRadius: "8px",
-                textDecoration: "none",
-                "&:hover": {
-                  bgcolor: grey[800],
-                },
-              }}
-            >
-              <Typography fontWeight="500" textTransform="none">
-                Sign up
-              </Typography>
-            </Button>
+            {isAuthenticated && userInformation ? (
+              <>
+                <IconButton onClick={handleProfileMenuOpen}>
+                  <AccountCircle />
+                </IconButton>
+                <Menu
+                  anchorEl={profileAnchorEl}
+                  open={Boolean(profileAnchorEl)}
+                  onClose={handleProfileMenuClose}
+                  anchorOrigin={{
+                    vertical: "bottom",
+                    horizontal: "right",
+                  }}
+                  transformOrigin={{
+                    vertical: "top",
+                    horizontal: "right",
+                  }}
+                >
+                  <MenuItem
+                    component={RouterLink}
+                    to={Constants.PROFILE_ROUTE}
+                    onClick={handleProfileMenuClose}
+                  >
+                    Profile
+                  </MenuItem>
+                  <MenuItem onClick={handleLogout}>Logout</MenuItem>
+                </Menu>
+              </>
+            ) : (
+              <>
+                <Button
+                  component={RouterLink}
+                  to={Constants.LOGIN_ROUTE}
+                  variant="outlined"
+                  sx={{
+                    bgcolor: grey[50],
+                    color: grey[900],
+                    borderColor: grey[900],
+                    borderRadius: "8px",
+                    textDecoration: "none",
+                    "&:hover": {
+                      bgcolor: grey[100],
+                      borderColor: grey[900],
+                    },
+                  }}
+                >
+                  <Typography fontWeight="500" textTransform="none">
+                    Login
+                  </Typography>
+                </Button>
+
+                <Button
+                  component={RouterLink}
+                  to={Constants.SIGNUP_ROUTE}
+                  variant="contained"
+                  sx={{
+                    bgcolor: grey[900],
+                    color: grey[50],
+                    borderRadius: "8px",
+                    textDecoration: "none",
+                    "&:hover": {
+                      bgcolor: grey[800],
+                    },
+                  }}
+                >
+                  <Typography fontWeight="500" textTransform="none">
+                    Sign up
+                  </Typography>
+                </Button>
+              </>
+            )}
           </Box>
         </Toolbar>
       </Paper>
