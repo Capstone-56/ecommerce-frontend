@@ -23,23 +23,28 @@ import Paginator from "@/resources/components/Pagination/Paginator";
 import ProductCard from "@/resources/components/ProductCard/ProductCard";
 import Filter from "@/resources/components/Filter/Filter";
 import DynamicBreadcrumbs from '@/resources/components/Navigation/DynamicBreadcrumbs';
+import { Constants } from "@/domain/constants";
 
 export default function Products() {
   const [products, setProducts] = useState<PagedList<ProductModel>>();
   const [searchParams, setSearchParams] = useSearchParams();
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
-  
+
   /**
    * Extract values from URL search parameters.
    */
-  const currentPage = parseInt(searchParams.get('page') || '1', 10);
-  const pageSize = parseInt(searchParams.get('pageSize') || '10', 10);
-  const sortOption = searchParams.get('sort') || undefined;
-  const colourFilter = searchParams.get('colour') || undefined;
-  const categoriesFilter = searchParams.get('categories') || undefined;
-  const priceMinFilter = searchParams.get('priceMin') ? parseFloat(searchParams.get('priceMin')!) : undefined;
-  const priceMaxFilter = searchParams.get('priceMax') ? parseFloat(searchParams.get('priceMax')!) : undefined;
-  const searchFilter = searchParams.get('search') || undefined;
+  const currentPage = parseInt(searchParams.get("page") || "1", 10);
+  const pageSize = parseInt(searchParams.get("pageSize") || "10", 10);
+  const sortOption = searchParams.get("sort") || undefined;
+  const colourFilter = searchParams.get("colour") || undefined;
+  const categoriesFilter = searchParams.get("categories") || undefined;
+  const priceMinFilter = searchParams.get("priceMin")
+    ? parseFloat(searchParams.get("priceMin")!)
+    : undefined;
+  const priceMaxFilter = searchParams.get("priceMax")
+    ? parseFloat(searchParams.get("priceMax")!)
+    : undefined;
+  const searchFilter = searchParams.get("search") || undefined;
 
   /**
    * A useEffect required to get product data upon mount and when URL changes.
@@ -73,8 +78,8 @@ export default function Products() {
 
   // Update page parameter
   const handlePageChange = (page: number) => {
-    setSearchParams(params => {
-      params.set('page', page.toString());
+    setSearchParams((params) => {
+      params.set("page", page.toString());
       return params;
     });
   };
@@ -89,20 +94,24 @@ export default function Products() {
 
   // Update sort parameter, reset page to 1
   const handleSortChange = (sort: string) => {
-    setSearchParams(params => {
-      params.set('sort', sort);
-      params.set('page', '1');
+    setSearchParams((params) => {
+      params.set("sort", sort);
+      params.set("page", "1");
       return params;
     });
     handleSortMenuClose();
   };
-  
+
   const getSortLabel = () => {
     switch (sortOption) {
-      case 'featured': return 'Featured';
-      case 'priceAsc': return 'Price: Low to High';
-      case 'priceDesc': return 'Price: High to Low';
-      default: return 'Default';
+      case "featured":
+        return "Featured";
+      case "priceAsc":
+        return "Price: Low to High";
+      case "priceDesc":
+        return "Price: High to Low";
+      default:
+        return "Default";
     }
   };
 
@@ -130,7 +139,7 @@ export default function Products() {
               }}
             >
               {/* Filters section */}
-                <Filter />
+              <Filter />
 
               {/* Product listing */}
               <Box sx={{ flex: 1 }}>
@@ -162,23 +171,31 @@ export default function Products() {
                       onClick={handleSortMenuOpen}
                       endIcon={<ExpandMoreIcon />}
                       sx={{
-                        border: '1px solidrgb(255, 255, 255)', // Golden border like in Image 1
-                        borderRadius: '8px',
-                        color: 'text.primary',
-                        padding: '8px 16px',
-                        textTransform: 'none',
-                        fontWeight: 'normal',
-                        boxShadow: 'none',
-                        '&:hover': {
-                          borderColor: '#F2D48F',
-                          backgroundColor: 'rgba(242, 212, 143, 0.04)'
-                        }
+                        border: "1px solidrgb(255, 255, 255)", // Golden border like in Image 1
+                        borderRadius: "8px",
+                        color: "text.primary",
+                        padding: "8px 16px",
+                        textTransform: "none",
+                        fontWeight: "normal",
+                        boxShadow: "none",
+                        "&:hover": {
+                          borderColor: "#F2D48F",
+                          backgroundColor: "rgba(242, 212, 143, 0.04)",
+                        },
                       }}
                     >
-                      <Typography variant="body2" component="span" sx={{ fontWeight: 'normal', mr: 1 }}>
+                      <Typography
+                        variant="body2"
+                        component="span"
+                        sx={{ fontWeight: "normal", mr: 1 }}
+                      >
                         Sort By:
                       </Typography>
-                      <Typography variant="body2" component="span" sx={{ color: 'text.secondary' }}>
+                      <Typography
+                        variant="body2"
+                        component="span"
+                        sx={{ color: "text.secondary" }}
+                      >
                         {getSortLabel()}
                       </Typography>
                     </Button>
@@ -189,31 +206,40 @@ export default function Products() {
                       slotProps={{
                         paper: {
                           sx: {
-                            width: '200px',
-                            borderRadius: '8px',
+                            width: "200px",
+                            borderRadius: "8px",
                             mt: 1,
-                            boxShadow: '0 4px 12px rgba(0,0,0,0.1)'
-                          }
-                        }
+                            boxShadow: "0 4px 12px rgba(0,0,0,0.1)",
+                          },
+                        },
                       }}
-                      transformOrigin={{ horizontal: 'center', vertical: 'top' }}
-                      anchorOrigin={{ horizontal: 'center', vertical: 'bottom' }}
+                      transformOrigin={{
+                        horizontal: "center",
+                        vertical: "top",
+                      }}
+                      anchorOrigin={{
+                        horizontal: "center",
+                        vertical: "bottom",
+                      }}
                     >
-                      <MenuItem 
-                        onClick={() => handleSortChange('featured')}
+                      <MenuItem
+                        onClick={() => handleSortChange("featured")}
                         sx={{ py: 1.5 }}
                       >
                         Featured
                       </MenuItem>
-                      <MenuItem 
-                        onClick={() => handleSortChange('priceDesc')}
-                        sx={{ 
-                          py: 1.5, 
+                      <MenuItem
+                        onClick={() => handleSortChange("priceDesc")}
+                        sx={{
+                          py: 1.5,
                         }}
                       >
                         Price: High-Low
                       </MenuItem>
-                      <MenuItem onClick={() => handleSortChange('priceAsc')} sx={{ py: 1.5 }}>
+                      <MenuItem
+                        onClick={() => handleSortChange("priceAsc")}
+                        sx={{ py: 1.5 }}
+                      >
                         Price: Low-High
                       </MenuItem>
                     </Menu>

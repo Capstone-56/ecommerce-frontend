@@ -1,6 +1,9 @@
-import React, { useState, useEffect } from "react";
 import { Menu as MenuIcon, Search as SearchIcon, ChevronLeft} from "@mui/icons-material";
-import ShoppingCartIcon from "@mui/icons-material/ShoppingCartOutlined";
+import React, { useEffect, useState } from "react";
+import {
+  ShoppingCartOutlined,
+  AccountCircle,
+} from "@mui/icons-material";
 import {
   AppBar,
   Box,
@@ -11,48 +14,46 @@ import {
   Paper,
   Badge,
   Drawer,
+  MenuItem,
+  Menu,
 } from "@mui/material";
-import { NavLink, Link as RouterLink, useLocation } from "react-router-dom";
+import { NavLink, Link as RouterLink, useLocation, useNavigate } from "react-router-dom";
 import { grey, common } from "@mui/material/colors";
 import { Constants } from "@/domain/constants";
-import { cartState } from "@/domain/state";
 import { CategoryModel } from "@/domain/models/CategoryModel";
 import { CategoryService } from "@/services/category-service";
 import CategoryMenu from "./CategoryMenu";
 import MobileDrawer from "./MobileDrawer";
+import { AuthenticationState, cartState, UserState } from "@/domain/state";
+import { Role } from "@/domain/enum/role";
 import SearchBar from "@/resources/components/Search/SearchBar";
+import { AuthService } from "@/services/auth-service";
+import { StatusCodes } from "http-status-codes";
+import { UserService } from "@/services/user-service";
 
+// Menu Items
 // Should move to another file
 // const menus = ["Home", "Products", "About"];
 const menus = [
-  { name: "Home", route: "/" },
-  //{ name: "Products", route: "/products" },
-  { name: "About", route: "/about" },
+  { name: "Home", route: Constants.HOME_ROUTE },
+  { name: "Products", route: Constants.PRODUCTS_ROUTE },
+  { name: "Categories", route: Constants.CATEGORIES_ROUTE },
+  { name: "About", route: Constants.ABOUT_ROUTE },
 ];
-
-const LogoStyle = {
-  minHeight: "48px",
-  minWidth: "48px",
-  color: grey[900],
-  display: {
-    xs: "none",
-    md: "flex",
-  },
-};
-
-const TitleStyling = {
-  fontSize: { xs: "32px", md: "24px" },
-  color: grey[900],
-  "&:hover": {
-    color: grey[900],
-  },
-};
 
 const Navbar: React.FC = () => {
   const [mobileDrawerOpen, setMobileDrawerOpen] = useState(false);
   const [searchDrawerOpen, setSearchDrawerOpen] = useState(false);
+  const [profileAnchorEl, setProfileAnchorEl] = useState<null | HTMLElement>(
+    null
+  );
+  const [userInformation, setUserInformation] = useState(null);
   const location = useLocation();
   const cart = cartState((state) => state.cart);
+  const isAuthenticated = AuthenticationState((state) => state.authenticated);
+  const username = UserState((state) => state.userName);
+  const authService = new AuthService();
+  const navigate = useNavigate();
 
   // Category related state
   const [categories, setCategories] = useState<CategoryModel[]>([]);
@@ -85,11 +86,15 @@ const Navbar: React.FC = () => {
     fetchCategories();
   }, []);
 
-    const handleCategoryClick = (category: CategoryModel) => {
+  const handleCategoryClick = (category: CategoryModel) => {
     // Navigate to products page with category filter
     const categoryParam = category.internalName;
     window.location.href = `/products?categories=${categoryParam}`;
   };
+
+  useEffect(() => {
+    fetchUser();
+  }, [isAuthenticated, username]);
 
   const handleMobileMenuOpen = () => {
     setMobileDrawerOpen(true);
@@ -107,9 +112,43 @@ const Navbar: React.FC = () => {
     setSearchDrawerOpen(false);
   };
 
+
+  const fetchUser = async () => {
+    const userService = new UserService();
+    if (username) {
+      setUserInformation(await userService.getUser(username));
+    }
+  };
+
+  const handleProfileMenuOpen = (event: React.MouseEvent<HTMLElement>) => {
+    setProfileAnchorEl(event.currentTarget);
+  };
+
+  const handleProfileMenuClose = () => {
+    setProfileAnchorEl(null);
+  };
+
+  const handleLogout = async () => {
+    try {
+      const status = await authService.logout();
+
+      if (status === StatusCodes.OK) {
+        AuthenticationState.setState({ authenticated: false });
+        UserState.setState({ role: Role.CUSTOMER });
+        UserState.setState({ userName: null });
+        navigate(Constants.HOME_ROUTE);
+      }
+    } catch (error) {
+      console.error("Logout failed", error);
+    }
+  };
+
   return (
     <AppBar position="static" elevation={0}>
-      <Paper elevation={0} sx={{ boxShadow: "0px 4px 8px rgba(55, 55, 55, 0.15)" }}>
+      <Paper
+        elevation={0}
+        sx={{ boxShadow: "0px 4px 8px rgba(55, 55, 55, 0.15)" }}
+      >
         <Toolbar
           sx={{
             backgroundColor: common.white,
@@ -141,9 +180,15 @@ const Navbar: React.FC = () => {
               <Typography
                 variant="h1"
                 component={RouterLink}
-                to={"/"}
+                to={Constants.HOME_ROUTE}
                 noWrap
-                sx={{ ...TitleStyling }}
+                sx={{
+                  fontSize: { xs: "32px", md: "24px" },
+                  color: grey[900],
+                  "&:hover": {
+                    color: grey[900],
+                  },
+                }}
               >
                 BDNX
               </Typography>
@@ -156,8 +201,8 @@ const Navbar: React.FC = () => {
               display: { xs: "none", md: "none", lg: "flex" },
               alignItems: "center",
               flexDirection: "row",
-              justifyContent: "center", // Center the middle links
-              gap: { md: 2, lg: 6}, // Add spacing between links
+              justifyContent: "center",
+              gap: { md: 2, lg: 6 },
             }}
           >
             {/* Categories with mega dropdown */}
@@ -178,14 +223,14 @@ const Navbar: React.FC = () => {
               />
             )}
           </Box>
-          
+
           {/* Cart and User related Buttons */}
           <Box
             sx={{
               display: "flex",
               flexDirection: "row",
-              gap: 1,
               alignItems: "center",
+              gap: 1,
             }}
           >
             {/* Desktop SearchBar */}
@@ -206,68 +251,101 @@ const Navbar: React.FC = () => {
 
             {/* Cart Button */}
             <IconButton component={RouterLink} to={Constants.CART_ROUTE}>
-              <ShoppingCartIcon 
-                sx={{ 
-                  color: location.pathname === Constants.CART_ROUTE ? common.black : grey
+              <ShoppingCartOutlined
+                sx={{
+                  color:
+                    location.pathname === Constants.CART_ROUTE
+                      ? common.black
+                      : grey,
                 }}
-                fontSize="medium">
-              </ShoppingCartIcon>
-              <Badge 
+                fontSize="medium"
+              ></ShoppingCartOutlined>
+              <Badge
                 badgeContent={cart.length}
                 color="primary"
                 sx={{
-                  '& .MuiBadge-badge': {
-                    top: -15, 
-                    fontSize: '0.6rem',
-                    height: '16px',
-                    minWidth: '16px',
-                    padding: '0 4px',
+                  "& .MuiBadge-badge": {
+                    top: -15,
+                    fontSize: "0.6rem",
+                    height: "16px",
+                    minWidth: "16px",
+                    padding: "0 4px",
                   },
                 }}
-                >
-              </Badge>
+              ></Badge>
             </IconButton>
-            {/* LOGIN button with RouterLink to /login */}
-            <Button
-              component={RouterLink}
-              to="/login"
-              variant="outlined"
-              sx={{
-                bgcolor: grey[50],
-                color: grey[900],
-                borderColor: grey[900],
-                borderRadius: "8px",
-                textDecoration: "none",
-                "&:hover": {
-                  bgcolor: grey[100],
-                  borderColor: grey[900],
-                },
-              }}
-            >
-              <Typography fontWeight="500" textTransform="none">
-                Login
-              </Typography>
-            </Button>
 
-            {/*SIGN UP button with RouterLink to /signup */}
-            <Button
-              component={RouterLink}
-              to="/signup"
-              variant="contained"
-              sx={{
-                bgcolor: grey[900],
-                color: grey[50],
-                borderRadius: "8px",
-                textDecoration: "none",
-                "&:hover": {
-                  bgcolor: grey[800],
-                },
-              }}
-            >
-              <Typography fontWeight="500" textTransform="none">
-                Sign up
-              </Typography>
-            </Button>
+            {isAuthenticated && userInformation ? (
+              <>
+                <IconButton onClick={handleProfileMenuOpen}>
+                  <AccountCircle />
+                </IconButton>
+                <Menu
+                  anchorEl={profileAnchorEl}
+                  open={Boolean(profileAnchorEl)}
+                  onClose={handleProfileMenuClose}
+                  anchorOrigin={{
+                    vertical: "bottom",
+                    horizontal: "right",
+                  }}
+                  transformOrigin={{
+                    vertical: "top",
+                    horizontal: "right",
+                  }}
+                >
+                  <MenuItem
+                    component={RouterLink}
+                    to={Constants.PROFILE_ROUTE}
+                    onClick={handleProfileMenuClose}
+                  >
+                    Profile
+                  </MenuItem>
+                  <MenuItem onClick={handleLogout}>Logout</MenuItem>
+                </Menu>
+              </>
+            ) : (
+              <>
+                <Button
+                  component={RouterLink}
+                  to={Constants.LOGIN_ROUTE}
+                  variant="outlined"
+                  sx={{
+                    bgcolor: grey[50],
+                    color: grey[900],
+                    borderColor: grey[900],
+                    borderRadius: "8px",
+                    textDecoration: "none",
+                    "&:hover": {
+                      bgcolor: grey[100],
+                      borderColor: grey[900],
+                    },
+                  }}
+                >
+                  <Typography fontWeight="500" textTransform="none">
+                    Login
+                  </Typography>
+                </Button>
+
+                <Button
+                  component={RouterLink}
+                  to={Constants.SIGNUP_ROUTE}
+                  variant="contained"
+                  sx={{
+                    bgcolor: grey[900],
+                    color: grey[50],
+                    borderRadius: "8px",
+                    textDecoration: "none",
+                    "&:hover": {
+                      bgcolor: grey[800],
+                    },
+                  }}
+                >
+                  <Typography fontWeight="500" textTransform="none">
+                    Sign up
+                  </Typography>
+                </Button>
+              </>
+            )}
           </Box>
         </Toolbar>
       </Paper>

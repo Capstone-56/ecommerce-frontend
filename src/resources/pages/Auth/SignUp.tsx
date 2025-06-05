@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState } from "react";
 import {
   Box,
   Button,
@@ -7,26 +7,26 @@ import {
   Link,
   TextField,
   Typography,
-  CircularProgress
-} from '@mui/material';
-import { Visibility, VisibilityOff } from '@mui/icons-material';
+  CircularProgress,
+} from "@mui/material";
+import { Visibility, VisibilityOff } from "@mui/icons-material";
 import api from "@/api";
-import { StatusCodes } from 'http-status-codes';
+import { StatusCodes } from "http-status-codes";
 import { AuthenticationState, UserState } from "@/domain/state";
 import { Role } from "@/domain/enum/role";
 import { UserSignUpModel } from "@/domain/models/UserModel";
-import { useNavigate } from 'react-router-dom';
-import { toast } from 'react-toastify';
+import { useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
 
 const SignUp: React.FC = () => {
   const [form, setForm] = useState({
-    username: '',
-    email: '',
-    firstName: '',
-    lastName: '',
-    phone: '',
-    password: '',
-    confirmPassword: '',
+    username: "",
+    email: "",
+    firstName: "",
+    lastName: "",
+    phone: "",
+    password: "",
+    confirmPassword: "",
   });
 
   const [showPassword, setShowPassword] = useState(false);
@@ -40,7 +40,8 @@ const SignUp: React.FC = () => {
   };
 
   const handleSubmit = async () => {
-    if (form.password !== form.confirmPassword) return toast.error('Passwords do not match');
+    if (form.password !== form.confirmPassword)
+      return toast.error("Passwords do not match");
     setLoading(true);
     try {
       const user: UserSignUpModel = {
@@ -61,9 +62,9 @@ const SignUp: React.FC = () => {
         toast.success("Account created successfully");
 
         navigate("/");
-      };
+      }
     } catch (err: any) {
-      toast.error(err?.response?.data?.detail || 'Signup failed');
+      toast.error(err?.response?.data?.detail || "Signup failed");
     } finally {
       setLoading(false);
     }
@@ -73,26 +74,31 @@ const SignUp: React.FC = () => {
     <Box
       sx={{
         maxWidth: 400,
-        mx: 'auto',
+        mx: "auto",
         mt: 10,
         px: 3,
         py: 4,
         boxShadow: 3,
         borderRadius: 2,
-        bgcolor: 'background.paper',
-        textAlign: 'center',
+        bgcolor: "background.paper",
+        textAlign: "center",
       }}
     >
-      <Typography variant="h4" fontWeight="bold" gutterBottom sx={{ color: 'black' }}>
+      <Typography
+        variant="h4"
+        fontWeight="bold"
+        gutterBottom
+        sx={{ color: "black" }}
+      >
         Create Account
       </Typography>
 
       {[
-        { label: 'Username', name: 'username', type: 'text' },
-        { label: 'First Name', name: 'firstName', type: 'text' },
-        { label: 'Last Name', name: 'lastName', type: 'text' },
-        { label: 'Phone', name: 'phone', type: 'tel' },
-        { label: 'Email', name: 'email', type: 'email' },
+        { label: "Username", name: "username", type: "text" },
+        { label: "First Name", name: "firstName", type: "text" },
+        { label: "Last Name", name: "lastName", type: "text" },
+        { label: "Phone", name: "phone", type: "tel" },
+        { label: "Email", name: "email", type: "email" },
       ].map((field) => (
         <TextField
           key={field.name}
@@ -104,8 +110,12 @@ const SignUp: React.FC = () => {
           value={form[field.name as keyof typeof form]}
           onChange={handleChange}
           required
-          error={field.name === 'username' && usernameTaken}
-          helperText={field.name === 'username' && usernameTaken ? 'Username already exists' : ''}
+          error={field.name === "username" && usernameTaken}
+          helperText={
+            field.name === "username" && usernameTaken
+              ? "Username already exists"
+              : ""
+          }
         />
       ))}
 
@@ -115,7 +125,7 @@ const SignUp: React.FC = () => {
         margin="normal"
         label="Password"
         name="password"
-        type={showPassword ? 'text' : 'password'}
+        type={showPassword ? "text" : "password"}
         value={form.password}
         onChange={handleChange}
         required
@@ -136,7 +146,7 @@ const SignUp: React.FC = () => {
         margin="normal"
         label="Confirm Password"
         name="confirmPassword"
-        type={showConfirm ? 'text' : 'password'}
+        type={showConfirm ? "text" : "password"}
         value={form.confirmPassword}
         onChange={handleChange}
         required
@@ -155,15 +165,27 @@ const SignUp: React.FC = () => {
       <Button
         fullWidth
         variant="contained"
-        sx={{ mt: 3, backgroundColor: 'black', color: 'white', '&:hover': { backgroundColor: '#333' } }}
+        sx={{
+          mt: 3,
+          backgroundColor: "black",
+          color: "white",
+          "&:hover": { backgroundColor: "#333" },
+        }}
         onClick={handleSubmit}
         disabled={loading || usernameTaken}
       >
-        {loading ? <CircularProgress size={24} color="inherit" /> : 'Create Account'}
+        {loading ? (
+          <CircularProgress size={24} color="inherit" />
+        ) : (
+          "Create Account"
+        )}
       </Button>
 
-      <Typography variant="body2" mt={2} sx={{ color: 'black' }}>
-        Already a member? <Link href="/login" underline="hover">Log In</Link>
+      <Typography variant="body2" mt={2} sx={{ color: "black" }}>
+        Already a member?{" "}
+        <Link href="/login" underline="hover">
+          Log In
+        </Link>
       </Typography>
     </Box>
   );

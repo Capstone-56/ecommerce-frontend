@@ -42,7 +42,7 @@ const Login: React.FC = () => {
         UserState.setState({ userName: form.username });
       }
 
-      // navigate to dashboard
+      // navigate to dashboard TODO: PA-164
       navigate("/");
     } catch (err: any) {
       console.error("Login error:", err?.response?.data || err);
@@ -68,7 +68,12 @@ const Login: React.FC = () => {
         textAlign: "center",
       }}
     >
-      <Typography variant="h4" fontWeight="bold" gutterBottom sx={{ color: "black" }}>
+      <Typography
+        variant="h4"
+        fontWeight="bold"
+        gutterBottom
+        sx={{ color: "black" }}
+      >
         Login
       </Typography>
 
@@ -93,8 +98,15 @@ const Login: React.FC = () => {
         onChange={handleChange}
         InputProps={{
           endAdornment: (
-            <Box sx={{ cursor: "pointer" }} onClick={() => setShowPassword(!showPassword)}>
-              {showPassword ? <VisibilityOff fontSize="small" /> : <Visibility fontSize="small" />}
+            <Box
+              sx={{ cursor: "pointer" }}
+              onClick={() => setShowPassword(!showPassword)}
+            >
+              {showPassword ? (
+                <VisibilityOff fontSize="small" />
+              ) : (
+                <Visibility fontSize="small" />
+              )}
             </Box>
           ),
         }}
@@ -124,7 +136,11 @@ const Login: React.FC = () => {
           "&:hover": { backgroundColor: "#333" },
         }}
       >
-        {loading ? <CircularProgress size={24} sx={{ color: "white" }} /> : "LOG IN"}
+        {loading ? (
+          <CircularProgress size={24} sx={{ color: "white" }} />
+        ) : (
+          "LOG IN"
+        )}
       </Button>
 
       <Box mt={2}>
