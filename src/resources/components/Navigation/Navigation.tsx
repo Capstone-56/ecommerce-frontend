@@ -1,10 +1,10 @@
 import React, { useState } from "react";
 import {
-  Flare,
   KeyboardCommandKey,
   Menu as MenuIcon,
+  ShoppingCartOutlined,
+  AccountCircle,
 } from "@mui/icons-material";
-import ShoppingCartIcon from "@mui/icons-material/ShoppingCartOutlined";
 import {
   AppBar,
   Box,
@@ -33,6 +33,7 @@ const menus = [
   { name: "About", route: Constants.ABOUT_ROUTE },
 ];
 
+// Styles
 const LogoStyle = {
   minHeight: "48px",
   minWidth: "48px",
@@ -53,18 +54,29 @@ const TitleStyling = {
 
 const Navbar: React.FC = () => {
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
+  const [profileAnchorEl, setProfileAnchorEl] = useState<null | HTMLElement>(
+    null
+  );
   const location = useLocation();
   const cart = cartState((state) => state.cart);
-  const userRole = UserState((state) => state.role);
   const auth = AuthenticationState((state) => state.authenticated);
 
-  // basically anchor is HTML element where mouse click happened
+  // handlers for nav menu links on small screen (left)
   const handleMenuOpen = (event: React.MouseEvent<HTMLElement>) => {
     setAnchorEl(event.currentTarget);
   };
 
   const handleMenuClose = () => {
     setAnchorEl(null);
+  };
+
+  // handlers for profile menu (right)
+  const handleProfileMenuOpen = (event: React.MouseEvent<HTMLElement>) => {
+    setProfileAnchorEl(event.currentTarget);
+  };
+
+  const handleProfileMenuClose = () => {
+    setProfileAnchorEl(null);
   };
 
   return (
@@ -215,7 +227,7 @@ const Navbar: React.FC = () => {
               <SearchBar />
             </Box>
             <IconButton component={RouterLink} to={Constants.CART_ROUTE}>
-              <ShoppingCartIcon
+              <ShoppingCartOutlined
                 sx={{
                   color:
                     location.pathname === Constants.CART_ROUTE
@@ -223,7 +235,7 @@ const Navbar: React.FC = () => {
                       : grey,
                 }}
                 fontSize="medium"
-              ></ShoppingCartIcon>
+              ></ShoppingCartOutlined>
               <Badge
                 badgeContent={cart.length}
                 color="primary"
@@ -239,8 +251,18 @@ const Navbar: React.FC = () => {
               ></Badge>
             </IconButton>
 
-            {userRole && auth ? (
-              <div>Hello I am logged in!</div>
+            {auth ? (
+              <>
+                <IconButton onClick={handleProfileMenuOpen}>
+                  <AccountCircle />
+                </IconButton>
+                <Menu
+                  anchorEl={profileAnchorEl}
+                  open={Boolean(profileAnchorEl)}
+                >
+                  <MenuItem onClick={handleProfileMenuClose}>Profile</MenuItem>
+                </Menu>
+              </>
             ) : (
               <>
                 <Button
