@@ -39,6 +39,7 @@ export default function Products() {
   const categoriesFilter = searchParams.get('categories') || undefined;
   const priceMinFilter = searchParams.get('priceMin') ? parseFloat(searchParams.get('priceMin')!) : undefined;
   const priceMaxFilter = searchParams.get('priceMax') ? parseFloat(searchParams.get('priceMax')!) : undefined;
+  const searchFilter = searchParams.get('search') || undefined;
 
   /**
    * A useEffect required to get product data upon mount and when URL changes.
@@ -61,7 +62,8 @@ export default function Products() {
         priceMaxFilter,
         sortOption,
         colourFilter,
-        categoriesFilter
+        categoriesFilter,
+        searchFilter
       );
       setProducts(result);
     } catch (error) {

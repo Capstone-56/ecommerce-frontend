@@ -22,6 +22,7 @@ import { CategoryModel } from "@/domain/models/CategoryModel";
 import { CategoryService } from "@/services/category-service";
 import CategoryMenu from "./CategoryMenu";
 import MobileDrawer from "./MobileDrawer";
+import SearchBar from "@/resources/components/Search/SearchBar";
 
 // Should move to another file
 // const menus = ["Home", "Products", "About"];
@@ -185,15 +186,20 @@ const Navbar: React.FC = () => {
               />
             )}
           </Box>
-
+          
           {/* Cart and User related Buttons */}
           <Box
             sx={{
               display: "flex",
               flexDirection: "row",
               gap: 1,
+              alignItems: "center",
             }}
           >
+            {/* Add SearchBar */}
+            <Box sx={{display: "flex",}}>
+              <SearchBar />
+            </Box>
             <IconButton component={RouterLink} to={Constants.CART_ROUTE}>
               <ShoppingCartIcon 
                 sx={{ 

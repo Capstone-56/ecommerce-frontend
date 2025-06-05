@@ -6,14 +6,15 @@ import { ThemeProvider, createTheme, CssBaseline, GlobalStyles } from "@mui/mate
 import { themeOptions } from "./assets/theme/theme";
 
 import { router } from "./router/router.tsx";
+import { Slide, ToastContainer } from "react-toastify";
 
 const customTheme = createTheme(themeOptions);
 
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
     <ThemeProvider theme={customTheme}>
-    <CssBaseline />
-    <GlobalStyles
+      <CssBaseline />
+      <GlobalStyles
         styles={{
           "input:-webkit-autofill": {
             WebkitBoxShadow: "0 0 0 1000px white inset",
@@ -24,6 +25,19 @@ createRoot(document.getElementById("root")!).render(
         }}
       />
       <RouterProvider router={router} />
+      <ToastContainer
+        position="bottom-center"
+        autoClose={3000}
+        hideProgressBar={true}
+        newestOnTop={false}
+        closeOnClick={false}
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+        theme="colored"
+        transition={Slide}
+      />
     </ThemeProvider>
   </StrictMode>
 );

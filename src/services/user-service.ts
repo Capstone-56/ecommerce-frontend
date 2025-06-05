@@ -8,7 +8,7 @@ export class UserService {
    * @params null
    * @returns list of all users (Array\<UserModel\>)
    */
-  async listUsers() : Promise<Array<UserModel>> {
+  async listUsers(): Promise<Array<UserModel>> {
     try {
       const response = await api.get("/api/user");
 
@@ -24,7 +24,7 @@ export class UserService {
    * @params id (userId)
    * @returns a UserModel
    */
-  async getUser(id: string) : Promise<UserModel> {
+  async getUser(id: string) {
     try {
       const response = await api.get(`/api/user/${id}`);
 
