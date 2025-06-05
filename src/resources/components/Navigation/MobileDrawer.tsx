@@ -201,7 +201,7 @@ const MobileDrawer: React.FC<MobileDrawerProps> = ({
   // --- Render Logic ---
   return (
     <Drawer
-      anchor="right" // Slide in from the right side of the screen
+      anchor="left" // Slide in from the right side of the screen
       open={open}
       onClose={handleClose}
       PaperProps={{

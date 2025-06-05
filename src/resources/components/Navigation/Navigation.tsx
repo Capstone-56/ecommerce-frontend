@@ -1,18 +1,16 @@
 import React, { useState, useEffect } from "react";
-import { KeyboardCommandKey, Menu as MenuIcon } from "@mui/icons-material";
+import { Menu as MenuIcon, Search as SearchIcon, ChevronLeft} from "@mui/icons-material";
 import ShoppingCartIcon from "@mui/icons-material/ShoppingCartOutlined";
 import {
   AppBar,
   Box,
   Button,
   IconButton,
-  Menu,
   Toolbar,
   Typography,
-  MenuItem,
   Paper,
   Badge,
-  Link,
+  Drawer,
 } from "@mui/material";
 import { NavLink, Link as RouterLink, useLocation } from "react-router-dom";
 import { grey, common } from "@mui/material/colors";
@@ -52,6 +50,7 @@ const TitleStyling = {
 
 const Navbar: React.FC = () => {
   const [mobileDrawerOpen, setMobileDrawerOpen] = useState(false);
+  const [searchDrawerOpen, setSearchDrawerOpen] = useState(false);
   const location = useLocation();
   const cart = cartState((state) => state.cart);
 
@@ -100,6 +99,14 @@ const Navbar: React.FC = () => {
     setMobileDrawerOpen(false);
   };
 
+  const handleSearchDrawerOpen = () => {
+    setSearchDrawerOpen(true);
+  };
+
+  const handleSearchDrawerClose = () => {
+    setSearchDrawerOpen(false);
+  };
+
   return (
     <AppBar position="static" elevation={0}>
       <Paper elevation={0} sx={{ boxShadow: "0px 4px 8px rgba(55, 55, 55, 0.15)" }}>
@@ -111,6 +118,18 @@ const Navbar: React.FC = () => {
           }}
         >
           {/* Nav Menu on < md (uses MUI Menu component) */}
+          {/* Mobile Menu Button */}
+          <Box sx={{ display:"flex"}}>
+            <Box sx={{ display: { xs: "flex", md: "flex", lg: "none" } }}>
+              <IconButton
+                size="large"
+                edge="start"
+                color="inherit"
+                onClick={handleMobileMenuOpen}
+              >
+                <MenuIcon />
+              </IconButton>
+            </Box>
             {/* Company Name - Logo */}
             <Box
               sx={{
@@ -129,7 +148,8 @@ const Navbar: React.FC = () => {
                 BDNX
               </Typography>
             </Box>
-
+          </Box>
+            
           {/* Nav Menu on > md */}
           <Box
             sx={{
@@ -140,34 +160,6 @@ const Navbar: React.FC = () => {
               gap: { md: 2, lg: 6}, // Add spacing between links
             }}
           >
-            {menus.map((menuItem) => (
-              <NavLink
-                key={menuItem.name}
-                to={menuItem.route}
-                style={({ isActive }) => ({
-                  textDecoration: "none",
-                  color: isActive ? grey[900] : grey[600],
-                  fontWeight: isActive ? "bold" : "normal",
-                })}
-              >
-                <Typography
-                  textTransform="none"
-                  variant="subtitle1"
-                  fontWeight="500"
-                  sx={{
-                    "&:hover": {
-                      color: grey[800],
-                      textDecoration: "underline",
-                      textUnderlineOffset: "8px",
-                      textDecorationThickness: "2px",
-                    }
-                  }}
-                >
-                  {menuItem.name}
-                </Typography>
-              </NavLink>
-            ))}
-
             {/* Categories with mega dropdown */}
             {categoriesLoading ? (
               <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
@@ -196,10 +188,23 @@ const Navbar: React.FC = () => {
               alignItems: "center",
             }}
           >
-            {/* Add SearchBar */}
-            <Box sx={{display: "flex",}}>
+            {/* Desktop SearchBar */}
+            <Box sx={{ display: { xs: "none", md: "flex" } }}>
               <SearchBar />
             </Box>
+
+            {/* Mobile Search Button */}
+            <Box sx={{ display: { xs: "flex", md: "none" } }}>
+              <IconButton
+                size="medium"
+                color="inherit"
+                onClick={handleSearchDrawerOpen}
+              >
+                <SearchIcon />
+              </IconButton>
+            </Box>
+
+            {/* Cart Button */}
             <IconButton component={RouterLink} to={Constants.CART_ROUTE}>
               <ShoppingCartIcon 
                 sx={{ 
@@ -263,17 +268,6 @@ const Navbar: React.FC = () => {
                 Sign up
               </Typography>
             </Button>
-            {/* Mobile Menu Button */}
-            <Box sx={{ display: { xs: "flex", md: "flex", lg: "none" } }}>
-              <IconButton
-                size="large"
-                edge="start"
-                color="inherit"
-                onClick={handleMobileMenuOpen}
-              >
-                <MenuIcon />
-              </IconButton>
-            </Box>
           </Box>
         </Toolbar>
       </Paper>
@@ -284,6 +278,46 @@ const Navbar: React.FC = () => {
         onCategoryClick={handleCategoryClick}
         menuItems={menus}
       />
+      {/* Search Drawer */}
+      <Drawer
+        anchor="right"
+        open={searchDrawerOpen}
+        onClose={handleSearchDrawerClose}
+        sx={{
+          '& .MuiDrawer-paper': {
+            width: '100%',
+            height: '100vh',
+          },
+        }}
+      >
+        <Box
+          sx={{
+            p: 2,
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'space-between',
+            gap: 2,
+            borderBottom: '1px solid',
+            borderColor: grey[300],
+          }}
+        >
+          <Box sx={{ display: 'flex', justifyContent: 'flex-start', flex: 1 }}>
+            <IconButton onClick={handleSearchDrawerClose}>
+              <ChevronLeft />
+            </IconButton>
+          </Box>
+          <Box sx={{ display: 'flex', justifyContent: 'center', flex: 1 }}>
+            <Typography variant="h6" fontWeight={600} sx={{ color: grey[900] }}>
+              Search
+            </Typography>
+          </Box>
+          {/* Empty to balance */}
+          <Box sx={{ flex: 1 }} />
+        </Box>
+        <Box sx={{ flex: 1, p: 4 }}>
+            <SearchBar/>
+        </Box>
+      </Drawer>
     </AppBar>
   );
 };
