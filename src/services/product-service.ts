@@ -23,6 +23,7 @@ export class ProductService {
     sort?: string,
     colour?: string,
     categories?: string,
+    search?: string
   ) : Promise<PagedList<ProductModel>> {
     try {
       const params = new URLSearchParams();
@@ -33,6 +34,7 @@ export class ProductService {
       if (sort) params.append("sort", sort);
       if (colour) params.append("colour", colour);
       if (categories) params.append("categories", categories);
+      if (search) params.append("search", search);
     
       const baseUrl = `/api/product?${params.toString()}`;
 

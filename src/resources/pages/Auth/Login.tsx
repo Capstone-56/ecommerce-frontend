@@ -39,6 +39,7 @@ const Login: React.FC = () => {
       if (response.status === 200) {
         AuthenticationState.setState({ authenticated: true });
         UserState.setState({ role: response.data.role });
+        UserState.setState({ userName: form.username });
       }
 
       // navigate to dashboard TODO: PA-164
