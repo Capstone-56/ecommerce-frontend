@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   KeyboardCommandKey,
   Menu as MenuIcon,
@@ -18,14 +18,17 @@ import {
   Badge,
   Link,
 } from "@mui/material";
-import { Link as RouterLink, useLocation } from "react-router-dom";
+import { Link as RouterLink, useLocation, useNavigate } from "react-router-dom";
 import { grey, common } from "@mui/material/colors";
 import { Constants } from "@/domain/constants";
 import { AuthenticationState, cartState, UserState } from "@/domain/state";
 import { Role } from "@/domain/enum/role";
 import SearchBar from "@/resources/components/Search/SearchBar";
+import { AuthService } from "@/services/auth-service";
+import { StatusCodes } from "http-status-codes";
+import { UserService } from "@/services/user-service";
 
-// Nav Menu Items
+// Menu Items
 const menus = [
   { name: "Home", route: Constants.HOME_ROUTE },
   { name: "Products", route: Constants.PRODUCTS_ROUTE },
@@ -33,35 +36,24 @@ const menus = [
   { name: "About", route: Constants.ABOUT_ROUTE },
 ];
 
-// Styles
-const LogoStyle = {
-  minHeight: "48px",
-  minWidth: "48px",
-  color: grey[900],
-  display: {
-    xs: "none",
-    md: "flex",
-  },
-};
-
-const TitleStyling = {
-  fontSize: { xs: "32px", md: "24px" },
-  color: grey[900],
-  "&:hover": {
-    color: grey[900],
-  },
-};
-
 const Navbar: React.FC = () => {
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const [profileAnchorEl, setProfileAnchorEl] = useState<null | HTMLElement>(
     null
   );
+  const [userInformation, setUserInformation] = useState(null);
   const location = useLocation();
   const cart = cartState((state) => state.cart);
-  const auth = AuthenticationState((state) => state.authenticated);
+  const isAuthenticated = AuthenticationState((state) => state.authenticated);
+  const username = UserState((state) => state.userName);
+  const authService = new AuthService();
+  const navigate = useNavigate();
 
-  // handlers for nav menu links on small screen (left)
+  useEffect(() => {
+    fetchUser();
+  }, [isAuthenticated, username]);
+
+  // Menu handlers
   const handleMenuOpen = (event: React.MouseEvent<HTMLElement>) => {
     setAnchorEl(event.currentTarget);
   };
@@ -70,13 +62,34 @@ const Navbar: React.FC = () => {
     setAnchorEl(null);
   };
 
-  // handlers for profile menu (right)
   const handleProfileMenuOpen = (event: React.MouseEvent<HTMLElement>) => {
     setProfileAnchorEl(event.currentTarget);
   };
 
   const handleProfileMenuClose = () => {
     setProfileAnchorEl(null);
+  };
+
+  const handleLogout = async () => {
+    try {
+      const status = await authService.logout();
+
+      if (status === StatusCodes.OK) {
+        AuthenticationState.setState({ authenticated: false });
+        UserState.setState({ role: Role.CUSTOMER });
+        UserState.setState({ userName: null });
+        navigate(Constants.HOME_ROUTE);
+      }
+    } catch (error) {
+      console.error("Logout failed", error);
+    }
+  };
+
+  const fetchUser = async () => {
+    const userService = new UserService();
+    if (username) {
+      setUserInformation(await userService.getUser(username));
+    }
   };
 
   return (
@@ -161,14 +174,30 @@ const Navbar: React.FC = () => {
                 to={Constants.HOME_ROUTE}
                 disableRipple
               >
-                <KeyboardCommandKey sx={{ ...LogoStyle }} />
+                <KeyboardCommandKey
+                  sx={{
+                    minHeight: "48px",
+                    minWidth: "48px",
+                    color: grey[900],
+                    display: {
+                      xs: "none",
+                      md: "flex",
+                    },
+                  }}
+                />
               </IconButton>
               <Typography
                 variant="h1"
                 component={RouterLink}
                 to={Constants.HOME_ROUTE}
                 noWrap
-                sx={{ ...TitleStyling }}
+                sx={{
+                  fontSize: { xs: "32px", md: "24px" },
+                  color: grey[900],
+                  "&:hover": {
+                    color: grey[900],
+                  },
+                }}
               >
                 BDNX
               </Typography>
@@ -251,7 +280,7 @@ const Navbar: React.FC = () => {
               ></Badge>
             </IconButton>
 
-            {auth ? (
+            {isAuthenticated && userInformation ? (
               <>
                 <IconButton onClick={handleProfileMenuOpen}>
                   <AccountCircle />
@@ -259,8 +288,24 @@ const Navbar: React.FC = () => {
                 <Menu
                   anchorEl={profileAnchorEl}
                   open={Boolean(profileAnchorEl)}
+                  onClose={handleProfileMenuClose}
+                  anchorOrigin={{
+                    vertical: "bottom",
+                    horizontal: "right",
+                  }}
+                  transformOrigin={{
+                    vertical: "top",
+                    horizontal: "right",
+                  }}
                 >
-                  <MenuItem onClick={handleProfileMenuClose}>Profile</MenuItem>
+                  <MenuItem
+                    component={RouterLink}
+                    to={Constants.PROFILE_ROUTE}
+                    onClick={handleProfileMenuClose}
+                  >
+                    Profile
+                  </MenuItem>
+                  <MenuItem onClick={handleLogout}>Logout</MenuItem>
                 </Menu>
               </>
             ) : (
