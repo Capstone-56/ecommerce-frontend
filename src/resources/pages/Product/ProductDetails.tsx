@@ -121,21 +121,28 @@ export default function ProductDetails() {
           display: "flex",
           flexDirection: { xs: "column", md: "row" },
           justifyContent: "center",
-          margin: "2rem",
-          paddingX: { xs: "2rem", md: "3rem" },
+          alignItems: { xs: "center", md: "flex-start" },
+          padding: { xs: "2rem", md: "3rem" },
           gap: "2rem",
+          width: "100%",
         }}
       >
         {/* img list */}
-        <Box sx={{ flex: "1 1 auto", justifyContent: "flex-end" }}>
+        <Box
+          sx={{
+            width: "100%",
+            maxWidth: { xs: 350, sm: 500, md: 600 },
+            display: "flex",
+            justifyContent: "center",
+          }}
+        >
           <ImageList
             variant="quilted"
             cols={3}
-            rowHeight={140}
             gap={4}
             sx={{
-              marginLeft: { md: "auto" },
-              width: { xs: "100%", md: "80%" },
+              width: "100%",
+              maxWidth: { xs: 350, sm: 500, md: 600 },
             }}
           >
             {Array.isArray(images) && images.length > 0 ? (
@@ -146,25 +153,37 @@ export default function ProductDetails() {
                     ? maxImageListLength - 1
                     : maxImageListLength
                 )
-                .map((link, index) =>
-                  index === 0 ? (
-                    <ImageListItem key={`image-${index}`} cols={3} rows={3}>
+                .map((link, index) => (
+                  <ImageListItem
+                    key={`image-${index}`}
+                    cols={index === 0 ? 3 : 1}
+                    rows={index === 0 ? 3 : 1}
+                    sx={{ p: 0 }}
+                  >
+                    <Box
+                      sx={{
+                        position: "relative",
+                        width: "100%",
+                        paddingTop: "100%",
+                        overflow: "hidden",
+                      }}
+                    >
                       <img
                         src={link}
                         alt="image alt text"
-                        style={{ objectFit: "cover", borderRadius: "16px" }}
+                        style={{
+                          position: "absolute",
+                          top: 0,
+                          left: 0,
+                          width: "100%",
+                          height: "100%",
+                          objectFit: "cover",
+                          borderRadius: index === 0 ? "16px" : "8px",
+                        }}
                       />
-                    </ImageListItem>
-                  ) : (
-                    <ImageListItem key={`image-${index}`}>
-                      <img
-                        src={`${link}`}
-                        alt="image alt text"
-                        style={{ objectFit: "cover", borderRadius: "8px" }}
-                      />
-                    </ImageListItem>
-                  )
-                )
+                    </Box>
+                  </ImageListItem>
+                ))
             ) : (
               <Box>
                 <Typography>No images available</Typography>
@@ -258,16 +277,16 @@ export default function ProductDetails() {
         {/* details section (populated based on api resp) */}
         <Box
           sx={{
-            flex: "1 1 auto",
             display: "flex",
             flexDirection: "column",
             gap: "30px",
+            width: "100%",
+            maxWidth: { xs: 350, sm: 500, md: 600 },
           }}
         >
+          {/* Title, price, desc */}
           <Box
             sx={{
-              width: { xs: "100%", md: "65%" },
-              maxWidth: "100%",
               display: "flex",
               flexDirection: "column",
               gap: "18px",
@@ -286,16 +305,16 @@ export default function ProductDetails() {
 
             {/* retrieving price from backend now */}
             {typeof price === "number" && (
-            <Typography
-              variant="caption"
-              sx={{
-                color: "black",
-                fontSize: "1.5rem",
-              }}
-            >
-              ${price.toFixed(2)}
-            </Typography>
-          )}
+              <Typography
+                variant="caption"
+                sx={{
+                  color: "black",
+                  fontSize: "1.5rem",
+                }}
+              >
+                ${price.toFixed(2)}
+              </Typography>
+            )}
 
             <Divider orientation="horizontal" flexItem />
 
@@ -325,10 +344,11 @@ export default function ProductDetails() {
                     backgroundColor: color,
                     borderRadius: "50%",
                     margin: "4px",
-                    border: colour === color
-                      ? '2px solid black'
-                      : '1px solid rgba(0, 0, 0, 0.23)',
-                    boxSizing: 'border-box',
+                    border:
+                      colour === color
+                        ? "2px solid black"
+                        : "1px solid rgba(0, 0, 0, 0.23)",
+                    boxSizing: "border-box",
                   }}
                 ></ButtonBase>
               ))}
@@ -376,50 +396,52 @@ export default function ProductDetails() {
               display: "flex",
               flexDirection: "row",
               alignItems: "center",
-              width: { xs: "100%", md: "65%" },
-              maxWidth: "100%",
+              width: "100%",
+              maxWidth: "500px",
               marginY: "1rem",
+              gap: 3,
             }}
           >
-            <Typography variant="body1" sx={{ marginRight: "8px" }}>
-              Quantity:
-            </Typography>
-            <Input
-              type="number"
-              value={qty}
-              onChange={(event) => {
-                handleChange(event);
-              }}
-              onKeyDown={(event) => {
-                handleKeyPress(event);
-              }}
-              inputProps={{
-                min: 1,
-                max: 99,
-              }}
-              sx={{
-                "& input": {
-                  textAlign: "center",
-                },
-                padding: "4px",
-              }}
-            />
-            <Button
-              variant="outlined"
-              sx={{
-                bgcolor: grey[900],
-                color: grey[50],
-                borderRadius: "8px",
-                mx: "1rem",
-                width: "100%",
-                maxWidth: "100%",
-              }}
-              onClick={handleAddToCart}
-            >
-              <Typography fontWeight="500" textTransform="none">
-                Add to Cart
-              </Typography>
-            </Button>
+            <Box sx={{ display: "flex", alignItems: "center" }}>
+              <Typography variant="body1">Quantity:</Typography>
+              <Input
+                type="number"
+                value={qty}
+                onChange={(event) => {
+                  handleChange(event);
+                }}
+                onKeyDown={(event) => {
+                  handleKeyPress(event);
+                }}
+                inputProps={{
+                  min: 1,
+                  max: 99,
+                }}
+                sx={{
+                  "& input": {
+                    textAlign: "center",
+                  },
+                  padding: "4px",
+                }}
+              />
+            </Box>
+            <Box>
+              <Button
+                variant="outlined"
+                sx={{
+                  bgcolor: grey[900],
+                  color: grey[50],
+                  borderRadius: "8px",
+                  width: "100%",
+                  maxWidth: "100%",
+                }}
+                onClick={handleAddToCart}
+              >
+                <Typography fontWeight="500" textTransform="none">
+                  Add to Cart
+                </Typography>
+              </Button>
+            </Box>
           </Box>
         </Box>
       </Box>
