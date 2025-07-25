@@ -2,7 +2,7 @@ import MenuContent from "@/resources/components/AdminPage/MenuContent";
 import RequireAdmin from "@/resources/components/AdminPage/Authentication";
 import { Outlet } from "react-router";
 import { useEffect, useState } from "react";
-import { UserState } from "@/domain/state";
+import { userState } from "@/domain/state";
 import { UserService } from "@/services/user-service";
 
 /**
@@ -10,7 +10,7 @@ import { UserService } from "@/services/user-service";
  * information will be displayed and can be updated.
  */
 export default function AdminProfile() {
-  const userName = UserState((state) => state.userName)
+  const userName = userState((state) => state.userName)
   const [userInformation, setUserInformation] = useState(null)
 
   useEffect(() => {
@@ -23,7 +23,7 @@ export default function AdminProfile() {
    * @returns An admin's user details.
    */
   const getAdminInformation = async () => {
-    const userService = new UserService;
+    const userService = new UserService();
     if (userName) {
       setUserInformation(await userService.getUser(userName))
     }

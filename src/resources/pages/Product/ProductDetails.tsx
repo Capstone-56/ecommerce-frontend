@@ -1,8 +1,12 @@
 import { Link, useLocation, useParams } from "react-router-dom";
 
 import { ProductModel } from "@/domain/models/ProductModel";
+import { AddShoppingCartItemModel } from "@/domain/models/ShoppingCartItemModel";
+
 import { useEffect, useState } from "react";
 import { ProductService } from "@/services/product-service";
+import { ShoppingCartService } from "@/services/shopping-cart-service";
+
 import {
   Box,
   Typography,
@@ -20,8 +24,10 @@ import {
 } from "@mui/material";
 import { grey } from "@mui/material/colors";
 import { Close } from "@mui/icons-material";
-import { cartState } from "@/domain/state";
 import { ZoomIn } from "@mui/icons-material";
+
+import { cartState, authenticationState } from "@/domain/state";
+
 import RelatedProducts from "@/resources/components/RelatedProducts/RelatedProducts";
 
 const maxImageListLength = 4;
@@ -39,6 +45,9 @@ export default function ProductDetails() {
   const { name, description, images, price, avgRating, featured } =
     productDetails || {};
   const { addToCart } = cartState();
+  const { authenticated } = authenticationState();
+
+  const shoppingCartService = new ShoppingCartService();
 
   // Event handlers for number input
   function handleChange(
@@ -79,8 +88,17 @@ export default function ProductDetails() {
   }
 
   // TODO: consider making some fields optional as they aren't all relevant to purchases
-  function handleAddToCart() {
-    addToCart(productDetails!, qty);
+  async function handleAddToCart() {
+    if (authenticated) {
+      const model: AddShoppingCartItemModel = {
+        productItemId: "",  // TODO: construct productItemId
+        quantity: qty,
+      }
+
+      const result = await shoppingCartService.addToCart(model);
+    } else {
+      addToCart(productDetails!, qty);
+    }
   }
 
   useEffect(() => {

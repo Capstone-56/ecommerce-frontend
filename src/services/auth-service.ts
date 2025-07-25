@@ -1,5 +1,5 @@
 import api from "@/api";
-import { AuthenticationState } from "@/domain/state";
+import { authenticationState } from "@/domain/state";
 
 export class AuthService {
 

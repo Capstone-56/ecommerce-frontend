@@ -1,15 +1,30 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { Box, Grid, Typography } from "@mui/material";
-import { cartState } from "@/domain/state";
+import { cartState, authenticationState } from "@/domain/state";
 import OrderSummary from "@/resources/components/OrderSummary/OrderSummary";
 import CartProductCard from "@/resources/components/ProductCard/CartProductCard";
 import { common } from "@mui/material/colors";
 
+import { ShoppingCartService } from "@/services/shopping-cart-service";
+
 export default function Cart() {
-  const cart = cartState((state) => state.cart);;
+  const { authenticated } = authenticationState();
+  const unAuthedCart = cartState((state) => state.cart);
+  const [cart, setCart] = useState<any[]>([]);
+
+  async function getCart() {
+    if (authenticated) {
+      const shoppingCartService = new ShoppingCartService();
+      const result = await shoppingCartService.getShoppingCart();
+      setCart(result);
+    } else {
+      setCart(unAuthedCart);
+    }
+  }
 
   useEffect(() => {
     document.title = "eCommerce | Cart";
+    getCart();
   });
 
   return (

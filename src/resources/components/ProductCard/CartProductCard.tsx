@@ -10,9 +10,13 @@ import {
   TextField
 } from "@mui/material";
 import { ProductModel } from "domain/models/ProductModel";
+import { UpdateShoppingCartItemModel } from "@/domain/models/ShoppingCartItemModel";
+
 import DeleteForeverIcon from '@mui/icons-material/DeleteForever';
 import placeholderImage from "/src/assets/ProductCard/product_card_placeholder.svg";
-import { cartState } from "@/domain/state";
+import { cartState, authenticationState } from "@/domain/state";
+
+import { ShoppingCartService } from "@/services/shopping-cart-service";
 
 interface ProductCardProps {
   product: ProductModel;
@@ -22,10 +26,36 @@ interface ProductCardProps {
  * The card component to display products when users view their cart. 
  */
 const CartProductCard: React.FC<ProductCardProps> = ({ product }) => {
+  const shoppingCartService = new ShoppingCartService();
+
   const { name, description, images, price } = product;
-  const removeProduct = cartState((state) => state.removeFromCart);
-  const updateProduct = cartState((state) => state.updateQuantity);
+  const { authenticated } = authenticationState();
+
+  // Cart state management for unauthenticated users
+  const updateCart = cartState((state) => state.updateQuantity);
   const getProductQuantity = cartState((state) => state.getQuantity);
+  const removeFromCart = cartState((state) => state.removeFromCart);
+
+  async function updateCartItem(product: any, quantity: number) {
+    if (authenticated) {
+      const model: UpdateShoppingCartItemModel = {
+        quantity: quantity,
+      }
+
+      const result = await shoppingCartService.updateShoppingCartItem("shopping-cart-item-id", model);
+    } else {
+      updateCart(product, quantity);
+    }
+  }
+
+  async function removeCartItem(product: any) {
+    if (authenticated) {
+      const result = await shoppingCartService.removeFromCart("shopping-cart-item-id");
+    } else {
+      removeFromCart(product);
+    }
+  }
+
   const quantity = getProductQuantity(product);
 
   const thumbnail =
@@ -103,7 +133,7 @@ const CartProductCard: React.FC<ProductCardProps> = ({ product }) => {
                   color="inherit"
                   size="small"
                   sx={{ minWidth: "30px", padding: "4px 8px" }}
-                  onClick={() => quantity ? quantity > 1 ? updateProduct(product, -1) : 0 : 0}
+                  onClick={() => quantity ? quantity > 1 ? updateCartItem(product, -1) : 0 : 0}
                   disabled={quantity == 1}
                 >
                   -
@@ -130,7 +160,7 @@ const CartProductCard: React.FC<ProductCardProps> = ({ product }) => {
                   color="inherit"
                   size="small"
                   sx={{ minWidth: "30px", padding: "4px 8px" }}
-                  onClick={() => updateProduct(product, 1)}
+                  onClick={() => updateCartItem(product, 1)}
                 >
                   +
                 </Button>
@@ -149,7 +179,7 @@ const CartProductCard: React.FC<ProductCardProps> = ({ product }) => {
             >
               <CardContent sx={{ py: 1 }}>
                 <IconButton
-                  onClick={() => removeProduct(product)}
+                  onClick={() => removeCartItem(product)}
                   sx={{ "&:focus": { outline: "none" } }}
                 >
                   <DeleteForeverIcon color="error" />

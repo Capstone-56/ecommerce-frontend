@@ -21,7 +21,7 @@ import {
 import { Link as RouterLink, useLocation, useNavigate } from "react-router-dom";
 import { grey, common } from "@mui/material/colors";
 import { Constants } from "@/domain/constants";
-import { AuthenticationState, cartState, UserState } from "@/domain/state";
+import { authenticationState, cartState, userState } from "@/domain/state";
 import { Role } from "@/domain/enum/role";
 import SearchBar from "@/resources/components/Search/SearchBar";
 import { AuthService } from "@/services/auth-service";
@@ -44,8 +44,8 @@ const Navbar: React.FC = () => {
   const [userInformation, setUserInformation] = useState(null);
   const location = useLocation();
   const cart = cartState((state) => state.cart);
-  const isAuthenticated = AuthenticationState((state) => state.authenticated);
-  const username = UserState((state) => state.userName);
+  const isAuthenticated = authenticationState((state) => state.authenticated);
+  const username = userState((state) => state.userName);
   const authService = new AuthService();
   const navigate = useNavigate();
 
@@ -75,9 +75,9 @@ const Navbar: React.FC = () => {
       const status = await authService.logout();
 
       if (status === StatusCodes.OK) {
-        AuthenticationState.setState({ authenticated: false });
-        UserState.setState({ role: Role.CUSTOMER });
-        UserState.setState({ userName: null });
+        authenticationState.setState({ authenticated: false });
+        userState.setState({ role: Role.CUSTOMER });
+        userState.setState({ userName: null });
         navigate(Constants.HOME_ROUTE);
       }
     } catch (error) {

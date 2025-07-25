@@ -134,7 +134,7 @@ export const cartState = create<cartStore>()(
 /**
  * Authentication global state to store user's authentication state. Is required to check on client side where user is authenticated.
  */
-export const AuthenticationState = create<AuthenticationStore>()(
+export const authenticationState = create<AuthenticationStore>()(
   persist(
     (set) => ({
       authenticated: false,
@@ -151,7 +151,7 @@ export const AuthenticationState = create<AuthenticationStore>()(
 /**
  * User state to store the user's role.
  */
-export const UserState = create<UserStore>()(
+export const userState = create<UserStore>()(
   persist(
     (set) => ({
       role: Role.CUSTOMER,

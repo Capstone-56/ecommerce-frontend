@@ -15,7 +15,7 @@ import { ProductService } from "@/services/product-service";
 import { ProductModel } from "@/domain/models/ProductModel";
 import ProductCard from "@/resources/components/ProductCard/ProductCard";
 import axios from "axios";
-import { locationState, AuthenticationState, UserState } from "@/domain/state";
+import { locationState, authenticationState, userState } from "@/domain/state";
 import { Constants } from "@/domain/constants";
 
 export default function Home() {

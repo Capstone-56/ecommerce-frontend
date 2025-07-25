@@ -12,7 +12,7 @@ import {
 import { Visibility, VisibilityOff } from "@mui/icons-material";
 import api from "@/api";
 import { StatusCodes } from "http-status-codes";
-import { AuthenticationState, UserState } from "@/domain/state";
+import { authenticationState, userState } from "@/domain/state";
 import { Role } from "@/domain/enum/role";
 import { UserSignUpModel } from "@/domain/models/UserModel";
 import { useNavigate } from "react-router-dom";
@@ -56,9 +56,9 @@ const SignUp: React.FC = () => {
 
       const response = await api.post("/auth/signup", user);
       if (response.status === StatusCodes.OK) {
-        AuthenticationState.setState({ authenticated: true });
-        UserState.setState({ role: response.data.role });
-        UserState.setState({ userName: form.username });
+        authenticationState.setState({ authenticated: true });
+        userState.setState({ role: response.data.role });
+        userState.setState({ userName: form.username });
         toast.success("Account created successfully");
 
         navigate("/");
