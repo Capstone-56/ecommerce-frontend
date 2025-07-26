@@ -37,7 +37,6 @@ const CartProductCard: React.FC<ProductCardProps> = ({ cartItem }) => {
 
   async function handleUpdateQuantity(delta: number) {
     if (authenticated) {
-      // Authenticated users: API only - calculate the new absolute quantity
       const currentQuantity = cartItem.quantity;
       const newQuantity = currentQuantity + delta;
       

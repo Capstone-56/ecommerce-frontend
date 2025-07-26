@@ -5,6 +5,8 @@ import { useEffect, useState } from "react";
 import { userState } from "@/domain/state";
 import { UserService } from "@/services/user-service";
 
+const userService = new UserService();
+
 /**
  * The profile page to be showed to admins, where related
  * information will be displayed and can be updated.
@@ -23,7 +25,6 @@ export default function AdminProfile() {
    * @returns An admin's user details.
    */
   const getAdminInformation = async () => {
-    const userService = new UserService();
     if (userName) {
       setUserInformation(await userService.getUser(userName))
     }

@@ -112,7 +112,7 @@ export default function ProductDetails() {
       // Dispatch custom event to notify Navigation to reload cart
       window.dispatchEvent(new CustomEvent(Constants.EVENT_CART_UPDATED));
     } else {
-      // For unauthenticated users, create a local cart item using real ProductItemModel data
+      // For unauthenticated users, manually create a local cart item 
       const cartItem: LocalShoppingCartItemModel = {
         id: MathUtils.generateGUID(),
         productItem: selectedProductItem,

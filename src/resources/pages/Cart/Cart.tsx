@@ -38,10 +38,9 @@ export default function Cart() {
             {cart.length > 0 ? cart
               .filter((cartItem) => cartItem?.productItem?.product?.id)
               .map((cartItem) => {
-                const productId = cartItem.productItem.product.id;
                 return (
                   <CartProductCard 
-                    key={productId} 
+                    key={cartItem.productItem.product.id} 
                     cartItem={cartItem}
                   ></CartProductCard>
                 )

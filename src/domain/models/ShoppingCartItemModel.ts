@@ -9,7 +9,7 @@ export interface ShoppingCartItemModel {
   readonly totalPrice: number;
 }
 
-/** ShoppingCartItemModel for unauthenticated users. */
+/** ShoppingCartItemModel for state management. */
 export interface LocalShoppingCartItemModel {
   id: string;
   productItem: ProductItemModel;
