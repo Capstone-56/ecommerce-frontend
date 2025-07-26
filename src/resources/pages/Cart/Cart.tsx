@@ -1,31 +1,17 @@
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { Box, Grid, Typography } from "@mui/material";
-import { cartState, authenticationState } from "@/domain/state";
+import { cartState } from "@/domain/state";
 import OrderSummary from "@/resources/components/OrderSummary/OrderSummary";
 import CartProductCard from "@/resources/components/ProductCard/CartProductCard";
 import { common } from "@mui/material/colors";
 
-import { ShoppingCartService } from "@/services/shopping-cart-service";
-
 export default function Cart() {
-  const { authenticated } = authenticationState();
-  const unAuthedCart = cartState((state) => state.cart);
-  const [cart, setCart] = useState<any[]>([]);
-
-  async function getCart() {
-    if (authenticated) {
-      const shoppingCartService = new ShoppingCartService();
-      const result = await shoppingCartService.getShoppingCart();
-      setCart(result);
-    } else {
-      setCart(unAuthedCart);
-    }
-  }
+  // Use unified cart state for both authenticated and unauthenticated users
+  const cart = cartState((state) => state.cart);
 
   useEffect(() => {
     document.title = "eCommerce | Cart";
-    getCart();
-  });
+  }, []);
 
   return (
     <div>
@@ -49,11 +35,17 @@ export default function Cart() {
       >
         <Grid size={{ xs: 12, md: 7 }}>
           <Box display="flex" flexDirection="column" gap={2}>
-            {cart.length > 0 ? cart.map((product) => {
-              return (
-                <CartProductCard key={product.product.id} product={product.product}></CartProductCard>
-              )
-            }) :
+            {cart.length > 0 ? cart
+              .filter((cartItem) => cartItem?.productItem?.product?.id)
+              .map((cartItem) => {
+                const productId = cartItem.productItem.product.id;
+                return (
+                  <CartProductCard 
+                    key={productId} 
+                    cartItem={cartItem}
+                  ></CartProductCard>
+                )
+              }) :
               <Typography
                 variant="h5"
                 color={common.black}

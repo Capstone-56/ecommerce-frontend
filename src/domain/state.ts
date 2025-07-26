@@ -1,40 +1,54 @@
-import { ProductModel } from "@/domain/models/ProductModel";
 import { create } from "zustand";
 import { persist, createJSONStorage } from "zustand/middleware";
 import { Constants } from "./constants";
-import { cartItem } from "./types";
+import { LocalShoppingCartItemModel } from "./models/ShoppingCartItemModel";
 import { Role } from "./enum/role";
 
 type cartStore = {
   /**
-   * An array of selected products to be bought.
+   * An array of selected products to be bought (for both authenticated and unauthenticated users).
    */
-  cart: Array<cartItem>;
+  cart: Array<LocalShoppingCartItemModel>;
+
   /**
-   * A function to insert a selected product into the cart state.
-   * @param addedProduct The selected product to add to the cart.
-   * @returns A cart containing the selected product.
+   * A function to insert a selected cart item into the cart state.
+   * @param cartItem The cart item to add to the cart.
+   * @returns A cart containing the selected item.
    */
-  addToCart: (addedProduct: ProductModel, quantity: number) => void;
+  addToCart: (cartItem: LocalShoppingCartItemModel) => void;
+
   /**
-   * A function to remove a selected product from the cart state.
-   * @param removedProduct The selected product to remove from the cart.
-   * @returns A cart not containing the selected product.
+   * A function to remove a cart item by its ID.
+   * @param cartItemId The cart item ID to remove from the cart.
+   * @returns A cart not containing the selected item.
    */
-  removeFromCart: (removedProduct: ProductModel) => void;
+  removeFromCart: (cartItemId: string) => void;
+
   /**
-   * A function to update the quantity of a product stored in cart.
-   * @param product The selected product to have its quantity updated.
-   * @param amount  The amount to change its quantity by.
-   * @returns A cart with the updated product's quantity.
+   * A function to update a specific cart item.
+   * @param cartItemId The cart item ID to update.
+   * @param updates Partial updates to apply to the cart item.
+   * @returns A cart with the updated item.
    */
-  updateQuantity: (product: ProductModel, amount: number) => void;
+  updateCartItem: (cartItemId: string, updates: Partial<LocalShoppingCartItemModel>) => void;
+
   /**
-   * A function to retrieve the quantity of a certain product.
-   * @param product The product to retrieve a quantity for.
-   * @returns The quantity if found.
+   * A function to set the entire cart (for authenticated users loading from API).
+   * @param cartItems The complete cart array to set.
    */
-  getQuantity: (product: ProductModel) => number | undefined;
+  setCart: (cartItems: Array<LocalShoppingCartItemModel>) => void;
+
+  /**
+   * A function to clear all cart items.
+   */
+  clearCart: () => void;
+  
+  /**
+   * A function to get a cart item by ID.
+   * @param cartItemId The cart item ID to find.
+   * @returns The cart item if found.
+   */
+  getCartItem: (cartItemId: string) => LocalShoppingCartItemModel | undefined;
 };
 
 type AuthenticationStore = {
@@ -92,44 +106,81 @@ export const cartState = create<cartStore>()(
   persist(
     (set, get) => ({
       cart: [],
-      addToCart: (addedProduct: ProductModel, quantity: number) => {
-        if (get().cart.some((cartItem) => cartItem.product.id === addedProduct.id)) {
-          get().updateQuantity(addedProduct, quantity)
+
+      addToCart: (cartItem: LocalShoppingCartItemModel) => {
+        // Check if product already exists in cart by product item ID
+        const existingItem = get().cart.find(item => 
+          item.productItem.id === cartItem.productItem.id
+        );
+
+        if (existingItem) {
+          // Update quantity of existing item
+          set((state) => ({
+            cart: state.cart.map(item => 
+              item.productItem.id === cartItem.productItem.id 
+                ? {
+                    ...existingItem, // Keep existing item's ID
+                    quantity: item.quantity + cartItem.quantity,
+                    totalPrice: item.productItem.price * (item.quantity + cartItem.quantity)
+                  }
+                : item
+            )
+          }));
         } else {
-          set({
-            cart: [...get().cart, { product: addedProduct, quantity: quantity }],
-          })
+          // Add new item with the provided ID
+          set((state) => ({
+            cart: [...state.cart, cartItem]
+          }));
         }
       },
-      removeFromCart: (removedProduct: ProductModel) =>
-        set((state: any) => ({
-          cart: get().cart.filter(
-            (cartItem: cartItem) => cartItem.product !== removedProduct
-          ),
+
+      removeFromCart: (cartItemId: string) =>
+        set((state) => ({
+          cart: state.cart.filter((item) => item.id !== cartItemId),
         })),
-      updateQuantity: (product: ProductModel, amount: number) =>
-        set((state: any) => ({
-          cart: get().cart.map((currentProduct: cartItem) =>
-            currentProduct.product.id === product.id
+
+      updateCartItem: (cartItemId: string, updates: Partial<LocalShoppingCartItemModel>) =>
+        set((state) => ({
+          cart: state.cart.map((item) =>
+            item.id === cartItemId
               ? {
-                ...currentProduct,
-                quantity: (currentProduct.quantity += amount),
-              }
-              : currentProduct
+                  ...item,
+                  ...updates,
+                  // Recalculate totalPrice if quantity is updated
+                  totalPrice: updates.quantity !== undefined
+                    ? item.productItem.price * updates.quantity
+                    : item.totalPrice
+                }
+              : item
           ),
         })),
-      getQuantity: (product: ProductModel) => {
-        const cartItem = get().cart.find((item) => item.product === product);
-        return cartItem?.quantity;
+
+      setCart: (cartItems: Array<LocalShoppingCartItemModel>) =>
+        set({ cart: cartItems }),
+
+      clearCart: () => set({ cart: [] }),
+      
+      getCartItem: (cartItemId: string) => {
+        return get().cart.find((item) => item.id === cartItemId);
       },
     }),
     {
-      // Name of the item in the storage.
       name: Constants.LOCAL_STORAGE_CART_STORAGE,
-      storage: createJSONStorage(() => localStorage),
+      storage: createJSONStorage(() => localStorage)
     }
   )
 );
+
+// Add cross-tab synchronisation
+if (typeof window !== "undefined") {
+  window.addEventListener("storage", e => {
+    // Only react to cart storage changes
+    if (e.key === Constants.LOCAL_STORAGE_CART_STORAGE) {
+      // Force rehydration of the store
+      cartState.persist.rehydrate();
+    }
+  });
+}
 
 /**
  * Authentication global state to store user's authentication state. Is required to check on client side where user is authenticated.

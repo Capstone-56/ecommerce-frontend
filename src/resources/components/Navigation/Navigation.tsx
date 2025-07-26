@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import {
   KeyboardCommandKey,
   Menu as MenuIcon,
@@ -27,6 +27,7 @@ import SearchBar from "@/resources/components/Search/SearchBar";
 import { AuthService } from "@/services/auth-service";
 import { StatusCodes } from "http-status-codes";
 import { UserService } from "@/services/user-service";
+import { ShoppingCartService } from "@/services/shopping-cart-service";
 
 // Menu Items
 const menus = [
@@ -36,6 +37,11 @@ const menus = [
   { name: "About", route: Constants.ABOUT_ROUTE },
 ];
 
+// Create service instances once per module (shared across all component instances)
+const authService = new AuthService();
+const shoppingCartService = new ShoppingCartService();
+const userService = new UserService();
+
 const Navbar: React.FC = () => {
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const [profileAnchorEl, setProfileAnchorEl] = useState<null | HTMLElement>(
@@ -43,15 +49,59 @@ const Navbar: React.FC = () => {
   );
   const [userInformation, setUserInformation] = useState(null);
   const location = useLocation();
+  
+  // Unified cart state for both authenticated and unauthenticated users
   const cart = cartState((state) => state.cart);
+  const setCart = cartState((state) => state.setCart);
+  const clearCart = cartState((state) => state.clearCart);
   const isAuthenticated = authenticationState((state) => state.authenticated);
   const username = userState((state) => state.userName);
-  const authService = new AuthService();
+  
+  const cartCount = cart.length;
   const navigate = useNavigate();
+
+  const loadCartData = useCallback(async () => {
+    if (isAuthenticated) {
+      // Authenticated users: Load cart from API into Zustand store
+      try {
+        const cartItems = await shoppingCartService.getShoppingCart();
+
+        // Convert API response to LocalShoppingCartItemModel format
+        const localCartItems = cartItems.map(item => ({
+          ...item,
+          totalPrice: item.totalPrice || item.productItem.price * item.quantity
+        }));
+
+        setCart(localCartItems);
+      } catch (error) {
+        console.error("Failed to fetch cart data:", error);
+        clearCart();
+      }
+    }
+    // Unauthenticated users: cart data is already in Zustand store (persisted)
+  }, [isAuthenticated, setCart, clearCart]);
+
+  const fetchUser = useCallback(async () => {
+    if (username) {
+      setUserInformation(await userService.getUser(username));
+    }
+  }, [username]);
 
   useEffect(() => {
     fetchUser();
-  }, [isAuthenticated, username]);
+    loadCartData();
+
+    // Listen for cart updates from other components
+    const handleCartUpdate = () => {
+      loadCartData();
+    };
+    window.addEventListener(Constants.EVENT_CART_UPDATED, handleCartUpdate);
+
+    // Cleanup listener on unmount
+    return () => {
+      window.removeEventListener(Constants.EVENT_CART_UPDATED, handleCartUpdate);
+    };
+  }, [fetchUser, loadCartData]);
 
   // Menu handlers
   const handleMenuOpen = (event: React.MouseEvent<HTMLElement>) => {
@@ -78,17 +128,11 @@ const Navbar: React.FC = () => {
         authenticationState.setState({ authenticated: false });
         userState.setState({ role: Role.CUSTOMER });
         userState.setState({ userName: null });
+        clearCart(); // Clear cart data on logout
         navigate(Constants.HOME_ROUTE);
       }
     } catch (error) {
       console.error("Logout failed", error);
-    }
-  };
-
-  const fetchUser = async () => {
-    const userService = new UserService();
-    if (username) {
-      setUserInformation(await userService.getUser(username));
     }
   };
 
@@ -266,7 +310,7 @@ const Navbar: React.FC = () => {
                 fontSize="medium"
               ></ShoppingCartOutlined>
               <Badge
-                badgeContent={cart.length}
+                badgeContent={cartCount}
                 color="primary"
                 sx={{
                   "& .MuiBadge-badge": {

@@ -6,10 +6,19 @@ export interface ShoppingCartItemModel {
   user: UserModel;
   productItem: ProductItemModel;
   quantity: number;
+  readonly totalPrice: number;
 }
 
-export type AddShoppingCartItemModel = Omit<ShoppingCartItemModel, "id" | "user" | "productItem"> & {
+/** ShoppingCartItemModel for unauthenticated users. */
+export interface LocalShoppingCartItemModel {
+  id: string;
+  productItem: ProductItemModel;
+  quantity: number;
+  totalPrice: number;
+}
+
+export type AddShoppingCartItemModel = Omit<ShoppingCartItemModel, "id" | "user" | "productItem" | "totalPrice"> & {
   productItemId: string;
 }
 
-export type UpdateShoppingCartItemModel = Omit<ShoppingCartItemModel, "id" | "user" | "productItem">;
+export type UpdateShoppingCartItemModel = Omit<ShoppingCartItemModel, "id" | "user" | "productItem" | "totalPrice">;
