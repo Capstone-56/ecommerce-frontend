@@ -12,7 +12,7 @@ import { Visibility, VisibilityOff } from "@mui/icons-material";
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import api from "@/api";
-import { AuthenticationState, UserState } from "@/domain/state";
+import { authenticationState, userState } from "@/domain/state";
 
 const Login: React.FC = () => {
   const [form, setForm] = useState({
@@ -37,9 +37,9 @@ const Login: React.FC = () => {
     try {
       const response = await api.post("/auth/login", form);
       if (response.status === 200) {
-        AuthenticationState.setState({ authenticated: true });
-        UserState.setState({ role: response.data.role });
-        UserState.setState({ userName: form.username });
+        authenticationState.setState({ authenticated: true });
+        userState.setState({ role: response.data.role });
+        userState.setState({ userName: form.username });
       }
 
       // navigate to dashboard TODO: PA-164
