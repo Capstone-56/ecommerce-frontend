@@ -1,0 +1,405 @@
+import React, { useEffect, useState, useCallback } from "react";
+import {
+  KeyboardCommandKey,
+  Menu as MenuIcon,
+  ShoppingCartOutlined,
+  AccountCircle,
+} from "@mui/icons-material";
+import {
+  AppBar,
+  Box,
+  Button,
+  IconButton,
+  Menu,
+  Toolbar,
+  Typography,
+  MenuItem,
+  Paper,
+  Badge,
+  Link,
+} from "@mui/material";
+import { Link as RouterLink, useLocation, useNavigate } from "react-router-dom";
+import { grey, common } from "@mui/material/colors";
+import { Constants } from "@/domain/constants";
+import { authenticationState, cartState, userState } from "@/domain/state";
+import { Role } from "@/domain/enum/role";
+import SearchBar from "@/resources/components/Search/SearchBar";
+import { AuthService } from "@/services/auth-service";
+import { StatusCodes } from "http-status-codes";
+import { UserService } from "@/services/user-service";
+import { ShoppingCartService } from "@/services/shopping-cart-service";
+
+// Menu Items
+const menus = [
+  { name: "Home", route: Constants.HOME_ROUTE },
+  { name: "Products", route: Constants.PRODUCTS_ROUTE },
+  { name: "Categories", route: Constants.CATEGORIES_ROUTE },
+  { name: "About", route: Constants.ABOUT_ROUTE },
+];
+
+// Create service instances once per module (shared across all component instances)
+const authService = new AuthService();
+const shoppingCartService = new ShoppingCartService();
+const userService = new UserService();
+
+const Navbar: React.FC = () => {
+  const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
+  const [profileAnchorEl, setProfileAnchorEl] = useState<null | HTMLElement>(
+    null
+  );
+  const [userInformation, setUserInformation] = useState(null);
+  const location = useLocation();
+  
+  // Unified cart state for both authenticated and unauthenticated users
+  const cart = cartState((state) => state.cart);
+  const setCart = cartState((state) => state.setCart);
+  const clearCart = cartState((state) => state.clearCart);
+  const isAuthenticated = authenticationState((state) => state.authenticated);
+  const username = userState((state) => state.userName);
+  
+  const cartCount = cart.length;
+  const navigate = useNavigate();
+
+  const loadCartData = useCallback(async () => {
+    if (isAuthenticated) {
+      // Authenticated users: Load cart from API into Zustand store
+      try {
+        const cartItems = await shoppingCartService.getShoppingCart();
+
+        // Convert API response to LocalShoppingCartItemModel format
+        const localCartItems = cartItems.map(item => ({
+          ...item,
+          totalPrice: item.totalPrice || item.productItem.price * item.quantity
+        }));
+
+        setCart(localCartItems);
+      } catch (error) {
+        console.error("Failed to fetch cart data:", error);
+        clearCart();
+      }
+    }
+    // Unauthenticated users: cart data is already in Zustand store (persisted)
+  }, [isAuthenticated, setCart, clearCart]);
+
+  const fetchUser = useCallback(async () => {
+    if (username) {
+      setUserInformation(await userService.getUser(username));
+    }
+  }, [username]);
+
+  useEffect(() => {
+    fetchUser();
+    loadCartData();
+
+    // Listen for cart updates from other components
+    const handleCartUpdate = () => {
+      loadCartData();
+    };
+    window.addEventListener(Constants.EVENT_CART_UPDATED, handleCartUpdate);
+
+    // Cleanup listener on unmount
+    return () => {
+      window.removeEventListener(Constants.EVENT_CART_UPDATED, handleCartUpdate);
+    };
+  }, [fetchUser, loadCartData]);
+
+  // Menu handlers
+  const handleMenuOpen = (event: React.MouseEvent<HTMLElement>) => {
+    setAnchorEl(event.currentTarget);
+  };
+
+  const handleMenuClose = () => {
+    setAnchorEl(null);
+  };
+
+  const handleProfileMenuOpen = (event: React.MouseEvent<HTMLElement>) => {
+    setProfileAnchorEl(event.currentTarget);
+  };
+
+  const handleProfileMenuClose = () => {
+    setProfileAnchorEl(null);
+  };
+
+  const handleLogout = async () => {
+    try {
+      const status = await authService.logout();
+
+      if (status === StatusCodes.OK) {
+        authenticationState.setState({ authenticated: false });
+        userState.setState({ role: Role.CUSTOMER });
+        userState.setState({ userName: null });
+        clearCart(); // Clear cart data on logout
+        navigate(Constants.HOME_ROUTE);
+      }
+    } catch (error) {
+      console.error("Logout failed", error);
+    }
+  };
+
+  return (
+    <AppBar position="static" elevation={0}>
+      <Paper
+        elevation={0}
+        sx={{ boxShadow: "0px 4px 8px rgba(55, 55, 55, 0.15)" }}
+      >
+        <Toolbar
+          sx={{
+            backgroundColor: grey[50],
+            justifyContent: {
+              md: "space-evenly",
+              xs: "space-between",
+              sm: "space-between",
+            },
+            px: 2,
+          }}
+        >
+          {/* Nav Menu on < md - uses MUI Menu (i.e. dropdown) component */}
+          <Box
+            sx={{
+              display: "flex",
+            }}
+          >
+            <Box
+              sx={{
+                display: { xs: "flex", md: "none" },
+                alignItems: "center",
+              }}
+            >
+              <IconButton
+                size="large"
+                edge="end"
+                color="inherit"
+                onClick={handleMenuOpen}
+              >
+                <MenuIcon />
+              </IconButton>
+              <Menu
+                anchorEl={anchorEl}
+                open={!!anchorEl}
+                onClose={handleMenuClose}
+              >
+                {menus.map((menuItem) => (
+                  <MenuItem>
+                    <Typography
+                      component={RouterLink}
+                      variant="body1"
+                      to={menuItem.route}
+                      sx={{
+                        color:
+                          location.pathname === menuItem.route
+                            ? grey[900]
+                            : grey[600],
+                        fontWeight:
+                          location.pathname === menuItem.route
+                            ? "bold"
+                            : "normal",
+                        "&:hover": {
+                          color: "inherit",
+                        },
+                      }}
+                    >
+                      {menuItem.name}
+                    </Typography>
+                  </MenuItem>
+                ))}
+              </Menu>
+            </Box>
+
+            {/* Company Name - Logo */}
+            <Box
+              sx={{
+                display: "flex",
+                flexDirection: "row",
+                alignItems: "center",
+              }}
+            >
+              <IconButton
+                component={RouterLink}
+                to={Constants.HOME_ROUTE}
+                disableRipple
+              >
+                <KeyboardCommandKey
+                  sx={{
+                    minHeight: "48px",
+                    minWidth: "48px",
+                    color: grey[900],
+                    display: {
+                      xs: "none",
+                      md: "flex",
+                    },
+                  }}
+                />
+              </IconButton>
+              <Typography
+                variant="h1"
+                component={RouterLink}
+                to={Constants.HOME_ROUTE}
+                noWrap
+                sx={{
+                  fontSize: { xs: "32px", md: "24px" },
+                  color: grey[900],
+                  "&:hover": {
+                    color: grey[900],
+                  },
+                }}
+              >
+                BDNX
+              </Typography>
+            </Box>
+          </Box>
+
+          {/* Nav Menu on > md breakpoint (shows all menu items) */}
+          <Box
+            sx={{
+              display: { xs: "none", md: "flex" },
+              flexDirection: "row",
+              justifyContent: "center",
+              gap: { md: 2, lg: 6 },
+            }}
+          >
+            {menus.map((menuItem) => (
+              <Link
+                key={menuItem.name}
+                component={RouterLink}
+                to={menuItem.route}
+                sx={{
+                  textDecoration: "none",
+                  color:
+                    location.pathname === menuItem.route
+                      ? grey[900]
+                      : grey[600],
+                  fontWeight:
+                    location.pathname === menuItem.route ? "bold" : "normal",
+                  "&:hover": {
+                    backgroundColor: "inherit",
+                  },
+                }}
+              >
+                <Typography
+                  textTransform="none"
+                  variant="subtitle1"
+                  fontWeight="500"
+                >
+                  {menuItem.name}
+                </Typography>
+              </Link>
+            ))}
+          </Box>
+
+          {/* Cart and User related Buttons */}
+          <Box
+            sx={{
+              display: "flex",
+              flexDirection: "row",
+              alignItems: "center",
+              gap: 1,
+            }}
+          >
+            {/* Add SearchBar */}
+            <Box sx={{ display: "flex" }}>
+              <SearchBar />
+            </Box>
+            <IconButton component={RouterLink} to={Constants.CART_ROUTE}>
+              <ShoppingCartOutlined
+                sx={{
+                  color:
+                    location.pathname === Constants.CART_ROUTE
+                      ? common.black
+                      : grey,
+                }}
+                fontSize="medium"
+              ></ShoppingCartOutlined>
+              <Badge
+                badgeContent={cartCount}
+                color="primary"
+                sx={{
+                  "& .MuiBadge-badge": {
+                    top: -15,
+                    fontSize: "0.6rem",
+                    height: "16px",
+                    minWidth: "16px",
+                    padding: "0 4px",
+                  },
+                }}
+              ></Badge>
+            </IconButton>
+
+            {isAuthenticated && userInformation ? (
+              <>
+                <IconButton onClick={handleProfileMenuOpen}>
+                  <AccountCircle />
+                </IconButton>
+                <Menu
+                  anchorEl={profileAnchorEl}
+                  open={Boolean(profileAnchorEl)}
+                  onClose={handleProfileMenuClose}
+                  anchorOrigin={{
+                    vertical: "bottom",
+                    horizontal: "right",
+                  }}
+                  transformOrigin={{
+                    vertical: "top",
+                    horizontal: "right",
+                  }}
+                >
+                  <MenuItem
+                    component={RouterLink}
+                    to={Constants.PROFILE_ROUTE}
+                    onClick={handleProfileMenuClose}
+                  >
+                    Profile
+                  </MenuItem>
+                  <MenuItem onClick={handleLogout}>Logout</MenuItem>
+                </Menu>
+              </>
+            ) : (
+              <>
+                <Button
+                  component={RouterLink}
+                  to={Constants.LOGIN_ROUTE}
+                  variant="outlined"
+                  sx={{
+                    bgcolor: grey[50],
+                    color: grey[900],
+                    borderColor: grey[900],
+                    borderRadius: "8px",
+                    textDecoration: "none",
+                    "&:hover": {
+                      bgcolor: grey[100],
+                      borderColor: grey[900],
+                    },
+                  }}
+                >
+                  <Typography fontWeight="500" textTransform="none">
+                    Login
+                  </Typography>
+                </Button>
+
+                <Button
+                  component={RouterLink}
+                  to={Constants.SIGNUP_ROUTE}
+                  variant="contained"
+                  sx={{
+                    bgcolor: grey[900],
+                    color: grey[50],
+                    borderRadius: "8px",
+                    textDecoration: "none",
+                    "&:hover": {
+                      bgcolor: grey[800],
+                    },
+                  }}
+                >
+                  <Typography fontWeight="500" textTransform="none">
+                    Sign up
+                  </Typography>
+                </Button>
+              </>
+            )}
+          </Box>
+        </Toolbar>
+      </Paper>
+    </AppBar>
+  );
+};
+
+export default Navbar;
