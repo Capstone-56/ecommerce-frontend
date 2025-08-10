@@ -11,8 +11,8 @@ export default function UserLayout() {
       <div className="layout">
         <Outlet />
       </div>
-      
+
       <Footer />
     </>
   );
-};
+}

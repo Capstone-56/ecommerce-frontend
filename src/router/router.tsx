@@ -21,11 +21,12 @@ import VendorManagement from "@/resources/components/AdminPage/VendorManagement"
 import CustomerSupport from "@/resources/components/AdminPage/CustomerSupport";
 import AdminSettings from "@/resources/components/AdminPage/AdminSettings";
 import { Constants } from "@/domain/constants";
+import UserDashboard from "@/resources/components/Profile/UserDashboard";
 
 export const router = createBrowserRouter([
   {
     path: "/",
-    element: <UserLayout />,  // User layout for default routes
+    element: <UserLayout />, // User layout for default routes
     children: [
       {
         index: true,
@@ -38,6 +39,13 @@ export const router = createBrowserRouter([
       {
         path: "profile",
         element: <Profile />,
+        children: [
+          {
+            index: true,
+            element: <UserDashboard />,
+          },
+          // Include orders, tracking and details
+        ],
       },
       {
         path: "products",
@@ -53,17 +61,16 @@ export const router = createBrowserRouter([
       },
       {
         path: "cart",
-        element: <Cart />
+        element: <Cart />,
       },
       {
         path: "login",
-        element: <Login />
+        element: <Login />,
       },
       {
         path: "signup",
-        element: <SignUp />
-      }
-
+        element: <SignUp />,
+      },
     ],
   },
   {
@@ -72,29 +79,29 @@ export const router = createBrowserRouter([
     children: [
       {
         index: true,
-        element: <AdminDashboard />
+        element: <AdminDashboard />,
       },
       {
         path: "analytics",
-        element: <Analytics />
+        element: <Analytics />,
       },
       {
         path: "product/management",
-        element: <ProductManagement />
+        element: <ProductManagement />,
       },
       {
         path: "vendor/management",
-        element: <VendorManagement />
+        element: <VendorManagement />,
       },
       {
         path: "support",
-        element: <CustomerSupport />
+        element: <CustomerSupport />,
       },
       {
         path: "settings",
-        element: <AdminSettings />
+        element: <AdminSettings />,
       },
-    ]
+    ],
   },
   {
     path: "*",
