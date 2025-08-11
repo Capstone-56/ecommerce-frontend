@@ -44,15 +44,15 @@ const CheckoutForm = () => {
 
   // all the countries in client's country list that are supported by Stripe
   const countryToCurrency: Record<string, string> = {
-    Australia: "AUD",
-    UnitedStates: "USD",
-    Canada: "CAD",
-    Singapore: "SGD",
-    Italy: "EUR",
-    France: "EUR",
-    Germany: "EUR",
+    AU: "AUD",
+    US: "USD",
+    CA: "CAD",
+    SG: "SGD",
+    IT: "EUR",
+    FR: "EUR",
+    DE: "EUR",
   };
-
+  
   // currency symbols for supported countries
   const currencySymbols: Record<string, string> = {
     USD: "$",
@@ -62,34 +62,24 @@ const CheckoutForm = () => {
     EUR: "€",
   };
 
-  // map countries to their ISO codes for Stripe's allowedCountries
-  const countryToCode: Record<string, string> = {
-    Australia: "AU",
-    UnitedStates: "US",
-    Canada: "CA",
-    Singapore: "SG",
-    Italy: "IT",
-    France: "FR",
-    Germany: "DE",
-  };
-
   // map countries to their locale for formatting the price
   const countryToLocale: Record<string, string> = {
-    Australia: "en-AU",
-    UnitedStates: "en-US",
-    Canada: "en-CA",
-    Singapore: "en-SG",
-    Italy: "it-IT",
-    France: "fr-FR",
-    Germany: "de-DE",
+    AU: "en-AU",
+    US: "en-US",
+    CA: "en-CA",
+    SG: "en-SG",
+    IT: "it-IT",
+    FR: "fr-FR",
+    DE: "de-DE",
   };
 
   const calculateTotal = (): number =>
     cart.reduce((total, item) => total + item.product.price * item.quantity, 0);
 
   const formatTotal = (amount: number): string => {
-    const currency = countryToCurrency[userLocation || ""] || "USD";
-    const locale = countryToLocale[userLocation || ""] || "en-US";
+    const code = (userLocation || "").toUpperCase();
+    const currency = countryToCurrency[code] || "USD";
+    const locale = countryToLocale[code] || "en-US";
 
     const formatted = new Intl.NumberFormat(locale, {
       style: "currency",
@@ -97,10 +87,7 @@ const CheckoutForm = () => {
     }).format(amount);
 
     const ambiguousCurrencies = ["USD", "AUD", "CAD", "SGD"];
-
-    return ambiguousCurrencies.includes(currency)
-      ? `${formatted} ${currency}`
-      : formatted;
+    return ambiguousCurrencies.includes(currency) ? `${formatted} ${currency}` : formatted;
   };
 
   useEffect(() => {
@@ -181,13 +168,10 @@ const CheckoutForm = () => {
             </AccordionSummary>
 
             <AccordionDetails sx={{ mt: 1 }}>
-              <AddressElement
+            <AddressElement
                 options={{
                   mode: "shipping",
-                  allowedCountries:
-                    userLocation && countryToCode[userLocation]
-                      ? [countryToCode[userLocation]]
-                      : [],
+                  allowedCountries: userLocation ? [userLocation.toUpperCase()] : [],
                 }}
               />
               <Box mt={2} display="flex" justifyContent="flex-end">
@@ -267,6 +251,7 @@ const CheckoutForm = () => {
 
 const StripeGateway = () => {
   const [stripePromise] = useState(() =>
+    // test key, replace with client's key once they set up their Stripe account
     loadStripe(
       "pk_test_51RE12kFZeA9h4jlt8K5dAqH8QnfndYFEJRQ06XzVXpGRl2CezlmuXO7dKTCvJGD4nO7Zau08Dzz2jutRKwuXi8IM00GEYs8CoX"
     )

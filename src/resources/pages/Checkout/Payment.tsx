@@ -1,30 +1,35 @@
-import { useEffect, useState } from "react";
+import { JSX, useEffect, useState } from "react";
 import StripeGateway from "@/resources/pages/Checkout/gateways/StripeGateway";
 import { locationState } from "@/domain/state";
 import { Typography, Container, Box } from "@mui/material";
 
-// Not the best approach, will need to refactor if we implement more gateways in the future
-
-// all the countries that are directly supported by Stripe
-const supportedCountries = [
-  "Australia",
-  "Canada",
-  "Singapore",
-  "Italy",
-  "France",
-  "Germany",
-  "UnitedStates",
-];
-
 const Payment = () => {
   const userLocation = locationState((state) => state.userLocation);
+  const [selectedGateway, setSelectedGateway] = useState<JSX.Element | null>(null);
   const [isSupported, setIsSupported] = useState<boolean | null>(null);
+
+  const gatewayMap: Record<string, JSX.Element> = {
+    AU: <StripeGateway />,
+    CA: <StripeGateway />,
+    SG: <StripeGateway />,
+    IT: <StripeGateway />,
+    FR: <StripeGateway />,
+    DE: <StripeGateway />,
+    US: <StripeGateway />,
+  };
 
   useEffect(() => {
     if (!userLocation) {
       setIsSupported(false);
+      return;
+    }
+
+    const gateway = gatewayMap[userLocation.toUpperCase()];
+    if (gateway) {
+      setSelectedGateway(gateway);
+      setIsSupported(true);
     } else {
-      setIsSupported(supportedCountries.includes(userLocation));
+      setIsSupported(false);
     }
   }, [userLocation]);
 
@@ -47,7 +52,7 @@ const Payment = () => {
     );
   }
 
-  return <StripeGateway />;
+  return selectedGateway;
 };
 
 export default Payment;
