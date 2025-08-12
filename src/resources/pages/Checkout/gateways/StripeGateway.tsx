@@ -24,6 +24,7 @@ import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 import { useState, useEffect, useMemo } from "react";
 import { UserState, cartState, locationState } from "@/domain/state";
 import { UserService } from "@/services/user-service";
+import type { StripeAddressElementChangeEvent } from "@stripe/stripe-js";
 
 type CreateIntentResponse = { clientSecret: string };
 
@@ -86,6 +87,10 @@ const StripeGateway = () => {
         setClientSecret(data.clientSecret);
       } catch (err) {
         console.error("Failed to create PaymentIntent:", err);
+        // static client secret for testing:
+        // setClientSecret(
+        //   "pi_3RvRkRFZeA9h4jlt0lWNS3CL_secret_eIJgMaGcVfVElR5uuXHIJLdfX"
+        // );
         setClientSecret(null);
       } finally {
         setCreating(false);
@@ -159,6 +164,8 @@ const CheckoutForm = ({
 
   const [shippingExpanded, setShippingExpanded] = useState(true);
   const [shippingConfirmed, setShippingConfirmed] = useState(false);
+
+  const [addressComplete, setAddressComplete] = useState(false);
 
   const [loading, setLoading] = useState(false);
 
@@ -253,6 +260,7 @@ const CheckoutForm = ({
   return (
     <form onSubmit={handleSubmit}>
       <Stack spacing={3}>
+        {/* User details */}
         <Typography variant="h6">Your Details</Typography>
         <TextField
           label="Name"
@@ -270,6 +278,7 @@ const CheckoutForm = ({
           required
         />
 
+        {/* Shipping form */}
         <Typography variant="h6" sx={{ mb: 1 }}>
           Shipping
         </Typography>
@@ -302,31 +311,26 @@ const CheckoutForm = ({
                     ? [userLocation.toUpperCase()]
                     : [],
                 }}
+                onChange={(e: StripeAddressElementChangeEvent) => {
+                  setAddressComplete(e.complete);
+                }}
               />
               <Box mt={2} display="flex" justifyContent="flex-end">
+                {/* Updated so that confirming shipping address does not validate card details */}
                 <Button
                   type="button"
                   variant="contained"
+                  disabled={!addressComplete}
                   onClick={async (e) => {
                     e.preventDefault();
                     e.stopPropagation();
 
                     if (!elements) return;
-                    const result = await elements.submit(); // validates AddressElement
-                    if (result.error) {
-                      console.error(
-                        "Address validation error:",
-                        result.error.message
-                      );
-                      return;
-                    }
-
-                    // Get the actual shipping address data from AddressElement
                     const addressElement = elements.getElement(AddressElement);
-                    if (addressElement) {
-                      const { value } = await addressElement.getValue();
-                      onShippingConfirmed(value);
-                    }
+                    if (!addressElement) return;
+
+                    const { value } = await addressElement.getValue(); // not validating card yet
+                    onShippingConfirmed(value);
 
                     setShippingConfirmed(true);
                     setShippingExpanded(false);
@@ -339,6 +343,7 @@ const CheckoutForm = ({
           </Accordion>
         </Box>
 
+        {/* Payment form */}
         <Typography variant="h6">Payment</Typography>
         <Box
           sx={{
@@ -384,3 +389,4 @@ const CheckoutForm = ({
 };
 
 export default StripeGateway;
+
