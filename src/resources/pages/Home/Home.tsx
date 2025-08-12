@@ -56,7 +56,7 @@ export default function Home() {
                   import.meta.env.VITE_GEOCODE_API_KEY
                 }`
               );
-              setLocation(response.data.results[0].components.country);
+              setLocation(response.data.results[0].components["ISO_3166-1_alpha-2"]);
             },
             (error) => {
               console.log(error);
