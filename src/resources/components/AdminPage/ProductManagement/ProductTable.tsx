@@ -110,7 +110,7 @@ export default function ManagementTable(props: ProductTableProps) {
 
   return (
     <Paper>
-      <TableContainer sx={{ maxHeight: "60vh", minHeight: "60vh" }}>
+      <TableContainer sx={{ maxHeight: "70vh", minHeight: "70vh" }}>
         <Table stickyHeader sx={{ minWidth: 650 }} aria-label="simple table">
           <TableHead>
             <TableRow>

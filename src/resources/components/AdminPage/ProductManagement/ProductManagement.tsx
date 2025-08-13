@@ -108,8 +108,13 @@ export default function ProductManagement() {
               maxWidth: "70%"
             }}
           />
-          <FormControl sx={{ minWidth: "30%" }}>
-            <InputLabel id="category-select">Filter by Category</InputLabel>
+          <FormControl sx={{
+            minWidth: "30%",
+            '& .MuiInputBase-root': {
+              marginTop: '10px',
+            }
+          }}>
+            <InputLabel id="category-select" sx={{ marginBottom: "5px" }}>Filter by Category</InputLabel>
             <Select
               labelId="category-select"
               id="category-simple-select"

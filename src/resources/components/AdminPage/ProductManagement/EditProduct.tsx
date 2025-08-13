@@ -1,4 +1,4 @@
-import { Box, Button, Card, CardMedia, Grid, TextField, Typography } from "@mui/material";
+import { Box, Button, Card, CardMedia, FormControlLabel, Grid, Radio, RadioGroup, TextField, Typography } from "@mui/material";
 import { useLocation } from "react-router";
 import { ProductService } from "@/services/product-service";
 import { useEffect, useState } from "react";
@@ -12,6 +12,7 @@ const productService = new ProductService();
 export default function EditProduct() {
   const [product, setProduct] = useState<ProductModel>();
   const [isDisabled, setIsDisabled] = useState(true);
+  const [value, setValue] = useState<string>();
 
   const location = useLocation();
   const { productId } = location.state;
@@ -24,12 +25,22 @@ export default function EditProduct() {
   }, []);
 
   /**
+   * Handles the change of featured field. Required to change between values of
+   * True and False when either is being clicked by the user.
+   * @param event The action of a user clicking a radio button.
+   */
+  const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setValue((event.target as HTMLInputElement).value);
+  };
+
+  /**
    * Fetches for product details based on the ID.
    */
   const fetchProduct = async () => {
     try {
       const response = await productService.getProduct(productId);
       setProduct(response);
+      setValue(response.featured.toString());
     } catch (error) {
       console.error("Failed to fetch products", error);
     }
@@ -75,11 +86,27 @@ export default function EditProduct() {
                 </Grid>
                 <Grid size={6}>
                   <Typography>Featured</Typography>
-                  <TextField
-                    fullWidth
-                    defaultValue={product.featured}
-                    disabled={isDisabled}
-                  />
+                  <RadioGroup
+                    row
+                    aria-labelledby="demo-row-radio-buttons-group-label"
+                    name="row-radio-buttons-group"
+                    value={value}
+                    onChange={handleChange}
+                    sx={{ marginTop: "5px" }}
+                  >
+                    <FormControlLabel
+                      value="true"
+                      control={<Radio />}
+                      label="True"
+                      disabled={isDisabled}
+                    />
+                    <FormControlLabel
+                      value="false"
+                      control={<Radio />}
+                      label="False"
+                      disabled={isDisabled}
+                    />
+                  </RadioGroup>
                 </Grid>
                 <Grid size={12}>
                   <Typography>Description</Typography>
