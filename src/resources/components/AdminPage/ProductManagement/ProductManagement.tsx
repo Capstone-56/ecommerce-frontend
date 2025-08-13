@@ -75,7 +75,7 @@ export default function ProductManagement() {
               if (e.key === "Enter") { /* empty */ };
             }}
             fullWidth
-            // alternatives to inputProps are also deprecated or dont allow sx... I hate MUI
+            // alternatives to inputProps are also deprecated or dont allow sx... I hate MUI (Dan & Xavier)
             InputProps={{
               disableUnderline: true,
               startAdornment: (
