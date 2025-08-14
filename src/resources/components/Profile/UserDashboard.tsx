@@ -1,7 +1,8 @@
-import { Box, Typography, Button, Paper, Divider } from "@mui/material";
+import { Box, Typography, Button, Paper } from "@mui/material";
+import React from "react";
 
 // Main dashboard for "Home" tab
-export default function UserDashboard() {
+const UserDashboard: React.FC = () => {
   // API call to fetch user details
 
   {
@@ -96,7 +97,6 @@ export default function UserDashboard() {
                   bgcolor: "#aaa",
                   mr: 2,
                   display: "flex",
-                  flexGrow: 1,
                   alignItems: "center",
                   justifyContent: "center",
                 }}
@@ -163,4 +163,6 @@ export default function UserDashboard() {
       </Box>
     </Box>
   );
-}
+};
+
+export default UserDashboard;

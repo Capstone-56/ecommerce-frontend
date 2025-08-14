@@ -1,18 +1,18 @@
 import { Outlet, NavLink, useLocation } from "react-router-dom";
-import { Box, Tabs, Tab, Paper } from "@mui/material";
+import { Box, Tabs, Tab } from "@mui/material";
 import { useEffect } from "react";
 
 const tabs = [
   { label: "Home", to: "/profile" },
   { label: "Orders", to: "/profile/orders" },
   { label: "Tracking", to: "/profile/tracking" },
-  { label: "Profile", to: "/profile/details" }, // Example extra tab
+  { label: "Profile", to: "/profile/details" },
 ];
 
-export default function Profile() {
+const Profile: React.FC = () => {
   const location = useLocation();
 
-  // Find the current tab index
+  // Find the current tab index - this is based on url
   const currentTab = tabs.findIndex(
     (tab) =>
       location.pathname === tab.to ||
@@ -55,4 +55,6 @@ export default function Profile() {
       </Box>
     </Box>
   );
-}
+};
+
+export default Profile;

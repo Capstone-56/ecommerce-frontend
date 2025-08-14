@@ -44,7 +44,18 @@ export const router = createBrowserRouter([
             index: true,
             element: <UserDashboard />,
           },
-          // Include orders, tracking and details
+          // {
+          //   path: "/orders",
+          //   element: "",
+          // },
+          // {
+          //   path: "/tracking",
+          //   element: "",
+          // },
+          // {
+          //   path: "/details",
+          //   element: "",
+          // },
         ],
       },
       {
