@@ -16,15 +16,7 @@ export class ProductService {
    * @returns A paged result of products.
    */
   async listProducts(
-    page?: number,
-    pageSize?: number,
-    priceMin?: number,
-    priceMax?: number,
-    sort?: string,
-    colour?: string,
-    categories?: string,
-    search?: string
-  ) : Promise<PagedList<ProductModel>> {
+page?: number, pageSize?: number, priceMin?: number, priceMax?: number, sort?: string, colour?: string, categories?: string, search?: string, userLocation?: string | null  ) : Promise<PagedList<ProductModel>> {
     try {
       const params = new URLSearchParams();
       if (page) params.append("page", page.toString());
@@ -35,6 +27,7 @@ export class ProductService {
       if (colour) params.append("colour", colour);
       if (categories) params.append("categories", categories);
       if (search) params.append("search", search);
+      if (userLocation) params.append("location", userLocation);
     
       const baseUrl = `/api/product?${params.toString()}`;
 
