@@ -1,8 +1,11 @@
-import { Menu as MenuIcon, Search as SearchIcon, ChevronLeft} from "@mui/icons-material";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import {
+  KeyboardCommandKey,
+  Menu as MenuIcon,
   ShoppingCartOutlined,
   AccountCircle,
+  Search as SearchIcon,
+  ChevronLeft
 } from "@mui/icons-material";
 import {
   AppBar,
@@ -24,12 +27,14 @@ import { CategoryModel } from "@/domain/models/CategoryModel";
 import { CategoryService } from "@/services/category-service";
 import CategoryMenu from "./CategoryMenu";
 import MobileDrawer from "./MobileDrawer";
-import { AuthenticationState, cartState, UserState } from "@/domain/state";
+import { authenticationState, cartState, userState } from "@/domain/state";
 import { Role } from "@/domain/enum/role";
+
 import SearchBar from "@/resources/components/Search/SearchBar";
 import { AuthService } from "@/services/auth-service";
 import { StatusCodes } from "http-status-codes";
 import { UserService } from "@/services/user-service";
+import { ShoppingCartService } from "@/services/shopping-cart-service";
 
 // Menu Items
 // Should move to another file
@@ -41,7 +46,13 @@ const menus = [
   { name: "About", route: Constants.ABOUT_ROUTE },
 ];
 
+// Create service instances once per module (shared across all component instances)
+const authService = new AuthService();
+const shoppingCartService = new ShoppingCartService();
+const userService = new UserService();
+
 const Navbar: React.FC = () => {
+  const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const [mobileDrawerOpen, setMobileDrawerOpen] = useState(false);
   const [searchDrawerOpen, setSearchDrawerOpen] = useState(false);
   const [profileAnchorEl, setProfileAnchorEl] = useState<null | HTMLElement>(
@@ -49,10 +60,15 @@ const Navbar: React.FC = () => {
   );
   const [userInformation, setUserInformation] = useState(null);
   const location = useLocation();
+  
+  // Unified cart state for both authenticated and unauthenticated users
   const cart = cartState((state) => state.cart);
-  const isAuthenticated = AuthenticationState((state) => state.authenticated);
-  const username = UserState((state) => state.userName);
-  const authService = new AuthService();
+  const setCart = cartState((state) => state.setCart);
+  const clearCart = cartState((state) => state.clearCart);
+  const isAuthenticated = authenticationState((state) => state.authenticated);
+  const username = userState((state) => state.userName);
+
+  const cartCount = cart.length;
   const navigate = useNavigate();
 
   // Category related state
@@ -86,17 +102,13 @@ const Navbar: React.FC = () => {
     fetchCategories();
   }, []);
 
-  const handleCategoryClick = (category: CategoryModel) => {
+    const handleCategoryClick = (category: CategoryModel) => {
     // Navigate to products page with category filter
     const categoryParam = category.internalName;
     window.location.href = `/products?categories=${categoryParam}`;
   };
 
-  useEffect(() => {
-    fetchUser();
-  }, [isAuthenticated, username]);
-
-  const handleMobileMenuOpen = () => {
+    const handleMobileMenuOpen = () => {
     setMobileDrawerOpen(true);
   };
 
@@ -112,12 +124,52 @@ const Navbar: React.FC = () => {
     setSearchDrawerOpen(false);
   };
 
+  const loadCartData = useCallback(async () => {
+    if (isAuthenticated) {
+      // Authenticated users: Load cart from API into Zustand store
+      try {
+        const cartItems = await shoppingCartService.getShoppingCart();
 
-  const fetchUser = async () => {
-    const userService = new UserService();
+        // Convert API response to LocalShoppingCartItemModel format
+        const localCartItems = cartItems.map(item => ({
+          ...item,
+          totalPrice: item.totalPrice || item.productItem.price * item.quantity
+        }));
+
+        setCart(localCartItems);
+      } catch (error) {
+        console.error("Failed to fetch cart data:", error);
+        clearCart();
+      }
+    }
+    // Unauthenticated users: cart data is already in Zustand store (persisted)
+  }, [isAuthenticated, setCart, clearCart]);
+
+  const fetchUser = useCallback(async () => {
     if (username) {
       setUserInformation(await userService.getUser(username));
     }
+  }, [username]);
+
+  useEffect(() => {
+    fetchUser();
+    loadCartData();
+
+    // Listen for cart updates from other components
+    const handleCartUpdate = () => {
+      loadCartData();
+    };
+    window.addEventListener(Constants.EVENT_CART_UPDATED, handleCartUpdate);
+
+    // Cleanup listener on unmount
+    return () => {
+      window.removeEventListener(Constants.EVENT_CART_UPDATED, handleCartUpdate);
+    };
+  }, [fetchUser, loadCartData]);
+  
+
+  const handleMenuClose = () => {
+    setAnchorEl(null);
   };
 
   const handleProfileMenuOpen = (event: React.MouseEvent<HTMLElement>) => {
@@ -133,9 +185,10 @@ const Navbar: React.FC = () => {
       const status = await authService.logout();
 
       if (status === StatusCodes.OK) {
-        AuthenticationState.setState({ authenticated: false });
-        UserState.setState({ role: Role.CUSTOMER });
-        UserState.setState({ userName: null });
+        authenticationState.setState({ authenticated: false });
+        userState.setState({ role: Role.CUSTOMER });
+        userState.setState({ userName: null });
+        clearCart(); // Clear cart data on logout
         navigate(Constants.HOME_ROUTE);
       }
     } catch (error) {
@@ -152,7 +205,11 @@ const Navbar: React.FC = () => {
         <Toolbar
           sx={{
             backgroundColor: common.white,
-            justifyContent: {xs: "space-between" , sm: "space-between", md: "space-between", lg: "space-evenly"},
+            justifyContent: {
+              md: "space-evenly",
+              xs: "space-between",
+              sm: "space-between",
+            },
             px: 2,
           }}
         >
@@ -224,6 +281,7 @@ const Navbar: React.FC = () => {
             )}
           </Box>
 
+
           {/* Cart and User related Buttons */}
           <Box
             sx={{
@@ -257,6 +315,12 @@ const Navbar: React.FC = () => {
                     location.pathname === Constants.CART_ROUTE
                       ? common.black
                       : grey,
+              <ShoppingCartOutlined
+                sx={{
+                  color:
+                    location.pathname === Constants.CART_ROUTE
+                      ? common.black
+                      : grey,
                 }}
                 fontSize="medium"
               ></ShoppingCartOutlined>
@@ -270,9 +334,65 @@ const Navbar: React.FC = () => {
                     height: "16px",
                     minWidth: "16px",
                     padding: "0 4px",
+                  "& .MuiBadge-badge": {
+                    top: -15,
+                    fontSize: "0.6rem",
+                    height: "16px",
+                    minWidth: "16px",
+                    padding: "0 4px",
                   },
                 }}
               ></Badge>
+              ></Badge>
+            </IconButton>
+
+            {isAuthenticated && userInformation ? (
+              <>
+                <IconButton onClick={handleProfileMenuOpen}>
+                  <AccountCircle />
+                </IconButton>
+                <Menu
+                  anchorEl={profileAnchorEl}
+                  open={Boolean(profileAnchorEl)}
+                  onClose={handleProfileMenuClose}
+                  anchorOrigin={{
+                    vertical: "bottom",
+                    horizontal: "right",
+                  }}
+                  transformOrigin={{
+                    vertical: "top",
+                    horizontal: "right",
+                  }}
+                >
+                  <MenuItem
+                    component={RouterLink}
+                    to={Constants.PROFILE_ROUTE}
+                    onClick={handleProfileMenuClose}
+                  >
+                    Profile
+                  </MenuItem>
+                  <MenuItem onClick={handleLogout}>Logout</MenuItem>
+                </Menu>
+              </>
+            ) : (
+              <>
+                <Button
+                  component={RouterLink}
+                  to={Constants.LOGIN_ROUTE}
+                  variant="outlined"
+                  sx={{
+                    bgcolor: grey[50],
+                    color: grey[900],
+                    borderColor: grey[900],
+                    borderRadius: "8px",
+                    textDecoration: "none",
+                    "&:hover": {
+                      bgcolor: grey[100],
+                      borderColor: grey[900],
+                    },
+                  }}
+                >
+              </Badge>
             </IconButton>
 
             {isAuthenticated && userInformation ? (

@@ -6,11 +6,12 @@ import CartProductCard from "@/resources/components/ProductCard/CartProductCard"
 import { common } from "@mui/material/colors";
 
 export default function Cart() {
-  const cart = cartState((state) => state.cart);;
+  // Use unified cart state for both authenticated and unauthenticated users
+  const cart = cartState((state) => state.cart);
 
   useEffect(() => {
     document.title = "eCommerce | Cart";
-  });
+  }, []);
 
   return (
     <div>
@@ -34,11 +35,16 @@ export default function Cart() {
       >
         <Grid size={{ xs: 12, md: 7 }}>
           <Box display="flex" flexDirection="column" gap={2}>
-            {cart.length > 0 ? cart.map((product) => {
-              return (
-                <CartProductCard key={product.product.id} product={product.product}></CartProductCard>
-              )
-            }) :
+            {cart.length > 0 ? cart
+              .filter((cartItem) => cartItem?.productItem?.product?.id)
+              .map((cartItem) => {
+                return (
+                  <CartProductCard 
+                    key={cartItem.productItem.product.id} 
+                    cartItem={cartItem}
+                  ></CartProductCard>
+                )
+              }) :
               <Typography
                 variant="h5"
                 color={common.black}
