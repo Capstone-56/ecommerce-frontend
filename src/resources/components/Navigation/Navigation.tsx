@@ -2,7 +2,6 @@ import React, { useEffect, useState, useCallback } from "react";
 import {
   Menu as MenuIcon,
   ShoppingCartOutlined,
-  AccountCircle,
   Search as SearchIcon,
   ChevronLeft
 } from "@mui/icons-material";
@@ -18,6 +17,7 @@ import {
   Drawer,
   MenuItem,
   Menu,
+  Avatar,
 } from "@mui/material";
 import { NavLink, Link as RouterLink, useLocation, useNavigate } from "react-router-dom";
 import { grey, common } from "@mui/material/colors";
@@ -49,6 +49,11 @@ const menus = [
 const authService = new AuthService();
 const shoppingCartService = new ShoppingCartService();
 const userService = new UserService();
+
+// get users initial for profile avatar
+function getInitial(name?: string | null) {
+  return name?.trim()?.[0]?.toUpperCase() ?? 'U';
+}
 
 const Navbar: React.FC = () => {
   // Routing
@@ -335,7 +340,17 @@ const Navbar: React.FC = () => {
             {isAuthenticated && userInformation ? (
               <>
                 <IconButton onClick={handleProfileMenuOpen}>
-                  <AccountCircle />
+                  <Avatar
+                    sx={{
+                      width: 32,
+                      height: 32,
+                      bgcolor: 'primary.light',
+                      fontSize: 14,
+                      fontWeight: 600,
+                    }}
+                  >
+                    {getInitial(username)}
+                  </Avatar>
                 </IconButton>
                 <Menu
                   anchorEl={profileAnchorEl}
