@@ -25,8 +25,11 @@ import { useState, useEffect, useMemo } from "react";
 import { UserState, cartState, locationState } from "@/domain/state";
 import { UserService } from "@/services/user-service";
 import type { StripeAddressElementChangeEvent } from "@stripe/stripe-js";
+import { Constants } from "@/domain/constants";
 
 type CreateIntentResponse = { clientSecret: string };
+
+const API_BASE = import.meta.env.VITE_API_BASE;
 
 const StripeGateway = () => {
   const cart = cartState((s) => s.cart);
@@ -72,14 +75,23 @@ const StripeGateway = () => {
       }
       setCreating(true);
       try {
-        // need to update this with actual API endpoint when its ready
-        const res = await fetch("/api/payments/xxxxxxxx", {
+        const token = localStorage.getItem("token");
+        const headers: Record<string, string> = {
+          "Content-Type": "application/json",
+          ...(token ? { Authorization: `Bearer ${token}` } : {}),
+        };
+        const res = await fetch(`${API_BASE}/api/payments/create-intent`, {
           method: "POST",
-          headers: { "Content-Type": "application/json" },
+          headers,
+          credentials: "include",
           body: JSON.stringify({
             amount,
             currency: currency.toLowerCase(),
             country: userLocation,
+            cart: cart.map((ci) => ({
+              product: { id: ci.product.id },
+              quantity: ci.quantity,
+            })),
           }),
         });
         if (!res.ok) throw new Error(await res.text());
@@ -87,10 +99,6 @@ const StripeGateway = () => {
         setClientSecret(data.clientSecret);
       } catch (err) {
         console.error("Failed to create PaymentIntent:", err);
-        // static client secret for testing:
-        // setClientSecret(
-        //   "pi_3RvRkRFZeA9h4jlt0lWNS3CL_secret_eIJgMaGcVfVElR5uuXHIJLdfX"
-        // );
         setClientSecret(null);
       } finally {
         setCreating(false);
@@ -117,31 +125,29 @@ const StripeGateway = () => {
   }
 
   return (
-    <Elements stripe={stripePromise} options={elementsOptions}>
-      <Container maxWidth="sm" sx={{ mt: 6 }}>
-        <Paper elevation={3} sx={{ p: 4, borderRadius: 2 }}>
-          <Typography variant="h4" gutterBottom>
-            Checkout
-          </Typography>
-          <Typography variant="body1" sx={{ mb: 3 }}>
-            Please enter your shipping and payment details to complete your
-            order.
-          </Typography>
-          {clientSecret && elementsOptions && (
-            <Elements
-              key={clientSecret}
-              stripe={stripePromise}
-              options={elementsOptions}
-            >
-              <CheckoutForm
-                clientSecret={clientSecret}
-                onShippingConfirmed={setShipping}
-              />
-            </Elements>
-          )}
-        </Paper>
-      </Container>
-    </Elements>
+    <Container maxWidth="sm" sx={{ mt: 6 }}>
+      <Paper elevation={3} sx={{ p: 4, borderRadius: 2 }}>
+        <Typography variant="h4" gutterBottom>
+          Checkout
+        </Typography>
+        <Typography variant="body1" sx={{ mb: 3 }}>
+          Please enter your shipping and payment details to complete your order.
+        </Typography>
+
+        {clientSecret && elementsOptions && (
+          <Elements
+            key={clientSecret}
+            stripe={stripePromise}
+            options={elementsOptions}
+          >
+            <CheckoutForm
+              clientSecret={clientSecret}
+              onShippingConfirmed={setShipping}
+            />
+          </Elements>
+        )}
+      </Paper>
+    </Container>
   );
 };
 
@@ -236,11 +242,12 @@ const CheckoutForm = ({
     setLoading(true);
 
     // PaymentElement handles payment method selection + validation
-    const { error } = await stripe.confirmPayment({
+    const { error, paymentIntent } = await stripe.confirmPayment({
       elements,
       confirmParams: {
         receipt_email: email,
         payment_method_data: { billing_details: { name, email } },
+        return_url: `${window.location.origin}${Constants.ORDER_COMPLETE_ROUTE}`,
       },
       redirect: "if_required",
     });
@@ -251,10 +258,15 @@ const CheckoutForm = ({
       console.error(error.message);
       return;
     }
-
-    alert(
-      "Payment confirmed client-side. Need to show order status page, and use webhooks to confirm the status"
-    );
+    // Card and other non-redirect have a PI immediately
+    if (paymentIntent?.id) {
+      window.location.href = `${
+        Constants.ORDER_COMPLETE_ROUTE
+      }?pi=${encodeURIComponent(paymentIntent.id)}`;
+    } else {
+      // Redirect methods will land on ORDER_COMPLETE_ROUTE via return_url
+      window.location.href = `${Constants.ORDER_COMPLETE_ROUTE}`;
+    }
   };
 
   return (
@@ -329,7 +341,7 @@ const CheckoutForm = ({
                     const addressElement = elements.getElement(AddressElement);
                     if (!addressElement) return;
 
-                    const { value } = await addressElement.getValue(); // not validating card yet
+                    const { value } = await addressElement.getValue();
                     onShippingConfirmed(value);
 
                     setShippingConfirmed(true);

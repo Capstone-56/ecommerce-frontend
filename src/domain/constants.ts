@@ -23,4 +23,5 @@ export class Constants {
   public static readonly LOGIN_ROUTE: string = "/login";
   public static readonly SIGNUP_ROUTE: string = "/signup"
   public static readonly PROFILE_ROUTE: string = "/profile"
+  public static readonly ORDER_COMPLETE_ROUTE: string = "/order-complete";
 }

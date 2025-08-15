@@ -22,6 +22,7 @@ import CustomerSupport from "@/resources/components/AdminPage/CustomerSupport";
 import AdminSettings from "@/resources/components/AdminPage/AdminSettings";
 import Payment from "@/resources/pages/Checkout/Payment";
 import { Constants } from "@/domain/constants";
+import OrderComplete from "@/resources/pages/Checkout/OrderComplete";
 
 export const router = createBrowserRouter([
   {
@@ -67,6 +68,10 @@ export const router = createBrowserRouter([
       {
         path: "checkout",
         element: <Payment />
+      },
+      {
+        path: "order-complete",
+        element: <OrderComplete />,
       }
 
     ],
