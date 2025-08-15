@@ -39,7 +39,7 @@ const CategoryMenu: React.FC<CategoryMenuProps> = ({categories, onCategoryClick,
   const calculateColumns = (category: CategoryModel): ColumnData[] => {
     const columns: ColumnData[] = [];
     
-    // Column 1: Primary children with "View All" option
+    // Column 1: Primary children
     if (category.children && category.children.length > 0) {
       columns.push({
         title: category.name,
@@ -50,7 +50,7 @@ const CategoryMenu: React.FC<CategoryMenuProps> = ({categories, onCategoryClick,
       });
     }
 
-    // Column 2: Secondary children (if primary child is hovered)
+    // Column 2: Secondary children
     if (hoveredPrimaryChild && hoveredPrimaryChild.children && hoveredPrimaryChild.children.length > 0) {
       columns.push({
         title: hoveredPrimaryChild.name,
@@ -61,7 +61,7 @@ const CategoryMenu: React.FC<CategoryMenuProps> = ({categories, onCategoryClick,
       });
     }
 
-    // Column 3: Tertiary children (if secondary child is hovered)
+    // Column 3: Tertiary children
     if (hoveredSecondaryChild && hoveredSecondaryChild.children && hoveredSecondaryChild.children.length > 0) {
       columns.push({
         title: hoveredSecondaryChild.name,
@@ -72,7 +72,7 @@ const CategoryMenu: React.FC<CategoryMenuProps> = ({categories, onCategoryClick,
       });
     }
 
-    // Column 4: Quaternary children (if tertiary child is hovered)
+    // Column 4: Quaternary children
     if (hoveredTertiaryChild && hoveredTertiaryChild.children && hoveredTertiaryChild.children.length > 0) {
       columns.push({
         title: hoveredTertiaryChild.name,
