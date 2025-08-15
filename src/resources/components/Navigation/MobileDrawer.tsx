@@ -12,7 +12,7 @@ import {
 } from '@mui/material';
 import {
   Close as CloseIcon,
-  ChevronRight
+  ChevronRight, ChevronLeft
 } from '@mui/icons-material';
 import { NavLink } from 'react-router-dom';
 import { CategoryModel } from '@/domain/models/CategoryModel';
@@ -49,8 +49,10 @@ const MobileDrawerMenuItem: React.FC<MenuItemProps> = ({ item, onClick }) => (
       onClick={onClick}
       sx={{
         py: 2,
+        transition: 'all 0.2s ease-in-out',
         '&:hover': {
           backgroundColor: grey[100],
+          transform: 'translateX(4px)',
         },
       }}
     >
@@ -102,9 +104,11 @@ const CategoryItem: React.FC<CategoryItemProps> = ({
       <ListItemButton
         onClick={handleClick}
         sx={{
-          p: 2, 
+          p: 2,
+          transition: 'all 0.2s ease-in-out',
           '&:hover': {
             backgroundColor: grey[100],
+            transform: 'translateX(4px)',
           },
         }}
       >
@@ -118,7 +122,7 @@ const CategoryItem: React.FC<CategoryItemProps> = ({
         {/* Display a right arrow icon if the category has children */}
         {hasChildren && (
           <ListItemIcon sx={{ minWidth: 24, justifyContent: 'flex-end' }}>
-            <ChevronRight />
+            <ChevronRight sx={{ fontSize: 20 }} />
           </ListItemIcon>
         )}
       </ListItemButton>
@@ -228,7 +232,7 @@ const MobileDrawer: React.FC<MobileDrawerProps> = ({
           {/* Back Button */}
           {!isTopLevel && (
             <IconButton onClick={navigateBack} sx={{ mr: 1 }}>
-              <ChevronRight sx={{ transform: 'rotate(180deg)' }}/>
+              <ChevronLeft/>
             </IconButton>
           )}
           {/* Dynamic Title */}

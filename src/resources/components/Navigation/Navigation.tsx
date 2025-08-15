@@ -1,6 +1,5 @@
 import React, { useEffect, useState, useCallback } from "react";
 import {
-  KeyboardCommandKey,
   Menu as MenuIcon,
   ShoppingCartOutlined,
   AccountCircle,
@@ -52,42 +51,44 @@ const shoppingCartService = new ShoppingCartService();
 const userService = new UserService();
 
 const Navbar: React.FC = () => {
-  const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
-  const [mobileDrawerOpen, setMobileDrawerOpen] = useState(false);
-  const [searchDrawerOpen, setSearchDrawerOpen] = useState(false);
-  const [profileAnchorEl, setProfileAnchorEl] = useState<null | HTMLElement>(
-    null
-  );
-  const [userInformation, setUserInformation] = useState(null);
+  // Routing
   const location = useLocation();
-  
-  // Unified cart state for both authenticated and unauthenticated users
+  const navigate = useNavigate();
+
+  // Global store state
+  const isAuthenticated = authenticationState((state) => state.authenticated);
+  const username = userState((state) => state.userName);
   const cart = cartState((state) => state.cart);
   const setCart = cartState((state) => state.setCart);
   const clearCart = cartState((state) => state.clearCart);
-  const isAuthenticated = authenticationState((state) => state.authenticated);
-  const username = userState((state) => state.userName);
-
   const cartCount = cart.length;
-  const navigate = useNavigate();
 
-  // Category related state
+  // Local UI state
+  const [mobileDrawerOpen, setMobileDrawerOpen] = useState(false);
+  const [searchDrawerOpen, setSearchDrawerOpen] = useState(false);
+  const [profileAnchorEl, setProfileAnchorEl] = useState<null | HTMLElement>(null);
+
+  // User state
+  const [userInformation, setUserInformation] = useState(null);
+
+  // Category state
   const [categories, setCategories] = useState<CategoryModel[]>([]);
   const [categoriesLoading, setCategoriesLoading] = useState(true);
   const [categoriesError, setCategoriesError] = useState<string | null>(null);
 
+  // Category effects & handlers
   useEffect(() => {
     const fetchCategories = async () => {
       try {
         setCategoriesLoading(true);
         const categoryService = new CategoryService();
         const fetchedCategories = await categoryService.listCategories();
-        
+
         // Filter for categories that have no parent
         const topLevelCategories = fetchedCategories.filter(
           (category) => !category.parentCategory
         );
-        
+
         setCategories(topLevelCategories);
         setCategoriesError(null);
       } catch (err) {
@@ -102,28 +103,13 @@ const Navbar: React.FC = () => {
     fetchCategories();
   }, []);
 
-    const handleCategoryClick = (category: CategoryModel) => {
+  const handleCategoryClick = (category: CategoryModel) => {
     // Navigate to products page with category filter
     const categoryParam = category.internalName;
     window.location.href = `/products?categories=${categoryParam}`;
   };
 
-    const handleMobileMenuOpen = () => {
-    setMobileDrawerOpen(true);
-  };
-
-  const handleMobileMenuClose = () => {
-    setMobileDrawerOpen(false);
-  };
-
-  const handleSearchDrawerOpen = () => {
-    setSearchDrawerOpen(true);
-  };
-
-  const handleSearchDrawerClose = () => {
-    setSearchDrawerOpen(false);
-  };
-
+  // Cart effects & helpers
   const loadCartData = useCallback(async () => {
     if (isAuthenticated) {
       // Authenticated users: Load cart from API into Zustand store
@@ -145,16 +131,7 @@ const Navbar: React.FC = () => {
     // Unauthenticated users: cart data is already in Zustand store (persisted)
   }, [isAuthenticated, setCart, clearCart]);
 
-  const fetchUser = useCallback(async () => {
-    if (username) {
-      setUserInformation(await userService.getUser(username));
-    }
-  }, [username]);
-
   useEffect(() => {
-    fetchUser();
-    loadCartData();
-
     // Listen for cart updates from other components
     const handleCartUpdate = () => {
       loadCartData();
@@ -165,12 +142,19 @@ const Navbar: React.FC = () => {
     return () => {
       window.removeEventListener(Constants.EVENT_CART_UPDATED, handleCartUpdate);
     };
-  }, [fetchUser, loadCartData]);
-  
+  }, [loadCartData]);
 
-  const handleMenuClose = () => {
-    setAnchorEl(null);
-  };
+  // User effects & handlers
+  const fetchUser = useCallback(async () => {
+    if (username) {
+      setUserInformation(await userService.getUser(username));
+    }
+  }, [username]);
+
+  useEffect(() => {
+    fetchUser();
+    loadCartData();
+  }, [fetchUser, loadCartData]);
 
   const handleProfileMenuOpen = (event: React.MouseEvent<HTMLElement>) => {
     setProfileAnchorEl(event.currentTarget);
@@ -196,6 +180,22 @@ const Navbar: React.FC = () => {
     }
   };
 
+  const handleMobileMenuOpen = () => {
+    setMobileDrawerOpen(true);
+  };
+
+  const handleMobileMenuClose = () => {
+    setMobileDrawerOpen(false);
+  };
+
+  const handleSearchDrawerOpen = () => {
+    setSearchDrawerOpen(true);
+  };
+
+  const handleSearchDrawerClose = () => {
+    setSearchDrawerOpen(false);
+  };
+
   return (
     <AppBar position="static" elevation={0}>
       <Paper
@@ -205,18 +205,15 @@ const Navbar: React.FC = () => {
         <Toolbar
           sx={{
             backgroundColor: common.white,
-            justifyContent: {
-              md: "space-evenly",
-              xs: "space-between",
-              sm: "space-between",
-            },
+            justifyContent: {xs: "space-between" , sm: "space-between", md: "space-between", lg: "space-between", xl: "space-evenly"},
             px: 2,
+            minHeight: { xs: 64, sm: 64, md: 64 }, // Force consistent height
           }}
         >
           {/* Nav Menu on < md (uses MUI Menu component) */}
           {/* Mobile Menu Button */}
           <Box sx={{ display:"flex"}}>
-            <Box sx={{ display: { xs: "flex", md: "flex", lg: "none" } }}>
+            <Box sx={{ display: { xs: "flex", md: "flex", lg: "flex", xl: "none" } }}>
               <IconButton
                 size="large"
                 edge="start"
@@ -240,7 +237,7 @@ const Navbar: React.FC = () => {
                 to={Constants.HOME_ROUTE}
                 noWrap
                 sx={{
-                  fontSize: { xs: "32px", md: "24px" },
+                  fontSize: { xs: "32px", md: "32px" },
                   color: grey[900],
                   "&:hover": {
                     color: grey[900],
@@ -255,7 +252,7 @@ const Navbar: React.FC = () => {
           {/* Nav Menu on > md */}
           <Box
             sx={{
-              display: { xs: "none", md: "none", lg: "flex" },
+              display: { xs: "none", md: "none", xl: "flex" },
               alignItems: "center",
               flexDirection: "row",
               justifyContent: "center",
@@ -309,89 +306,29 @@ const Navbar: React.FC = () => {
 
             {/* Cart Button */}
             <IconButton component={RouterLink} to={Constants.CART_ROUTE}>
-              <ShoppingCartOutlined
-                sx={{
-                  color:
-                    location.pathname === Constants.CART_ROUTE
-                      ? common.black
-                      : grey,
-              <ShoppingCartOutlined
-                sx={{
-                  color:
-                    location.pathname === Constants.CART_ROUTE
-                      ? common.black
-                      : grey,
-                }}
-                fontSize="medium"
-              ></ShoppingCartOutlined>
               <Badge
                 badgeContent={cart.length}
                 color="primary"
                 sx={{
                   "& .MuiBadge-badge": {
-                    top: -15,
+                    top: -4,
+                    right: -0, 
                     fontSize: "0.6rem",
                     height: "16px",
                     minWidth: "16px",
-                    padding: "0 4px",
-                  "& .MuiBadge-badge": {
-                    top: -15,
-                    fontSize: "0.6rem",
-                    height: "16px",
-                    minWidth: "16px",
-                    padding: "0 4px",
+                    padding: "0 4px", 
                   },
                 }}
-              ></Badge>
-              ></Badge>
-            </IconButton>
-
-            {isAuthenticated && userInformation ? (
-              <>
-                <IconButton onClick={handleProfileMenuOpen}>
-                  <AccountCircle />
-                </IconButton>
-                <Menu
-                  anchorEl={profileAnchorEl}
-                  open={Boolean(profileAnchorEl)}
-                  onClose={handleProfileMenuClose}
-                  anchorOrigin={{
-                    vertical: "bottom",
-                    horizontal: "right",
-                  }}
-                  transformOrigin={{
-                    vertical: "top",
-                    horizontal: "right",
-                  }}
-                >
-                  <MenuItem
-                    component={RouterLink}
-                    to={Constants.PROFILE_ROUTE}
-                    onClick={handleProfileMenuClose}
-                  >
-                    Profile
-                  </MenuItem>
-                  <MenuItem onClick={handleLogout}>Logout</MenuItem>
-                </Menu>
-              </>
-            ) : (
-              <>
-                <Button
-                  component={RouterLink}
-                  to={Constants.LOGIN_ROUTE}
-                  variant="outlined"
+              >
+                <ShoppingCartOutlined
                   sx={{
-                    bgcolor: grey[50],
-                    color: grey[900],
-                    borderColor: grey[900],
-                    borderRadius: "8px",
-                    textDecoration: "none",
-                    "&:hover": {
-                      bgcolor: grey[100],
-                      borderColor: grey[900],
-                    },
+                    color:
+                      location.pathname === Constants.CART_ROUTE
+                        ? common.black
+                        : grey,
                   }}
-                >
+                  fontSize="medium"
+                />
               </Badge>
             </IconButton>
 
@@ -521,4 +458,3 @@ const Navbar: React.FC = () => {
 };
 
 export default Navbar;
-
