@@ -3,6 +3,7 @@ import { ProductService } from "@/services/product-service";
 import { useEffect, useState } from "react";
 import ProductCard from "../ProductCard/ProductCard";
 import { Box, Typography } from "@mui/material";
+import { locationState } from "@/domain/state";
 
 type RelatedProductsProps = {
   product: ProductModel;
@@ -17,17 +18,18 @@ export default function ProductDetails(props: RelatedProductsProps) {
   const [relatedProducts, setRelatedProducts] = useState<Array<ProductModel>>(
     []
   );
+  const userLocation = locationState((state) => state.userLocation);
 
   useEffect(() => {
     getRelatedProducts();
-  }, [props.product]);
+  }, [props.product, userLocation]);
 
   /**
    * Retrieves the related products.
    */
   const getRelatedProducts = async () => {
     const productService = new ProductService();
-    const response = await productService.getRelatedProducts(props.product.id);
+    const response = await productService.getRelatedProducts(props.product.id, userLocation);
     if (response) {
       setRelatedProducts(response);
     } else {

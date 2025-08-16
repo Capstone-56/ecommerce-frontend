@@ -4,6 +4,7 @@ import "./index.css";
 import { RouterProvider } from "react-router-dom";
 import { ThemeProvider, createTheme, CssBaseline, GlobalStyles } from "@mui/material";
 import { themeOptions } from "./assets/theme/theme";
+import LocationProvider from "./providers/LocationProvider";
 
 import { router } from "./router/router.tsx";
 import { Slide, ToastContainer } from "react-toastify";
@@ -24,7 +25,9 @@ createRoot(document.getElementById("root")!).render(
           },
         }}
       />
-      <RouterProvider router={router} />
+      <LocationProvider>
+        <RouterProvider router={router} />
+      </LocationProvider>
       <ToastContainer
         position="bottom-center"
         autoClose={3000}
