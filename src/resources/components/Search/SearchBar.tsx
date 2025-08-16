@@ -30,7 +30,7 @@ const SearchBar: React.FC = () => {
   }, [location.pathname]);
 
   return (
-    <Box sx={{ display: "flex", alignItems: "center", width: "100%", maxWidth: 200}}>
+    <Box sx={{ display: "flex", alignItems: "center", width: "100%"}}>
       <TextField
         variant="outlined"
         size="medium"

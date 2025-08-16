@@ -3,5 +3,10 @@ export interface CategoryModel {
   internalName: string; 
   name: string;
   description: string;
-  parentCategory: string | null;
+  parentCategory?: string | null;
+  children?: CategoryModel[];
+  breadcrumb?: Array<{
+    name: string;
+    internalName: string;
+  }>;
 }

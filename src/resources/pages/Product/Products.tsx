@@ -22,7 +22,7 @@ import { ProductModel } from "@/domain/models/ProductModel";
 import Paginator from "@/resources/components/Pagination/Paginator";
 import ProductCard from "@/resources/components/ProductCard/ProductCard";
 import Filter from "@/resources/components/Filter/Filter";
-import { Constants } from "@/domain/constants";
+import DynamicBreadcrumbs from '@/resources/components/Navigation/DynamicBreadcrumbs';
 
 export default function Products() {
   const [products, setProducts] = useState<PagedList<ProductModel>>();
@@ -125,11 +125,8 @@ export default function Products() {
       >
         <Box component="main" sx={{ flexGrow: 1 }}>
           <Container maxWidth="xl" sx={{ mt: 4, mb: 8 }}>
-            {/* REPLACE: breadcrumb currently hardcoded. needs to be dynamic */}
-            <Breadcrumbs>
-              <Link to={Constants.HOME_ROUTE}>Home</Link>
-              <Link to={Constants.PRODUCTS_ROUTE}>Products</Link>
-            </Breadcrumbs>
+            {/* Dynamic breadcrumbs */}
+            <DynamicBreadcrumbs />
 
             {/* Responsive Flex Container */}
             <Box
