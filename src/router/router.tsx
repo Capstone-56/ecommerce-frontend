@@ -16,11 +16,13 @@ import SignUp from "@/resources/pages/Auth/SignUp";
 import AdminProfile from "@/resources/pages/Profile/AdminProfile";
 import Analytics from "@/resources/components/AdminPage/Analytics";
 import AdminDashboard from "@/resources/components/AdminPage/AdminDashboard/AdminDashboard";
-import ProductManagement from "@/resources/components/AdminPage/ProductManagement";
+import ProductManagement from "@/resources/components/AdminPage/ProductManagement/ProductManagement";
 import VendorManagement from "@/resources/components/AdminPage/VendorManagement";
 import CustomerSupport from "@/resources/components/AdminPage/CustomerSupport";
 import AdminSettings from "@/resources/components/AdminPage/AdminSettings";
 import { Constants } from "@/domain/constants";
+import AddProduct from "@/resources/components/AdminPage/ProductManagement/AddProduct";
+import EditProduct from "@/resources/components/AdminPage/ProductManagement/EditProduct";
 
 export const router = createBrowserRouter([
   {
@@ -81,6 +83,14 @@ export const router = createBrowserRouter([
       {
         path: "product/management",
         element: <ProductManagement />
+      },
+      {
+        path: "product/management/add",
+        element: <AddProduct />
+      },
+      {
+        path: "product/management/:id",
+        element: <EditProduct />
       },
       {
         path: "vendor/management",
