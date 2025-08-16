@@ -56,11 +56,15 @@ page?: number, pageSize?: number, priceMin?: number, priceMax?: number, sort?: s
 
   /**
    * An endpoint to retrieve a set of featured products.
+   * @param userLocation Optional location filter for products.
    * @returns A set of featured products.
    */
-  async getFeaturedProducts(): Promise<ProductModel[]> {
+  async getFeaturedProducts(userLocation?: string | null): Promise<ProductModel[]> {
     try {
-      const baseUrl = `/api/product/featured`;
+      const params = new URLSearchParams();
+      if (userLocation) params.append("location", userLocation);
+      
+      const baseUrl = `/api/product/featured${params.toString() ? `?${params.toString()}` : ''}`;
       const products = await api.get(baseUrl);
       
       return products.data;
@@ -71,11 +75,16 @@ page?: number, pageSize?: number, priceMin?: number, priceMax?: number, sort?: s
 
   /**
    * An endpoint to retrieve a set of related products.
+   * @param productId The ID of the product to get related products for.
+   * @param userLocation Optional location filter for products.
    * @returns A set of related products.
    */
-  async getRelatedProducts(productId?: string): Promise<ProductModel[]> {
+  async getRelatedProducts(productId?: string, userLocation?: string | null): Promise<ProductModel[]> {
     try {
-      const baseUrl = `/api/product/${productId}/related`;
+      const params = new URLSearchParams();
+      if (userLocation) params.append("location", userLocation);
+      
+      const baseUrl = `/api/product/${productId}/related${params.toString() ? `?${params.toString()}` : ''}`;
       const relatedProducts = await api.get(baseUrl);
       
       return relatedProducts.data;

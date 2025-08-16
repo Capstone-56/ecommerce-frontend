@@ -32,12 +32,12 @@ export default function Home() {
 
     // Function to retrieve featured products via the API.
     const getProducts = async () => {
-      const products = await productService.getFeaturedProducts();
+      const products = await productService.getFeaturedProducts(location);
       setProducts(products);
     };
 
     getProducts();
-  }, []); // Removed location dependencies since location is now handled at app level
+  }, [location]); // Added location dependency for filtering
 
   return (
     <>
