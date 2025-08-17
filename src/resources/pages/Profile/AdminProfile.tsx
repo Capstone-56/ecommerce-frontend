@@ -10,8 +10,8 @@ import { UserService } from "@/services/user-service";
  * information will be displayed and can be updated.
  */
 export default function AdminProfile() {
-  const userName = UserState((state) => state.userName)
-  const [userInformation, setUserInformation] = useState(null)
+  const userName = UserState((state) => state.userName);
+  const [userInformation, setUserInformation] = useState(null);
 
   useEffect(() => {
     document.title = "Profile";
@@ -23,31 +23,34 @@ export default function AdminProfile() {
    * @returns An admin's user details.
    */
   const getAdminInformation = async () => {
-    const userService = new UserService;
+    const userService = new UserService();
     if (userName) {
-      setUserInformation(await userService.getUser(userName))
+      setUserInformation(await userService.getUser(userName));
     }
-  }
+  };
 
   return (
     <>
       <RequireAdmin>
-        <div style={{ display: 'flex', minHeight: '100vh' }}>
+        <div style={{ display: "flex", minHeight: "100vh" }}>
           <div
             style={{
-              minWidth: '260px',
-              borderRight: '1px solid #ddd',
-              backgroundColor: '#212E4A',
-              color: "#8EB5C0"
-            }}>
+              minWidth: "260px",
+              borderRight: "1px solid #ddd",
+              backgroundColor: "#212E4A",
+              color: "#8EB5C0",
+            }}
+          >
             <MenuContent userInformation={userInformation} />
           </div>
 
-          <div style={{ flexGrow: 1, padding: '1rem', backgroundColor: '#F0F4F8' }}>
+          <div
+            style={{ flexGrow: 1, padding: "1rem", backgroundColor: "#F0F4F8" }}
+          >
             <Outlet context={userInformation} />
           </div>
         </div>
       </RequireAdmin>
     </>
   );
-};
+}

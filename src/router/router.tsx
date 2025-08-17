@@ -21,7 +21,10 @@ import VendorManagement from "@/resources/components/AdminPage/VendorManagement"
 import CustomerSupport from "@/resources/components/AdminPage/CustomerSupport";
 import AdminSettings from "@/resources/components/AdminPage/AdminSettings";
 import { Constants } from "@/domain/constants";
-import UserDashboard from "@/resources/components/Profile/UserDashboard";
+import UserDashboard from "@/resources/components/Profile/Dashboard/UserDashboard";
+import OrderHistory from "@/resources/components/AdminPage/AdminDashboard/OrderHistory";
+import UserDetails from "@/resources/components/Profile/UserDetails";
+import OrderTracking from "@/resources/components/Profile/OrderTracking";
 
 export const router = createBrowserRouter([
   {
@@ -37,25 +40,25 @@ export const router = createBrowserRouter([
         element: <About />,
       },
       {
-        path: "profile",
+        path: "/profile",
         element: <Profile />,
         children: [
           {
             index: true,
             element: <UserDashboard />,
           },
-          // {
-          //   path: "/orders",
-          //   element: "",
-          // },
-          // {
-          //   path: "/tracking",
-          //   element: "",
-          // },
-          // {
-          //   path: "/details",
-          //   element: "",
-          // },
+          {
+            path: "orders",
+            element: <OrderHistory />,
+          },
+          {
+            path: "tracking",
+            element: <OrderTracking />,
+          },
+          {
+            path: "details",
+            element: <UserDetails />,
+          },
         ],
       },
       {
