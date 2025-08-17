@@ -6,6 +6,7 @@ interface History {
   name: string;
   category: string;
   price: string;
+  imageUrl: string;
 }
 
 const HistorySummary: React.FC<{ history: History[] }> = ({ history }) => (
@@ -43,17 +44,27 @@ const HistorySummary: React.FC<{ history: History[] }> = ({ history }) => (
           {/* product image */}
           <Box
             sx={{
-              width: "40%",
-              height: "100%",
+              width: { xs: "35%", sm: "35%" },
+              minWidth: 64,
+              maxWidth: 120,
+              height: 80,
+              alignItems: "center",
+              justifyContent: "center",
               background: "grey.400",
+              overflow: "hidden",
             }}
-          ></Box>
+          >
+            <img
+              src={item.imageUrl}
+              alt={item.name}
+              style={{ width: "100%", height: "100%", objectFit: "cover" }}
+            />
+          </Box>
           {/* details */}
           <Box
             sx={{
               flex: 1,
               p: 1.5,
-              textAlign: "left",
             }}
           >
             <Typography
@@ -68,7 +79,7 @@ const HistorySummary: React.FC<{ history: History[] }> = ({ history }) => (
             </Typography>
             <Typography
               variant="body2"
-              color="primary.main"
+              color="text.primary"
               sx={{ fontWeight: "bold" }}
             >
               ${item.price}

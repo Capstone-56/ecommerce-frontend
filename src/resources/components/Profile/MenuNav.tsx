@@ -1,12 +1,13 @@
 import React from "react";
 import { NavLink } from "react-router-dom";
 import { Box, Button } from "@mui/material";
+import { Home, ShoppingBag, LocalShipping, Person } from "@mui/icons-material";
 
 const menuItems = [
-  { label: "Home", to: "/profile" },
-  { label: "Orders", to: "/profile/orders" },
-  { label: "Tracking", to: "/profile/tracking" },
-  { label: "Profile", to: "/profile/details" },
+  { label: "Home", to: "/profile", icon: <Home /> },
+  { label: "Orders", to: "/profile/orders", icon: <ShoppingBag /> },
+  { label: "Tracking", to: "/profile/tracking", icon: <LocalShipping /> },
+  { label: "Profile", to: "/profile/details", icon: <Person /> },
 ];
 
 const MenuNav: React.FC = () => {
@@ -32,11 +33,13 @@ const MenuNav: React.FC = () => {
             },
             color: "black",
             bgcolor: "white",
+            gap: 1,
             boxShadow: 1,
             fontWeight: "normal",
             "&:hover": { bgcolor: "#f5f5f5" },
           }}
         >
+          {item.icon}
           {item.label}
         </Button>
       ))}
