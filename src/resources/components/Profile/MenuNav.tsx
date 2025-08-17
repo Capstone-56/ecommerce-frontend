@@ -17,6 +17,7 @@ const MenuNav: React.FC = () => {
           key={item.to}
           component={NavLink}
           to={item.to}
+          end={item.to === "/profile"} // naive approach - for reusability maybe map base on routes object
           sx={{
             mx: 1,
             px: 4,
