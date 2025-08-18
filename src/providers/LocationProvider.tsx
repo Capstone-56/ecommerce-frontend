@@ -1,6 +1,7 @@
 import React, { useEffect, useRef } from "react";
 import { locationState } from "@/domain/state";
 import { LocationService } from "@/services/location-service";
+import { Constants } from "@/domain/constants";
 
 interface LocationProviderProps {
   children: React.ReactNode;
@@ -43,7 +44,7 @@ export const LocationProvider: React.FC<LocationProviderProps> = ({
       if (result.success && result.countryCode) {
         setLocation(result.countryCode);
         // Store the detection timestamp
-        localStorage.setItem('location-last-detection', Date.now().toString());
+        localStorage.setItem(Constants.LOCAL_STORAGE_LOCATION_LAST_DETECTION, Date.now().toString());
       }
     } catch (error) {
       // Do not set any fallback location on error.
