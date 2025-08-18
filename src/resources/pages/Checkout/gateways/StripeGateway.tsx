@@ -22,7 +22,7 @@ import {
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 import { useState, useEffect, useMemo } from "react";
-import { UserState, cartState, locationState } from "@/domain/state";
+import { userState, cartState, locationState } from "@/domain/state";
 import { UserService } from "@/services/user-service";
 import type { StripeAddressElementChangeEvent } from "@stripe/stripe-js";
 import { Constants } from "@/domain/constants";
@@ -52,7 +52,7 @@ const StripeGateway = () => {
   }, [userLocation]);
 
   const calculateTotal = (): number =>
-    cart.reduce((total, item) => total + item.product.price * item.quantity, 0);
+    cart.reduce((total, item) => total + item.productItem.product.price * item.quantity, 0);
 
   const [clientSecret, setClientSecret] = useState<string | null>(null);
   const [creating, setCreating] = useState(false);
@@ -89,7 +89,7 @@ const StripeGateway = () => {
             currency: currency.toLowerCase(),
             country: userLocation,
             cart: cart.map((ci) => ({
-              product: { id: ci.product.id },
+              product: { id: ci.productItem.product.id },
               quantity: ci.quantity,
             })),
           }),
@@ -161,7 +161,7 @@ const CheckoutForm = ({
   const stripe = useStripe();
   const elements = useElements();
 
-  const username = UserState((state) => state.userName);
+  const username = userState((s) => s.userName);
   const cart = cartState((state) => state.cart);
   const userLocation = locationState((state) => state.userLocation);
 
@@ -207,7 +207,7 @@ const CheckoutForm = ({
   }, [userLocation]);
 
   const calculateTotal = (): number =>
-    cart.reduce((total, item) => total + item.product.price * item.quantity, 0);
+    cart.reduce((total, item) => total + item.productItem.price * item.quantity, 0);
 
   const formatTotal = (amount: number): string => {
     const formatted = new Intl.NumberFormat(locale, {
