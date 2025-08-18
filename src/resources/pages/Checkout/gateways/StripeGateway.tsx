@@ -52,7 +52,7 @@ const StripeGateway = () => {
   }, [userLocation]);
 
   const calculateTotal = (): number =>
-    cart.reduce((total, item) => total + item.productItem.product.price * item.quantity, 0);
+    cart.reduce((total, item) => total + item.productItem.price * item.quantity, 0);
 
   const [clientSecret, setClientSecret] = useState<string | null>(null);
   const [creating, setCreating] = useState(false);
@@ -69,7 +69,7 @@ const StripeGateway = () => {
   useEffect(() => {
     const createIntent = async () => {
       const amount = calculateTotal();
-      if (!amount || !userLocation) {
+      if (!amount) {
         setClientSecret(null);
         return;
       }
@@ -87,7 +87,7 @@ const StripeGateway = () => {
           body: JSON.stringify({
             amount,
             currency: currency.toLowerCase(),
-            country: userLocation,
+            country: userLocation ? userLocation.toLowerCase() : undefined,
             cart: cart.map((ci) => ({
               product: { id: ci.productItem.product.id },
               quantity: ci.quantity,
