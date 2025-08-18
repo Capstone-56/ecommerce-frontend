@@ -24,4 +24,7 @@ export class Constants {
   public static readonly SIGNUP_ROUTE: string = "/signup"
   public static readonly PROFILE_ROUTE: string = "/profile"
   public static readonly ORDER_COMPLETE_ROUTE: string = "/order-complete";
+
+  // events
+  public static readonly EVENT_CART_UPDATED: string = "event-cart-updated";
 }

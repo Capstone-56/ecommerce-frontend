@@ -8,11 +8,11 @@ import {
   Button,
 } from "@mui/material";
 import { common } from "@mui/material/colors";
-import { cartItem } from "@/domain/types";
+import { ShoppingCartItemModel, LocalShoppingCartItemModel } from "@/domain/models/ShoppingCartItemModel";
 import { Constants } from "@/domain/constants";
 
 interface ProductCardProps {
-  cartState: cartItem[];
+  cartState: Array<ShoppingCartItemModel | LocalShoppingCartItemModel>;
 }
 
 /**
@@ -26,11 +26,15 @@ const OrderSummary: React.FC<ProductCardProps> = ({ cartState }) => {
    * @param productList The list of products in the user's cart.
    * @returns Total price.
    */
-  function calculateTotalPrice(productList: cartItem[]): string {
+  function calculateTotalPrice(productList: Array<ShoppingCartItemModel | LocalShoppingCartItemModel>): string {
     let price: number = 0;
+
     productList.forEach((cartItem) => {
-      price += cartItem.product.price * cartItem.quantity;
+      const itemPrice = cartItem?.productItem?.price || 0;
+      const itemQuantity = cartItem?.quantity || 0;
+      price += itemPrice * itemQuantity;
     });
+    
     return price.toFixed(2);
   }
 

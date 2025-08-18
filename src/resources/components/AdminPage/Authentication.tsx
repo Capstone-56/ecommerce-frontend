@@ -1,7 +1,7 @@
 // src/auth/RequireAdmin.tsx
 import { ReactNode, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { AuthenticationState, UserState } from "@/domain/state";
+import { authenticationState, userState } from "@/domain/state";
 import { Role } from "@/domain/enum/role";
 
 type Props = {
@@ -14,8 +14,8 @@ type Props = {
  */
 const RequireAdmin = ({ children }: Props) => {
   const navigate = useNavigate();
-  const isAuthenticated = AuthenticationState((state) => state.authenticated);
-  const userRole = UserState((state) => state.role);
+  const isAuthenticated = authenticationState((state) => state.authenticated);
+  const userRole = userState((state) => state.role);
 
   useEffect(() => {
     if (!isAuthenticated || isAuthenticated && userRole !== Role.ADMIN.valueOf()) {

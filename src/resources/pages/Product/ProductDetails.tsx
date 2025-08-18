@@ -1,8 +1,17 @@
 import { Link, useLocation, useParams } from "react-router-dom";
 
+import { Constants } from "@/domain/constants";
 import { ProductModel } from "@/domain/models/ProductModel";
+import { AddShoppingCartItemModel, LocalShoppingCartItemModel } from "@/domain/models/ShoppingCartItemModel";
+
 import { useEffect, useState } from "react";
+
 import { ProductService } from "@/services/product-service";
+import { ShoppingCartService } from "@/services/shopping-cart-service";
+import { ProductItemService } from "@/services/product-item-service";
+
+import * as MathUtils from "@/utilities/math-utils";
+
 import {
   Box,
   Typography,
@@ -20,11 +29,17 @@ import {
 } from "@mui/material";
 import { grey } from "@mui/material/colors";
 import { Close } from "@mui/icons-material";
-import { cartState } from "@/domain/state";
 import { ZoomIn } from "@mui/icons-material";
+
+import { cartState, authenticationState } from "@/domain/state";
+
 import RelatedProducts from "@/resources/components/RelatedProducts/RelatedProducts";
 
 const maxImageListLength = 4;
+
+const productService = new ProductService();
+const shoppingCartService = new ShoppingCartService();
+const productItemService = new ProductItemService();
 
 export default function ProductDetails() {
   const [productDetails, setProductDetails] = useState<ProductModel>();
@@ -39,6 +54,7 @@ export default function ProductDetails() {
   const { name, description, images, price, avgRating, featured } =
     productDetails || {};
   const { addToCart } = cartState();
+  const { authenticated } = authenticationState();
 
   // Event handlers for number input
   function handleChange(
@@ -79,8 +95,33 @@ export default function ProductDetails() {
   }
 
   // TODO: consider making some fields optional as they aren't all relevant to purchases
-  function handleAddToCart() {
-    addToCart(productDetails!, qty);
+  async function handleAddToCart() {
+    // Get the actual ProductItemModel data for both authenticated and unauthenticated users
+    // TODO: construct productItemId by configurations
+    const productItems = await productItemService.getByProductId(productId);
+    const selectedProductItem = productItems[0];
+    
+    if (authenticated) {
+      const model: AddShoppingCartItemModel = {
+        productItemId: selectedProductItem.id,
+        quantity: qty,
+      }
+
+      await shoppingCartService.addToCart(model);
+      
+      // Dispatch custom event to notify Navigation to reload cart
+      window.dispatchEvent(new CustomEvent(Constants.EVENT_CART_UPDATED));
+    } else {
+      // For unauthenticated users, manually create a local cart item 
+      const cartItem: LocalShoppingCartItemModel = {
+        id: MathUtils.generateGUID(),
+        productItem: selectedProductItem,
+        quantity: qty,
+        totalPrice: selectedProductItem.price * qty,
+      };
+      
+      addToCart(cartItem);
+    }
   }
 
   useEffect(() => {
@@ -95,7 +136,6 @@ export default function ProductDetails() {
   }, [images]);
 
   const fetchProductDetails = async (id: string) => {
-    const productService = new ProductService();
     const result = await productService.getProduct(id);
     if (result) {
       setProductDetails(result);
