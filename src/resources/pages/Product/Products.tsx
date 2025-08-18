@@ -23,6 +23,7 @@ import Paginator from "@/resources/components/Pagination/Paginator";
 import ProductCard from "@/resources/components/ProductCard/ProductCard";
 import Filter from "@/resources/components/Filter/Filter";
 import DynamicBreadcrumbs from '@/resources/components/Navigation/DynamicBreadcrumbs';
+import { locationState } from "@/domain/state";
 
 export default function Products() {
   const [products, setProducts] = useState<PagedList<ProductModel>>();
@@ -44,6 +45,7 @@ export default function Products() {
     ? parseFloat(searchParams.get("priceMax")!)
     : undefined;
   const searchFilter = searchParams.get("search") || undefined;
+  const userLocation = locationState((state) => state.userLocation);
 
   /**
    * A useEffect required to get product data upon mount and when URL changes.
@@ -52,7 +54,7 @@ export default function Products() {
   useEffect(() => {
     document.title = "eCommerce | Products";
     fetchProducts();
-  }, [searchParams]);
+  }, [searchParams, userLocation]);
 
   // Fetch products based on current search params
   const fetchProducts = async () => {
@@ -67,7 +69,8 @@ export default function Products() {
         sortOption,
         colourFilter,
         categoriesFilter,
-        searchFilter
+        searchFilter,
+        userLocation
       );
       setProducts(result);
     } catch (error) {
