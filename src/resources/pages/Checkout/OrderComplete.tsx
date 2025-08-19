@@ -12,6 +12,7 @@ import {
 } from "@mui/material";
 import CheckCircleOutlineIcon from "@mui/icons-material/CheckCircleOutline";
 import ErrorOutlineIcon from "@mui/icons-material/ErrorOutline";
+import api from "@/api";
 
 type Status = "pending" | "paid" | "failed";
 type OrderStatus = {
@@ -21,8 +22,6 @@ type OrderStatus = {
   currency?: string;
   reason?: string;
 };
-
-const API_BASE = import.meta.env.VITE_API_BASE;
 
 export default function OrderComplete() {
   const params = new URLSearchParams(window.location.search);
@@ -37,14 +36,17 @@ export default function OrderComplete() {
       for (let i = 0; i < 30 && !stopped; i++) {
         try {
           const token = localStorage.getItem("token");
-          const res = await fetch(`${API_BASE}/api/orderstatus/status?pi=${encodeURIComponent(pi)}`, {
-            credentials: "include", // send cookies for guests
+          const res = await api.get(`/api/orderstatus/status`, {
+            params: {
+              pi: pi
+            },
+            withCredentials: true, // send cookies for guests
             headers: {
               ...(token ? { Authorization: `Bearer ${token}` } : {}),
             },
           });
-          if (res.ok) {
-            const j = await res.json();
+          if (res.status >= 200 && res.status < 300) {
+            const j = res.data;
             setData(j);
             if (j.status === "paid" || j.status === "failed") return;
           }

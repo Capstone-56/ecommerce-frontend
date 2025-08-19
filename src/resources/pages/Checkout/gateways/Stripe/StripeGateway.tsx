@@ -10,6 +10,7 @@ import {
 import { useState, useEffect, useMemo } from "react";
 import { cartState, locationState } from "@/domain/state";
 import CheckoutForm from "./CheckoutForm";
+import api from "@/api";
 
 type CreateIntentResponse = { clientSecret: string };
 
@@ -36,7 +37,10 @@ const StripeGateway = () => {
   }, [userLocation]);
 
   const calculateTotal = (): number =>
-    cart.reduce((total, item) => total + item.productItem.price * item.quantity, 0);
+    cart.reduce(
+      (total, item) => total + item.productItem.price * item.quantity,
+      0
+    );
 
   const [clientSecret, setClientSecret] = useState<string | null>(null);
   const [creating, setCreating] = useState(false);
@@ -64,11 +68,9 @@ const StripeGateway = () => {
           "Content-Type": "application/json",
           ...(token ? { Authorization: `Bearer ${token}` } : {}),
         };
-        const res = await fetch(`${API_BASE}/api/stripe/create-intent`, {
-          method: "POST",
-          headers,
-          credentials: "include",
-          body: JSON.stringify({
+        const res = await api.post(
+          `/api/stripe/create-intent`,
+          {
             amount,
             currency: currency.toLowerCase(),
             country: userLocation ? userLocation.toLowerCase() : undefined,
@@ -76,10 +78,15 @@ const StripeGateway = () => {
               product: { id: ci.productItem.product.id },
               quantity: ci.quantity,
             })),
-          }),
-        });
-        if (!res.ok) throw new Error(await res.text());
-        const data: CreateIntentResponse = await res.json();
+          },
+          {
+            headers,
+            withCredentials: true,
+          }
+        );
+        if (res.status < 200 || res.status >= 300)
+          throw new Error(res.data || "Request failed");
+        const data: CreateIntentResponse = res.data;
         setClientSecret(data.clientSecret);
       } catch (err) {
         console.error("Failed to create PaymentIntent:", err);

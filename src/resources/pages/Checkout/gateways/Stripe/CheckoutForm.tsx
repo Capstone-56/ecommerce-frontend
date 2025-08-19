@@ -22,6 +22,7 @@ import {
   import { UserService } from "@/services/user-service";
   import type { StripeAddressElementChangeEvent } from "@stripe/stripe-js";
   import { Constants } from "@/domain/constants";
+  import api from "@/api";
   
   const API_BASE = import.meta.env.VITE_API_BASE;
   
@@ -112,11 +113,9 @@ import {
             ...(token ? { Authorization: `Bearer ${token}` } : {}),
           };
     
-          const response = await fetch(`${API_BASE}/api/stripe/${intentId}/shipping`, {
-            method: "PUT",
-            headers,
-            credentials: "include",
-            body: JSON.stringify({
+          const response = await api.put(
+            `/api/stripe/${intentId}/shipping`,
+            {
               name: name,
               shipping: {
                 name: shippingData.name || name,
@@ -128,15 +127,17 @@ import {
                 country: shippingData.address?.country || "",
                 phone: shippingData.phone || "",
               },
-            }),
-          });
+            },
+            {
+              headers,
+              withCredentials: true,
+            }
+          );
     
-          if (!response.ok) {
-            const errorText = await response.text();
-            console.error("Failed to save shipping address:", errorText);
+          if (response.status < 200 || response.status >= 300) {
+            console.error("Failed to save shipping address:", response.data);
             return false;
           }
-    
           return true;
         } catch (error) {
           console.error("Error saving shipping address:", error);
