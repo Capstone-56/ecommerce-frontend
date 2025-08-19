@@ -14,8 +14,6 @@ import api from "@/api";
 
 type CreateIntentResponse = { clientSecret: string };
 
-const API_BASE = import.meta.env.VITE_API_BASE;
-
 const StripeGateway = () => {
   const cart = cartState((s) => s.cart);
   const userLocation = locationState((s) => s.userLocation);

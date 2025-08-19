@@ -24,8 +24,6 @@ import {
   import { Constants } from "@/domain/constants";
   import api from "@/api";
   
-  const API_BASE = import.meta.env.VITE_API_BASE;
-  
   interface CheckoutFormProps {
     clientSecret: string | null;
     onShippingConfirmed: (s: any) => void;
