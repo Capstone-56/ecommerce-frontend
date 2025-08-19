@@ -37,7 +37,7 @@ export default function OrderComplete() {
       for (let i = 0; i < 30 && !stopped; i++) {
         try {
           const token = localStorage.getItem("token");
-          const res = await fetch(`${API_BASE}/api/orders/status?pi=${encodeURIComponent(pi)}`, {
+          const res = await fetch(`${API_BASE}/api/orderstatus/status?pi=${encodeURIComponent(pi)}`, {
             credentials: "include", // send cookies for guests
             headers: {
               ...(token ? { Authorization: `Bearer ${token}` } : {}),
