@@ -1,5 +1,5 @@
 import { JSX, useEffect, useState } from "react";
-import StripeGateway from "@/resources/pages/Checkout/gateways/StripeGateway";
+import StripeGateway from "@/resources/pages/Checkout/gateways/Stripe/StripeGateway";
 import { locationState } from "@/domain/state";
 import { Typography, Container, Box } from "@mui/material";
 
