@@ -20,7 +20,9 @@ import ProductManagement from "@/resources/components/AdminPage/ProductManagemen
 import VendorManagement from "@/resources/components/AdminPage/VendorManagement";
 import CustomerSupport from "@/resources/components/AdminPage/CustomerSupport";
 import AdminSettings from "@/resources/components/AdminPage/AdminSettings";
+import Payment from "@/resources/pages/Checkout/Payment";
 import { Constants } from "@/domain/constants";
+import OrderComplete from "@/resources/pages/Checkout/OrderComplete";
 import AddProduct from "@/resources/components/AdminPage/ProductManagement/AddProduct";
 import EditProduct from "@/resources/components/AdminPage/ProductManagement/EditProduct";
 
@@ -64,6 +66,14 @@ export const router = createBrowserRouter([
       {
         path: "signup",
         element: <SignUp />
+      },
+      {
+        path: "checkout",
+        element: <Payment />
+      },
+      {
+        path: "order-complete",
+        element: <OrderComplete />,
       }
 
     ],
