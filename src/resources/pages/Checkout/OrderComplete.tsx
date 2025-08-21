@@ -36,7 +36,7 @@ export default function OrderComplete() {
       for (let i = 0; i < 30 && !stopped; i++) {
         try {
           const token = localStorage.getItem("token");
-          const res = await api.get(`/api/orderstatus/status`, {
+          const res = await api.get(`/api/orderstatus`, {
             params: {
               pi: pi
             },
