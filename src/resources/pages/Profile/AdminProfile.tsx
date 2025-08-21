@@ -2,15 +2,17 @@ import MenuContent from "@/resources/components/AdminPage/MenuContent";
 import RequireAdmin from "@/resources/components/AdminPage/Authentication";
 import { Outlet } from "react-router";
 import { useEffect, useState } from "react";
-import { UserState } from "@/domain/state";
+import { userState } from "@/domain/state";
 import { UserService } from "@/services/user-service";
+
+const userService = new UserService();
 
 /**
  * The profile page to be showed to admins, where related
  * information will be displayed and can be updated.
  */
 export default function AdminProfile() {
-  const userName = UserState((state) => state.userName);
+  const userName = userState((state) => state.userName);
   const [userInformation, setUserInformation] = useState(null);
 
   useEffect(() => {

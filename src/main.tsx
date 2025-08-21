@@ -13,6 +13,7 @@ import {
 import { themeOptions } from "./assets/theme/theme";
 import { modernTheme } from "./assets/theme/modernTheme";
 import { trialDarkTheme } from "./assets/theme/darkTheme.ts";
+import LocationProvider from "./providers/LocationProvider";
 
 import { router } from "./router/router.tsx";
 import { Slide, ToastContainer } from "react-toastify";
@@ -34,7 +35,9 @@ createRoot(document.getElementById("root")!).render(
           },
         }}
       />
-      <RouterProvider router={router} />
+      <LocationProvider>
+        <RouterProvider router={router} />
+      </LocationProvider>
       <ToastContainer
         position="bottom-center"
         autoClose={3000}
