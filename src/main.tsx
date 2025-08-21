@@ -8,8 +8,11 @@ import {
   CssBaseline,
   GlobalStyles,
 } from "@mui/material";
+
+// Themes
 import { themeOptions } from "./assets/theme/theme";
 import { modernTheme } from "./assets/theme/modernTheme";
+import { trialDarkTheme } from "./assets/theme/darkTheme.ts";
 
 import { router } from "./router/router.tsx";
 import { Slide, ToastContainer } from "react-toastify";

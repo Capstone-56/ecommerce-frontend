@@ -41,20 +41,16 @@ const UserDashboard: React.FC = () => {
   }
   return (
     <Box>
-      {/* Banner with profile picture */}
+      {/* Banner section can be added here if needed */}
       <Box
         sx={{
-          position: "relative",
-          width: "100%",
-          height: { xs: 160, sm: 220, md: 260 },
-          mb: 8,
-          borderRadius: 3,
-          backgroundImage: `url(${bannerUrl})`,
-          backgroundSize: "cover",
-          backgroundPosition: "center",
+          display: "flex",
+          flexDirection: "column",
+          alignItems: "center",
+          mt: 2,
+          mb: 2,
         }}
       >
-        {/* Profile picture */}
         <Avatar
           src={profileUrl}
           alt="Profile"
@@ -62,25 +58,18 @@ const UserDashboard: React.FC = () => {
             width: { xs: 96, sm: 128 },
             height: { xs: 96, sm: 128 },
             border: "4px solid white",
-            position: "absolute",
-            left: "50%",
-            bottom: -48,
-            transform: "translateX(-50%)",
             boxShadow: 3,
             bgcolor: "grey.100",
-            zIndex: 2,
+            mb: 2,
           }}
         />
-      </Box>
-      <Box
-        sx={{
-          textAlign: "center",
-        }}
-      >
-        <Typography variant="h2" sx={{ mb: 1 }}>
+        <Typography variant="h2" sx={{ mb: 1, textAlign: "center" }}>
           Hey John,
         </Typography>
-        <Typography variant="subtitle1" sx={{ mb: 4, color: "gray" }}>
+        <Typography
+          variant="subtitle1"
+          sx={{ mb: 4, color: "gray", textAlign: "center" }}
+        >
           Welcome back!
         </Typography>
       </Box>

@@ -26,7 +26,15 @@ const HistorySummary: React.FC<{ history: History[] }> = ({ history }) => (
     >
       Your viewing history:
     </Typography>
-    <Box sx={{ flex: 1 }}>
+    <Box
+      sx={{
+        flex: 1,
+        display: "flex",
+        flexDirection: "column",
+        alignItems: "center",
+        justifyContent: "center",
+      }}
+    >
       {history.map((item, i) => (
         <Box
           key={i}
@@ -39,6 +47,8 @@ const HistorySummary: React.FC<{ history: History[] }> = ({ history }) => (
             overflow: "hidden",
             border: 1,
             borderColor: "grey.300",
+            maxWidth: 400,
+            width: "100%",
           }}
         >
           {/* product image */}
@@ -48,6 +58,7 @@ const HistorySummary: React.FC<{ history: History[] }> = ({ history }) => (
               minWidth: 64,
               maxWidth: 120,
               height: 80,
+              display: "flex",
               alignItems: "center",
               justifyContent: "center",
               background: "grey.400",

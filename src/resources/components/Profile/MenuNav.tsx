@@ -18,26 +18,28 @@ const MenuNav: React.FC = () => {
           key={item.to}
           component={NavLink}
           to={item.to}
-          end={item.to === "/profile"} // naive approach - for reusability maybe map base on routes object
-          sx={{
-            mx: 1,
-            px: 4,
-            py: 1.5,
-            borderRadius: 2,
+          end={item.to === "/profile"}
+          sx={(theme) => ({
+            mx: theme.spacing(1),
+            px: theme.spacing(4),
+            py: theme.spacing(1.5),
+            borderRadius: theme.shape.borderRadius,
             textTransform: "none",
-            "&.active": {
-              bgcolor: "black",
-              color: "white",
-              fontWeight: "bold",
-              boxShadow: 2,
-            },
-            color: "black",
-            bgcolor: "white",
             gap: 1,
-            boxShadow: 1,
             fontWeight: "normal",
-            "&:hover": { bgcolor: "#f5f5f5" },
-          }}
+            color: theme.palette.text.primary,
+            bgcolor: theme.palette.background.paper,
+            boxShadow: theme.shadows[1],
+            "&:hover": {
+              bgcolor: theme.palette.grey[200],
+            },
+            "&.active": {
+              bgcolor: theme.palette.primary.main,
+              color: theme.palette.primary.contrastText,
+              fontWeight: "bold",
+              boxShadow: theme.shadows[2],
+            },
+          })}
         >
           {item.icon}
           {item.label}
