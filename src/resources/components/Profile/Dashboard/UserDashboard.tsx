@@ -4,11 +4,6 @@ import RankCard from "./Rank";
 import HistorySummary from "./HistorySummary";
 import OrderTracker from "./OrderTracking";
 
-// stub images
-const bannerUrl =
-  "https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=1200&q=80"; // Example banner
-const profileUrl = "https://randomuser.me/api/portraits/men/32.jpg"; // Example profile
-
 const UserDashboard: React.FC = () => {
   // API call to fetch user details
 
@@ -40,48 +35,15 @@ const UserDashboard: React.FC = () => {
     /* TODO: replace with name, rank, view history and orders from API */
   }
   return (
-    <Box>
-      {/* Banner section can be added here if needed */}
-      <Box
-        sx={{
-          display: "flex",
-          flexDirection: "column",
-          alignItems: "center",
-          mt: 2,
-          mb: 2,
-        }}
-      >
-        <Avatar
-          src={profileUrl}
-          alt="Profile"
-          sx={{
-            width: { xs: 96, sm: 128 },
-            height: { xs: 96, sm: 128 },
-            border: "4px solid white",
-            boxShadow: 3,
-            bgcolor: "grey.100",
-            mb: 2,
-          }}
-        />
-        <Typography variant="h2" sx={{ mb: 1, textAlign: "center" }}>
-          Hey John,
-        </Typography>
-        <Typography
-          variant="subtitle1"
-          sx={{ mb: 4, color: "gray", textAlign: "center" }}
-        >
-          Welcome back!
-        </Typography>
-      </Box>
-
+    <Box sx={{ mx: 2, px: 1 }}>
       <Grid container spacing={3}>
-        <Grid size={{ xs: 12, md: 4 }}>
+        <Grid size={{ xs: 12, md: 8 }}>
           <RankCard rank={"Gold"} />
         </Grid>
-        <Grid size={{ xs: 12, md: 4 }}>
+        <Grid size={{ xs: 12, md: 12 }}>
           <HistorySummary history={history} />
         </Grid>
-        <Grid size={{ xs: 12, md: 4 }}>
+        <Grid size={{ xs: 12, md: 6 }}>
           <OrderTracker />
         </Grid>
       </Grid>
