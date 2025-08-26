@@ -84,6 +84,41 @@ const UserDetails: React.FC = () => {
             slotProps={{ input: { readOnly: true } }}
           />
         </Grid>
+        <Typography variant="subtitle1" sx={{ mt: 2 }}>
+          Location
+        </Typography>
+        <Grid size={12}>
+          <TextField
+            label="Street"
+            value={user.street}
+            fullWidth
+            slotProps={{ input: { readOnly: true } }}
+          />
+        </Grid>
+        <Grid size={{ xs: 12, sm: 6 }}>
+          <TextField
+            label="Suburb"
+            value={user.suburb}
+            fullWidth
+            slotProps={{ input: { readOnly: true } }}
+          />
+        </Grid>
+        <Grid size={{ xs: 6, sm: 3 }}>
+          <TextField
+            label="State"
+            value={user.state}
+            fullWidth
+            slotProps={{ input: { readOnly: true } }}
+          />
+        </Grid>
+        <Grid size={{ xs: 6, sm: 3 }}>
+          <TextField
+            label="Postcode"
+            value={user.post}
+            fullWidth
+            slotProps={{ input: { readOnly: true } }}
+          />
+        </Grid>
       </Grid>
       <Box sx={{ mt: 3, textAlign: "right" }}>
         <Button variant="contained" color="primary" disabled>
