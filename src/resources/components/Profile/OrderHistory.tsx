@@ -17,6 +17,8 @@ import {
   LocalShipping,
 } from "@mui/icons-material";
 
+// TODO: consider moving these to the model data types file
+// TODO: component-erise item cards and order cards
 // Example data types
 type PaymentMethod = "Card" | "Cash";
 type OrderType = "Online (Credit Card)" | "In-Store";
@@ -95,6 +97,7 @@ const orders: Order[] = [
   },
 ];
 
+// Probably need to bring this up
 const formatCurrency = (amount: number) =>
   amount.toLocaleString("en-AU", { style: "currency", currency: "AUD" });
 
