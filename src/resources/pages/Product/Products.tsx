@@ -127,7 +127,7 @@ export default function Products() {
         }}
       >
         <Box component="main" sx={{ flexGrow: 1 }}>
-          <Container maxWidth="xl" sx={{ mt: 4, mb: 8 }}>
+          <Container maxWidth={false} sx={{ mt: 4, mb: 8, maxWidth: 1680, mx: "auto" }}>
             {/* Dynamic breadcrumbs */}
             <DynamicBreadcrumbs />
 

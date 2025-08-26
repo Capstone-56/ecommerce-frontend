@@ -243,10 +243,8 @@ const Navbar: React.FC = () => {
                 noWrap
                 sx={{
                   fontSize: { xs: "32px", md: "32px" },
-                  color: grey[900],
-                  "&:hover": {
-                    color: grey[900],
-                  },
+                  color: "primary.light",
+                  fontWeight: 900
                 }}
               >
                 BDNX
@@ -384,12 +382,12 @@ const Navbar: React.FC = () => {
                   sx={{
                     bgcolor: grey[50],
                     color: grey[900],
-                    borderColor: grey[900],
+                    borderColor: "primary.main",
                     borderRadius: "8px",
                     textDecoration: "none",
                     "&:hover": {
                       bgcolor: grey[100],
-                      borderColor: grey[900],
+                      borderColor: "primary.main",
                     },
                   }}
                 >
@@ -403,13 +401,10 @@ const Navbar: React.FC = () => {
                   to={Constants.SIGNUP_ROUTE}
                   variant="contained"
                   sx={{
-                    bgcolor: grey[900],
+                    bgcolor: "primary.main",
                     color: grey[50],
                     borderRadius: "8px",
                     textDecoration: "none",
-                    "&:hover": {
-                      bgcolor: grey[800],
-                    },
                   }}
                 >
                   <Typography fontWeight="500" textTransform="none">
