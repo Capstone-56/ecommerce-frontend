@@ -23,7 +23,7 @@ import { useTheme } from "@mui/material/styles";
 const menuItems = [
   { label: "Profile", to: "/profile", icon: <AccountBox sx={{ mr: 1 }} /> },
   {
-    label: "Account information",
+    label: "Account details",
     to: "/profile/account",
     icon: <Person sx={{ mr: 1 }} />,
   },
@@ -39,7 +39,7 @@ const menuItems = [
   },
 ];
 
-const profileUrl = "https://randomuser.me/api/portraits/men/31.jpg"; // Example profile
+const profileUrl = "https://randomuser.me/api/portraits/men/32.jpg"; // Example profile
 
 const Profile: React.FC = () => {
   const [drawerOpen, setDrawerOpen] = useState(false);

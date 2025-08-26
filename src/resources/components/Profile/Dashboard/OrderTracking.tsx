@@ -14,11 +14,7 @@ const OrderTracker: React.FC = () => (
       height: 280,
     }}
   >
-    <Typography
-      variant="subtitle1"
-      color="text.primary"
-      sx={{ mb: 2, fontWeight: "bold" }}
-    >
+    <Typography variant="subtitle1" color="text.primary" sx={{ mb: 2 }}>
       Track your order:
     </Typography>
     <Box

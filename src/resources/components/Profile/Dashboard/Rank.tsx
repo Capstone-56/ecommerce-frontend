@@ -35,11 +35,7 @@ const RankCard: React.FC<RankCardProps> = ({
         height: 280,
       }}
     >
-      <Typography
-        variant="subtitle1"
-        color="text.primary"
-        sx={{ mb: 2, fontWeight: "bold" }}
-      >
+      <Typography variant="subtitle1" color="text.primary" sx={{ mb: 2 }}>
         Member Rank
       </Typography>
       <Typography

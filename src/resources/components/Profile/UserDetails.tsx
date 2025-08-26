@@ -1,10 +1,10 @@
-import { Box } from "@mui/material";
+import { Box, Typography } from "@mui/material";
 import React from "react";
 
 const UserDetails: React.FC = () => {
   return (
     <Box>
-      <h1>User Details</h1>
+      <Typography variant="h4">Account Details</Typography>
     </Box>
   );
 };
