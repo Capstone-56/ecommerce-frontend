@@ -23,7 +23,7 @@ import AdminSettings from "@/resources/components/AdminPage/AdminSettings";
 import { Constants } from "@/domain/constants";
 import UserDashboard from "@/resources/components/Profile/Dashboard/UserDashboard";
 import UserDetails from "@/resources/components/Profile/UserDetails";
-import OrderTracking from "@/resources/components/Profile/OrderTracking";
+import Payment from "@/resources/components/Profile/Payment";
 import PurchaseHistory from "@/resources/components/Profile/OrderHistory";
 import AddProduct from "@/resources/components/AdminPage/ProductManagement/AddProduct";
 import EditProduct from "@/resources/components/AdminPage/ProductManagement/EditProduct";
@@ -55,7 +55,7 @@ export const router = createBrowserRouter([
           },
           {
             path: "payment",
-            element: <OrderTracking />,
+            element: <Payment />,
           },
           {
             path: "account",
