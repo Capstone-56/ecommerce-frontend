@@ -10,9 +10,9 @@ import {
 } from "@mui/material";
 
 // Themes
-import { themeOptions } from "./assets/theme/theme";
 import { modernTheme } from "./assets/theme/modernTheme";
-import { trialDarkTheme } from "./assets/theme/darkTheme.ts";
+import { lightTheme } from "./assets/theme/BDNX.ts";
+
 import LocationProvider from "./providers/LocationProvider";
 
 import { router } from "./router/router.tsx";
@@ -22,7 +22,7 @@ const customTheme = createTheme(modernTheme);
 
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
-    <ThemeProvider theme={customTheme}>
+    <ThemeProvider theme={lightTheme}>
       <CssBaseline />
       <GlobalStyles
         styles={{
