@@ -112,13 +112,13 @@ export const themeOptions: ThemeOptions = {
     // you can define colours of element by specifying colour = primary/secondary
     // colours can also be used in sx prop such as sx={{ color: 'primary.main' }}
     primary: {
-      light: '#d1c1ff', // light colour
-      main: '#4F61FF', // main colour
+      light: '#DD5548', // light colour
+      main: '#243F68', // main colour
       dark: '#1f40fb', // hover colour
       contrastText: '#fff', // text colour
     },
     secondary: {
-      main: '#262626',
+      main: '#243F68',
       dark: '#000',
       contrastText: '#fff',
     },

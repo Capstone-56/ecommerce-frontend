@@ -206,8 +206,8 @@ export default function Filter() {
 
   return (
     <Box sx={{
-      width: '100%',
-      maxWidth: '250px',
+      width: { xs: '100%', md: 250 },
+      maxWidth: { xs: '100%', md: 250 },
     }}>
         
       <Accordion defaultExpanded>
