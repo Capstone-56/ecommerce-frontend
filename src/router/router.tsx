@@ -21,7 +21,7 @@ import VendorManagement from "@/resources/components/AdminPage/VendorManagement"
 import CustomerSupport from "@/resources/components/AdminPage/CustomerSupport";
 import AdminSettings from "@/resources/components/AdminPage/AdminSettings";
 import { Constants } from "@/domain/constants";
-import AddProduct from "@/resources/components/AdminPage/ProductManagement/AddProduct";
+import AddProduct from "@/resources/components/AdminPage/ProductManagement/AddProduct/AddProduct";
 import EditProduct from "@/resources/components/AdminPage/ProductManagement/EditProduct";
 
 export const router = createBrowserRouter([
