@@ -11,6 +11,8 @@ export class Constants {
   public static readonly LOCAL_STORAGE_USER_STORAGE: string = "user-storage";
   /** Storage name to be used in browser for location state. */
   public static readonly LOCAL_STORAGE_LOCATION_STORAGE: string = "location-storage";
+  /** Storage key to record when location was last detected. */
+  public static readonly LOCAL_STORAGE_LOCATION_LAST_DETECTION: string = "location-last-detection";
 
   // routes for navigation
   public static readonly CART_ROUTE: string = "/cart";
@@ -21,8 +23,9 @@ export class Constants {
   public static readonly ABOUT_ROUTE: string = "/about";
   public static readonly CHECKOUT_ROUTE: string = "/checkout";
   public static readonly LOGIN_ROUTE: string = "/login";
-  public static readonly SIGNUP_ROUTE: string = "/signup";
-  public static readonly PROFILE_ROUTE: string = "/profile";
+  public static readonly SIGNUP_ROUTE: string = "/signup"
+  public static readonly PROFILE_ROUTE: string = "/profile"
+  public static readonly ORDER_COMPLETE_ROUTE: string = "/order-complete";
 
   // events
   public static readonly EVENT_CART_UPDATED: string = "event-cart-updated";

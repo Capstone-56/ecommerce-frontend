@@ -1,28 +1,34 @@
 import React, { useEffect, useState, useCallback } from "react";
 import {
-  KeyboardCommandKey,
   Menu as MenuIcon,
   ShoppingCartOutlined,
-  AccountCircle,
+  Search as SearchIcon,
+  ChevronLeft
 } from "@mui/icons-material";
 import {
   AppBar,
   Box,
   Button,
   IconButton,
-  Menu,
   Toolbar,
   Typography,
-  MenuItem,
   Paper,
   Badge,
-  Link,
+  Drawer,
+  MenuItem,
+  Menu,
+  Avatar,
 } from "@mui/material";
-import { Link as RouterLink, useLocation, useNavigate } from "react-router-dom";
+import { NavLink, Link as RouterLink, useLocation, useNavigate } from "react-router-dom";
 import { grey, common } from "@mui/material/colors";
 import { Constants } from "@/domain/constants";
+import { CategoryModel } from "@/domain/models/CategoryModel";
+import { CategoryService } from "@/services/category-service";
+import CategoryMenu from "./CategoryMenu";
+import MobileDrawer from "./MobileDrawer";
 import { authenticationState, cartState, userState } from "@/domain/state";
 import { Role } from "@/domain/enum/role";
+
 import SearchBar from "@/resources/components/Search/SearchBar";
 import { AuthService } from "@/services/auth-service";
 import { StatusCodes } from "http-status-codes";
@@ -30,6 +36,8 @@ import { UserService } from "@/services/user-service";
 import { ShoppingCartService } from "@/services/shopping-cart-service";
 
 // Menu Items
+// Should move to another file
+// const menus = ["Home", "Products", "About"];
 const menus = [
   { name: "Home", route: Constants.HOME_ROUTE },
   { name: "Products", route: Constants.PRODUCTS_ROUTE },
@@ -42,24 +50,71 @@ const authService = new AuthService();
 const shoppingCartService = new ShoppingCartService();
 const userService = new UserService();
 
+// get users initial for profile avatar
+function getInitial(name?: string | null) {
+  return name?.trim()?.[0]?.toUpperCase() ?? 'U';
+}
+
 const Navbar: React.FC = () => {
-  const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
-  const [profileAnchorEl, setProfileAnchorEl] = useState<null | HTMLElement>(
-    null
-  );
-  const [userInformation, setUserInformation] = useState(null);
+  // Routing
   const location = useLocation();
-  
-  // Unified cart state for both authenticated and unauthenticated users
+  const navigate = useNavigate();
+
+  // Global store state
+  const isAuthenticated = authenticationState((state) => state.authenticated);
+  const username = userState((state) => state.userName);
   const cart = cartState((state) => state.cart);
   const setCart = cartState((state) => state.setCart);
   const clearCart = cartState((state) => state.clearCart);
-  const isAuthenticated = authenticationState((state) => state.authenticated);
-  const username = userState((state) => state.userName);
-  
   const cartCount = cart.length;
-  const navigate = useNavigate();
 
+  // Local UI state
+  const [mobileDrawerOpen, setMobileDrawerOpen] = useState(false);
+  const [searchDrawerOpen, setSearchDrawerOpen] = useState(false);
+  const [profileAnchorEl, setProfileAnchorEl] = useState<null | HTMLElement>(null);
+
+  // User state
+  const [userInformation, setUserInformation] = useState(null);
+
+  // Category state
+  const [categories, setCategories] = useState<CategoryModel[]>([]);
+  const [categoriesLoading, setCategoriesLoading] = useState(true);
+  const [categoriesError, setCategoriesError] = useState<string | null>(null);
+
+  // Category effects & handlers
+  useEffect(() => {
+    const fetchCategories = async () => {
+      try {
+        setCategoriesLoading(true);
+        const categoryService = new CategoryService();
+        const fetchedCategories = await categoryService.listCategories();
+
+        // Filter for categories that have no parent
+        const topLevelCategories = fetchedCategories.filter(
+          (category) => !category.parentCategory
+        );
+
+        setCategories(topLevelCategories);
+        setCategoriesError(null);
+      } catch (err) {
+        console.error('Failed to fetch categories:', err);
+        setCategoriesError('Failed to load categories');
+        setCategories([]);
+      } finally {
+        setCategoriesLoading(false);
+      }
+    };
+
+    fetchCategories();
+  }, []);
+
+  const handleCategoryClick = (category: CategoryModel) => {
+    // Navigate to products page with category filter
+    const categoryParam = category.internalName;
+    window.location.href = `/products?categories=${categoryParam}`;
+  };
+
+  // Cart effects & helpers
   const loadCartData = useCallback(async () => {
     if (isAuthenticated) {
       // Authenticated users: Load cart from API into Zustand store
@@ -81,16 +136,7 @@ const Navbar: React.FC = () => {
     // Unauthenticated users: cart data is already in Zustand store (persisted)
   }, [isAuthenticated, setCart, clearCart]);
 
-  const fetchUser = useCallback(async () => {
-    if (username) {
-      setUserInformation(await userService.getUser(username));
-    }
-  }, [username]);
-
   useEffect(() => {
-    fetchUser();
-    loadCartData();
-
     // Listen for cart updates from other components
     const handleCartUpdate = () => {
       loadCartData();
@@ -101,16 +147,19 @@ const Navbar: React.FC = () => {
     return () => {
       window.removeEventListener(Constants.EVENT_CART_UPDATED, handleCartUpdate);
     };
+  }, [loadCartData]);
+
+  // User effects & handlers
+  const fetchUser = useCallback(async () => {
+    if (username) {
+      setUserInformation(await userService.getUser(username));
+    }
+  }, [username]);
+
+  useEffect(() => {
+    fetchUser();
+    loadCartData();
   }, [fetchUser, loadCartData]);
-
-  // Menu handlers
-  const handleMenuOpen = (event: React.MouseEvent<HTMLElement>) => {
-    setAnchorEl(event.currentTarget);
-  };
-
-  const handleMenuClose = () => {
-    setAnchorEl(null);
-  };
 
   const handleProfileMenuOpen = (event: React.MouseEvent<HTMLElement>) => {
     setProfileAnchorEl(event.currentTarget);
@@ -136,6 +185,22 @@ const Navbar: React.FC = () => {
     }
   };
 
+  const handleMobileMenuOpen = () => {
+    setMobileDrawerOpen(true);
+  };
+
+  const handleMobileMenuClose = () => {
+    setMobileDrawerOpen(false);
+  };
+
+  const handleSearchDrawerOpen = () => {
+    setSearchDrawerOpen(true);
+  };
+
+  const handleSearchDrawerClose = () => {
+    setSearchDrawerOpen(false);
+  };
+
   return (
     <AppBar position="static" elevation={0}>
       <Paper
@@ -144,67 +209,25 @@ const Navbar: React.FC = () => {
       >
         <Toolbar
           sx={{
-            backgroundColor: grey[50],
-            justifyContent: {
-              md: "space-evenly",
-              xs: "space-between",
-              sm: "space-between",
-            },
+            backgroundColor: common.white,
+            justifyContent: {xs: "space-between" , sm: "space-between", md: "space-between", lg: "space-between", xl: "space-evenly"},
             px: 2,
+            minHeight: { xs: 64, sm: 64, md: 64 }, // Force consistent height
           }}
         >
-          {/* Nav Menu on < md - uses MUI Menu (i.e. dropdown) component */}
-          <Box
-            sx={{
-              display: "flex",
-            }}
-          >
-            <Box
-              sx={{
-                display: { xs: "flex", md: "none" },
-                alignItems: "center",
-              }}
-            >
+          {/* Nav Menu on < md (uses MUI Menu component) */}
+          {/* Mobile Menu Button */}
+          <Box sx={{ display:"flex"}}>
+            <Box sx={{ display: { xs: "flex", md: "flex", lg: "flex", xl: "none" } }}>
               <IconButton
                 size="large"
-                edge="end"
+                edge="start"
                 color="inherit"
-                onClick={handleMenuOpen}
+                onClick={handleMobileMenuOpen}
               >
                 <MenuIcon />
               </IconButton>
-              <Menu
-                anchorEl={anchorEl}
-                open={!!anchorEl}
-                onClose={handleMenuClose}
-              >
-                {menus.map((menuItem) => (
-                  <MenuItem>
-                    <Typography
-                      component={RouterLink}
-                      variant="body1"
-                      to={menuItem.route}
-                      sx={{
-                        color:
-                          location.pathname === menuItem.route
-                            ? grey[900]
-                            : grey[600],
-                        fontWeight:
-                          location.pathname === menuItem.route
-                            ? "bold"
-                            : "normal",
-                        "&:hover": {
-                          color: "inherit",
-                        },
-                      }}
-                    >
-                      {menuItem.name}
-                    </Typography>
-                  </MenuItem>
-                ))}
-              </Menu>
             </Box>
-
             {/* Company Name - Logo */}
             <Box
               sx={{
@@ -213,78 +236,51 @@ const Navbar: React.FC = () => {
                 alignItems: "center",
               }}
             >
-              <IconButton
-                component={RouterLink}
-                to={Constants.HOME_ROUTE}
-                disableRipple
-              >
-                <KeyboardCommandKey
-                  sx={{
-                    minHeight: "48px",
-                    minWidth: "48px",
-                    color: grey[900],
-                    display: {
-                      xs: "none",
-                      md: "flex",
-                    },
-                  }}
-                />
-              </IconButton>
               <Typography
                 variant="h1"
                 component={RouterLink}
                 to={Constants.HOME_ROUTE}
                 noWrap
                 sx={{
-                  fontSize: { xs: "32px", md: "24px" },
-                  color: grey[900],
-                  "&:hover": {
-                    color: grey[900],
-                  },
+                  fontSize: { xs: "32px", md: "32px" },
+                  color: "primary.light",
+                  fontWeight: 900
                 }}
               >
                 BDNX
               </Typography>
             </Box>
           </Box>
-
-          {/* Nav Menu on > md breakpoint (shows all menu items) */}
+            
+          {/* Nav Menu on > md */}
           <Box
             sx={{
-              display: { xs: "none", md: "flex" },
+              display: { xs: "none", md: "none", xl: "flex" },
+              alignItems: "center",
               flexDirection: "row",
               justifyContent: "center",
               gap: { md: 2, lg: 6 },
             }}
           >
-            {menus.map((menuItem) => (
-              <Link
-                key={menuItem.name}
-                component={RouterLink}
-                to={menuItem.route}
-                sx={{
-                  textDecoration: "none",
-                  color:
-                    location.pathname === menuItem.route
-                      ? grey[900]
-                      : grey[600],
-                  fontWeight:
-                    location.pathname === menuItem.route ? "bold" : "normal",
-                  "&:hover": {
-                    backgroundColor: "inherit",
-                  },
-                }}
-              >
-                <Typography
-                  textTransform="none"
-                  variant="subtitle1"
-                  fontWeight="500"
-                >
-                  {menuItem.name}
+            {/* Categories with mega dropdown */}
+            {categoriesLoading ? (
+              <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                <Typography variant="subtitle1" color="text.secondary">
+                  Loading...
                 </Typography>
-              </Link>
-            ))}
+              </Box>
+            ) : categoriesError ? (
+              <Typography variant="subtitle1" color="error">
+                Categories unavailable
+              </Typography>
+            ) : (
+              <CategoryMenu 
+                categories={categories} 
+                onCategoryClick={handleCategoryClick} 
+              />
+            )}
           </Box>
+
 
           {/* Cart and User related Buttons */}
           <Box
@@ -295,39 +291,64 @@ const Navbar: React.FC = () => {
               gap: 1,
             }}
           >
-            {/* Add SearchBar */}
-            <Box sx={{ display: "flex" }}>
+            {/* Desktop SearchBar */}
+            <Box sx={{ display: { xs: "none", md: "flex" } }}>
               <SearchBar />
             </Box>
+
+            {/* Mobile Search Button */}
+            <Box sx={{ display: { xs: "flex", md: "none" } }}>
+              <IconButton
+                size="medium"
+                color="inherit"
+                onClick={handleSearchDrawerOpen}
+              >
+                <SearchIcon />
+              </IconButton>
+            </Box>
+
+            {/* Cart Button */}
             <IconButton component={RouterLink} to={Constants.CART_ROUTE}>
-              <ShoppingCartOutlined
-                sx={{
-                  color:
-                    location.pathname === Constants.CART_ROUTE
-                      ? common.black
-                      : grey,
-                }}
-                fontSize="medium"
-              ></ShoppingCartOutlined>
               <Badge
-                badgeContent={cartCount}
+                badgeContent={cart.length}
                 color="primary"
                 sx={{
                   "& .MuiBadge-badge": {
-                    top: -15,
+                    top: -4,
+                    right: -0, 
                     fontSize: "0.6rem",
                     height: "16px",
                     minWidth: "16px",
-                    padding: "0 4px",
+                    padding: "0 4px", 
                   },
                 }}
-              ></Badge>
+              >
+                <ShoppingCartOutlined
+                  sx={{
+                    color:
+                      location.pathname === Constants.CART_ROUTE
+                        ? common.black
+                        : grey,
+                  }}
+                  fontSize="medium"
+                />
+              </Badge>
             </IconButton>
 
             {isAuthenticated && userInformation ? (
               <>
                 <IconButton onClick={handleProfileMenuOpen}>
-                  <AccountCircle />
+                  <Avatar
+                    sx={{
+                      width: 32,
+                      height: 32,
+                      bgcolor: 'primary.light',
+                      fontSize: 14,
+                      fontWeight: 600,
+                    }}
+                  >
+                    {getInitial(username)}
+                  </Avatar>
                 </IconButton>
                 <Menu
                   anchorEl={profileAnchorEl}
@@ -361,12 +382,12 @@ const Navbar: React.FC = () => {
                   sx={{
                     bgcolor: grey[50],
                     color: grey[900],
-                    borderColor: grey[900],
+                    borderColor: "primary.main",
                     borderRadius: "8px",
                     textDecoration: "none",
                     "&:hover": {
                       bgcolor: grey[100],
-                      borderColor: grey[900],
+                      borderColor: "primary.main",
                     },
                   }}
                 >
@@ -380,13 +401,10 @@ const Navbar: React.FC = () => {
                   to={Constants.SIGNUP_ROUTE}
                   variant="contained"
                   sx={{
-                    bgcolor: grey[900],
+                    bgcolor: "primary.main",
                     color: grey[50],
                     borderRadius: "8px",
                     textDecoration: "none",
-                    "&:hover": {
-                      bgcolor: grey[800],
-                    },
                   }}
                 >
                   <Typography fontWeight="500" textTransform="none">
@@ -398,6 +416,53 @@ const Navbar: React.FC = () => {
           </Box>
         </Toolbar>
       </Paper>
+      <MobileDrawer
+        open={mobileDrawerOpen}
+        onClose={handleMobileMenuClose}
+        categories={categories}
+        onCategoryClick={handleCategoryClick}
+        menuItems={menus}
+      />
+      {/* Search Drawer */}
+      <Drawer
+        anchor="right"
+        open={searchDrawerOpen}
+        onClose={handleSearchDrawerClose}
+        sx={{
+          '& .MuiDrawer-paper': {
+            width: '100%',
+            height: '100vh',
+          },
+        }}
+      >
+        <Box
+          sx={{
+            p: 2,
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'space-between',
+            gap: 2,
+            borderBottom: '1px solid',
+            borderColor: grey[300],
+          }}
+        >
+          <Box sx={{ display: 'flex', justifyContent: 'flex-start', flex: 1 }}>
+            <IconButton onClick={handleSearchDrawerClose}>
+              <ChevronLeft />
+            </IconButton>
+          </Box>
+          <Box sx={{ display: 'flex', justifyContent: 'center', flex: 1 }}>
+            <Typography variant="h6" fontWeight={600} sx={{ color: grey[900] }}>
+              Search
+            </Typography>
+          </Box>
+          {/* Empty to balance */}
+          <Box sx={{ flex: 1 }} />
+        </Box>
+        <Box sx={{ flex: 1, p: 4 }}>
+            <SearchBar/>
+        </Box>
+      </Drawer>
     </AppBar>
   );
 };
