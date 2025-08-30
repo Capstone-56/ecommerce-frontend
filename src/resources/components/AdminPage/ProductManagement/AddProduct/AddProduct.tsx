@@ -74,7 +74,8 @@ export default function AddProduct() {
                 productName === "" ||
                 productDescription === "" ||
                 location === "initial" ||
-                price === 0
+                price === 0 ||
+                featured === ""
               }
             >
               Next →

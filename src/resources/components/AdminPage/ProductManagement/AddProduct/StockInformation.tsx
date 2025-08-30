@@ -5,8 +5,19 @@ import {
   Button,
   Card,
   CardContent,
+  Checkbox,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogContentText,
+  DialogTitle,
   Grid,
   IconButton,
+  List,
+  ListItem,
+  ListItemButton,
+  ListItemIcon,
+  ListItemText,
   Paper,
   Table,
   TableBody,
@@ -47,6 +58,9 @@ export default function StockInformation(props: StockInformationProps) {
   const [listOfVariants, setListOfVariants] = useState<VariationModel[]>();
   const [chosenVariations, setChosenVariations] = useState<Record<string, { value: string, id: string }[]>>({});
   const [permutations, setPermutations] = useState<Record<string, string>[]>([]);
+  const [removedPermutations, setRemovedPermutations] = useState<Record<string, string>[]>([]);
+  const [selectedRemoved, setSelectedRemoved] = useState<Record<string, string>[]>([]);
+  const [open, setOpen] = useState(false);
   const navigate = useNavigate();
 
   /**
@@ -55,6 +69,31 @@ export default function StockInformation(props: StockInformationProps) {
   useEffect(() => {
     fetchRequiredInformation();
   }, []);
+
+  /**
+   * Opens the dialog for showing deleted rows 
+   */
+  const handleClickOpen = () => {
+    setOpen(true);
+  };
+
+  /**
+   * Handles the reverting of deleting a particular row. Appends the selected
+   * delete variation and appends it to the end of the current permutations
+   * to then display back on this table.
+   */
+  const handleRevert = () => {
+    setPermutations(perms => [...perms, ...selectedRemoved]);
+
+    // Remove them from removedPermutations.
+    setRemovedPermutations(prev =>
+      prev.filter(p => !selectedRemoved.includes(p))
+    );
+
+    // Clear selection and close dialog.
+    setSelectedRemoved([]);
+    setOpen(false);
+  };
 
   /**
    * Updates the list of product permutations whenever the chosen variations change.
@@ -76,35 +115,64 @@ export default function StockInformation(props: StockInformationProps) {
    * Sets the new list of permutations.
    */
   useEffect(() => {
-    const oldMap = new Map(
-      permutations.map(p => [
-        Object.keys(chosenVariations).map(k => p[`${k}_id`]).join('|'),
-        p
-      ])
-    );
+    // Build a set of valid keys from new generated combos.
+    const validKeys = new Set<string>();
 
-    const newPermutations = cartesianProduct(Object.values(chosenVariations)).map(values => {
-      const combination: Record<string, string> = {};
+    const generated = cartesianProduct(Object.values(chosenVariations)).map(values => {
+      const combination: Record<string, string> = {
+        sku: "",
+        stock: ""
+      };
 
       Object.keys(chosenVariations).forEach((key, i) => {
-        // Display value.
         combination[key] = values[i].value;
-        // Store the ID
         combination[`${key}_id`] = values[i].id;
       });
 
-      // Generate a stable key for oldMap lookup.
-      const key = Object.keys(chosenVariations).map(k => values.find(v => v.value === combination[k])?.id).join('|');
+      const key = Object.keys(chosenVariations)
+        .map(k => combination[`${k}_id`])
+        .join("|");
 
-      // Reuse previous sku and stock if they exist.
-      const old = oldMap.get(key);
-      combination.sku = old?.sku ?? "";
-      combination.stock = old?.stock ?? "";
+      validKeys.add(key);
 
-      return combination;
+      return { ...combination, _key: key };
     });
 
-    setPermutations(newPermutations);
+    const generatedMap = new Map(generated.map(g => [g._key, g]));
+
+    // Removed rows (user deleted manually).
+    const removedKeys = new Set(
+      removedPermutations.map(p =>
+        Object.keys(chosenVariations)
+          .map(k => p[`${k}_id`])
+          .join("|")
+      )
+    );
+
+    // Keep old ones that are still valid + not removed.
+    const kept = permutations.filter(p => {
+      const key = Object.keys(chosenVariations)
+        .map(k => p[`${k}_id`])
+        .join("|");
+      return validKeys.has(key) && !removedKeys.has(key);
+    });
+
+    // Append new ones that weren’t in the old list.
+    const existingKeys = new Set(
+      kept.map(p =>
+        Object.keys(chosenVariations)
+          .map(k => p[`${k}_id`])
+          .join("|")
+      )
+    );
+
+    const appended = Array.from(generatedMap.values())
+      .filter(g => !existingKeys.has(g._key) && !removedKeys.has(g._key));
+
+    // Merge, and strip out _key before saving
+    const merged = [...kept, ...appended].map(({ _key, ...rest }) => rest);
+
+    setPermutations(merged);
   }, [chosenVariations]);
 
   /**
@@ -137,7 +205,7 @@ export default function StockInformation(props: StockInformationProps) {
    * each possible variant having at least one value chosen. 
    */
   function isDisabled() {
-    return listOfVariants &&
+    return removedPermutations.length > 1 && permutations.length == 0 || listOfVariants &&
       (Object.keys(chosenVariations).length < listOfVariants?.length || Object.values(chosenVariations).some((value) => value.length === 0)) ||
       Object.values(permutations).some(permutation => (permutation.sku == "" || permutation.stock == ""))
   }
@@ -216,8 +284,13 @@ export default function StockInformation(props: StockInformationProps) {
     <Box maxHeight={"100%"}>
       <Grid container spacing={3}>
         <Grid size={2}>
-          <Card sx={{ maxHeight: "75vh" }}>
-            <CardContent>
+          <Card sx={{ height: "75vh", maxHeight: "75vh" }}>
+            <CardContent sx={{
+              height: "100%", overflowY: "auto",
+              "&::-webkit-scrollbar": { width: "6px" },
+              "&::-webkit-scrollbar-thumb": { backgroundColor: "#888", borderRadius: "3px" },
+              "&::-webkit-scrollbar-thumb:hover": { backgroundColor: "#555" }
+            }}>
               {listOfVariants &&
                 listOfVariants
                   .map((variant) => {
@@ -236,6 +309,7 @@ export default function StockInformation(props: StockInformationProps) {
                                 mr: 1,
                                 mb: 1,
                                 backgroundColor: isSelected ? "primary.main" : "lightgrey",
+                                color: isSelected ? "white" : "black",
                                 maxWidth: "10%"
                               }}
                               color="secondary"
@@ -319,7 +393,10 @@ export default function StockInformation(props: StockInformationProps) {
                       </TableCell>
                       <TableCell>
                         <Tooltip title={"Remove variation"}>
-                          <IconButton onClick={() => setPermutations(permutations.filter((row) => row !== permutation))}>
+                          <IconButton onClick={() => {
+                            setPermutations(permutations.filter((row) => row !== permutation));
+                            setRemovedPermutations([...removedPermutations, permutation])
+                          }}>
                             <CancelIcon fontSize={"medium"} color={"error"} />
                           </IconButton>
                         </Tooltip>
@@ -333,11 +410,70 @@ export default function StockInformation(props: StockInformationProps) {
         </Grid>
       </Grid >
       <Box display={"flex"} justifyContent={"right"} pt={2}>
+        <Button variant={"contained"} onClick={handleClickOpen} sx={{ mr: 2 }}>
+          Show deleted variations
+        </Button>
+        <Dialog
+          open={open}
+          onClose={() => setOpen(false)}
+          aria-labelledby="alert-dialog-title"
+          aria-describedby="alert-dialog-description"
+        >
+          <DialogTitle id="alert-dialog-title">
+            List of deleted variations
+          </DialogTitle>
+          <DialogContent>
+            <DialogContentText id="alert-dialog-description">
+              <List sx={{ width: '100%', maxWidth: 500, bgcolor: 'background.paper' }}>
+                {removedPermutations.length > 0 ? removedPermutations.map((value) => {
+                  const labelId = `checkbox-list-label-${value}`;
+                  return (
+                    <ListItem
+                      disablePadding
+                    >
+                      <ListItemButton role={undefined} dense>
+                        <ListItemIcon>
+                          <Checkbox
+                            edge="start"
+                            tabIndex={-1}
+                            disableRipple
+                            onChange={(e) => {
+                              if (e.target.checked) {
+                                setSelectedRemoved(perms => [...perms, value]);
+                              } else {
+                                setSelectedRemoved(perms => perms.filter(v => v !== value));
+                              }
+                            }}
+                          />
+                        </ListItemIcon>
+                        <ListItemText
+                          id={labelId}
+                          primary={
+                            Object.entries(value)
+                              .filter(([key, _]) => !key.endsWith("_id"))
+                              .map(([key, value]) => `${key}: ${value}`)
+                              .join("\n")} sx={{ whiteSpace: "pre-line" }
+                              }
+                        />
+                      </ListItemButton>
+                    </ListItem>
+                  );
+                }) : <Typography>No current variations have been deleted</Typography>}
+              </List>
+            </DialogContentText>
+          </DialogContent>
+          <DialogActions>
+            <Button onClick={() => setOpen(false)}>Close</Button>
+            <Button onClick={handleRevert} autoFocus disabled={selectedRemoved.length < 1}>
+              Add selected rows back
+            </Button>
+          </DialogActions>
+        </Dialog>
         <Tooltip
           title={"Ensure your variations are set and each have their own SKU and stock set"}
           disableHoverListener={!isDisabled()}
           arrow
-          placement={"left"}
+          placement={"top"}
         >
           <span>
             <Button
