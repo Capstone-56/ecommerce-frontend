@@ -3,6 +3,7 @@ import { persist, createJSONStorage } from "zustand/middleware";
 import { Constants } from "./constants";
 import { LocalShoppingCartItemModel } from "./models/ShoppingCartItemModel";
 import { Role } from "./enum/role";
+import { COUNTRY_CURRENCY_MAP } from "./enum/currency";
 
 type cartStore = {
   /**
@@ -90,7 +91,11 @@ type LocationStore = {
    */
   userLocation: string | null;
   /**
-   * Sets the users location.
+   * User's currency based on their location.
+   */
+  userCurrency: string | null;
+  /**
+   * Sets the users location and automatically updates currency.
    * @param location The location of user to be set.
    */
   setLocation: (location: string) => void;
@@ -218,14 +223,18 @@ export const userState = create<UserStore>()(
 );
 
 /**
- * Location state to store the user's active location. Will be used to get
- * products that are available in the user's country.
+ * Location state to store the user's active location and currency. Will be used to get
+ * products that are available in the user's country and display prices in their currency.
  */
 export const locationState = create<LocationStore>()(
   persist(
     (set) => ({
       userLocation: null,
-      setLocation: (userLocation: string) => set({ userLocation }),
+      userCurrency: null,
+      setLocation: (userLocation: string) => {
+        const userCurrency = COUNTRY_CURRENCY_MAP[userLocation] || null;
+        set({ userLocation, userCurrency });
+      },
     }),
     {
       name: Constants.LOCAL_STORAGE_LOCATION_STORAGE,
