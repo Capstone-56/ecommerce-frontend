@@ -210,14 +210,23 @@ const Navbar: React.FC = () => {
         <Toolbar
           sx={{
             backgroundColor: common.white,
-            justifyContent: {xs: "space-between" , sm: "space-between", md: "space-between", lg: "space-between", xl: "space-evenly"},
+            justifyContent: "center", // Center the content container
             px: 2,
             minHeight: { xs: 64, sm: 64, md: 64 }, // Force consistent height
           }}
         >
+          <Box
+            sx={{
+              display: "flex",
+              justifyContent: {xs: "space-between" , sm: "space-between", md: "space-between", lg: "space-between", xl: "space-between"},
+              alignItems: "center",
+              width: "100%",
+              maxWidth: "1680px",
+            }}
+          >
           {/* Nav Menu on < md (uses MUI Menu component) */}
           {/* Mobile Menu Button */}
-          <Box sx={{ display:"flex"}}>
+          <Box sx={{ display:"flex" }}>
             <Box sx={{ display: { xs: "flex", md: "flex", lg: "flex", xl: "none" } }}>
               <IconButton
                 size="large"
@@ -413,6 +422,7 @@ const Navbar: React.FC = () => {
                 </Button>
               </>
             )}
+          </Box>
           </Box>
         </Toolbar>
       </Paper>

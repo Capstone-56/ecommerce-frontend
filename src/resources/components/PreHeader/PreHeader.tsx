@@ -38,8 +38,8 @@ const PreHeader: React.FC = () => {
   return (
     <Box
       sx={{
-        backgroundColor: grey[100],
-        py: 1,
+        backgroundColor: "#F8F8F8",
+        py: 0.5,
         px: 2,
         borderBottom: `1px solid ${grey[300]}`,
       }}
@@ -49,7 +49,7 @@ const PreHeader: React.FC = () => {
           display: "flex",
           justifyContent: "space-between",
           alignItems: "center",
-          maxWidth: "1200px",
+          maxWidth: "1680px",
           mx: "auto",
         }}
       >
@@ -70,7 +70,7 @@ const PreHeader: React.FC = () => {
               displayEmpty
               IconComponent={ExpandMore}
               sx={{
-                backgroundColor: "#F8F8F8",
+                backgroundColor: "none",
                 "& .MuiSelect-select": {
                   py: 0.5,
                   pl: 0, // Reduce left padding
