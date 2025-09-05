@@ -9,24 +9,24 @@ import {
   Stack,
   Divider,
   CircularProgress,
+  Card,
+  CardContent,
+  Grid,
+  Avatar,
 } from "@mui/material";
 import CheckCircleOutlineIcon from "@mui/icons-material/CheckCircleOutline";
 import ErrorOutlineIcon from "@mui/icons-material/ErrorOutline";
+import LocalShippingIcon from "@mui/icons-material/LocalShipping";
 import api from "@/api";
-
-type Status = "pending" | "paid" | "failed";
-type OrderStatus = {
-  status: Status;
-  orderId?: number;
-  amount?: number;
-  currency?: string;
-  reason?: string;
-};
+import { OrderStatusModel } from "@/domain/models/OrderModel";
+import { cartState } from "@/domain/state";
 
 export default function OrderComplete() {
   const params = new URLSearchParams(window.location.search);
   const pi = params.get("pi") || params.get("payment_intent") || "";
-  const [data, setData] = useState<OrderStatus>({ status: "pending" });
+  const [data, setData] = useState<OrderStatusModel>({ status: "pending" });
+  const clearCart = cartState((state) => state.clearCart);
+  const [cartCleared, setCartCleared] = useState(false);
 
   useEffect(() => {
     if (!pi) return;
@@ -48,6 +48,13 @@ export default function OrderComplete() {
           if (res.status >= 200 && res.status < 300) {
             const j = res.data;
             setData(j);
+            
+            // Clear cart when payment is successful and we haven't cleared it yet
+            if (j.status === "paid" && !cartCleared) {
+              clearCart();
+              setCartCleared(true);
+            }
+            
             if (j.status === "paid" || j.status === "failed") return;
           }
         } catch (_) {
@@ -85,6 +92,106 @@ export default function OrderComplete() {
       </Box>
     </Container>
   );
+  {/* Order Summary */}
+  const OrderSummary: React.FC<{ data: OrderStatusModel }> = ({ data }) => {
+    if (!data.order || !data.address || !data.shippingVendor) return null;
+
+    const { order, address, shippingVendor } = data;
+    const customerName = order.user 
+      ? `${order.user.firstName} ${order.user.lastName}`
+      : order.guestUser 
+      ? `${order.guestUser.firstName} ${order.guestUser.lastName}`
+      : "Customer";
+
+    return (
+      <Box sx={{ mt: 3, textAlign: "left" }}>
+        <Divider sx={{ mb: 3 }} />
+        
+        {/* Order Items */}
+        <Typography variant="h6" gutterBottom>
+          Order Items
+        </Typography>
+        <Stack spacing={2} sx={{ mb: 3 }}>
+          {order.items.map((item) => (
+            <Card key={item.id} variant="outlined">
+              <CardContent sx={{ p: 2, "&:last-child": { pb: 2 } }}>
+                <Grid container spacing={2} alignItems="center">
+                  <Grid size={{xs:"auto"}}>
+                    {item.productItem.imageUrls && Array.isArray(item.productItem.imageUrls) && item.productItem.imageUrls.length > 0 ? (
+                      <Avatar
+                        src={item.productItem.imageUrls[0]}
+                        sx={{ width: 60, height: 60 }}
+                        variant="rounded"
+                      />
+                    ) : (
+                      <Avatar sx={{ width: 60, height: 60 }} variant="rounded">
+                        {item.productItem.product.name[0]}
+                      </Avatar>
+                    )}
+                  </Grid>
+                  <Grid size={{xs:"auto"}}>
+                    <Typography variant="body1" fontWeight="medium">
+                      {item.productItem.product.name}
+                    </Typography>
+                    <Typography variant="body2" color="text.secondary">
+                      SKU: {item.productItem.sku}
+                    </Typography>
+                    <Typography variant="body2" color="text.secondary">
+                      Quantity: {item.quantity}
+                    </Typography>
+                  </Grid>
+                  <Grid size={{xs:"auto"}}>
+                    <Typography variant="body1" fontWeight="medium">
+                      ${(item.price * item.quantity).toFixed(2)}
+                    </Typography>
+                  </Grid>
+                </Grid>
+              </CardContent>
+            </Card>
+          ))}
+        </Stack>
+
+        {/* Shipping Info */}
+        <Typography variant="h6" gutterBottom>
+          Shipping Details
+        </Typography>
+        <Card variant="outlined" sx={{ mb: 3 }}>
+          <CardContent sx={{ p: 2, "&:last-child": { pb: 2 } }}>
+            <Stack spacing={1}>
+              <Box display="flex" alignItems="center" gap={1}>
+                <LocalShippingIcon color="primary" fontSize="small" />
+                <Typography variant="body1" fontWeight="medium">
+                  {shippingVendor.name}
+                </Typography>
+              </Box>
+              <Typography variant="body2" color="text.secondary">
+                {customerName}
+              </Typography>
+              <Typography variant="body2" color="text.secondary">
+                {address.addressLine}
+              </Typography>
+              <Typography variant="body2" color="text.secondary">
+                {address.city}, {address.state} {address.postcode}
+              </Typography>
+              <Typography variant="body2" color="text.secondary">
+                {address.country}
+              </Typography>
+            </Stack>
+          </CardContent>
+        </Card>
+
+        {/* Order Total */}
+        <Box display="flex" justifyContent="space-between" alignItems="center">
+          <Typography variant="h6">
+            Total
+          </Typography>
+          <Typography variant="h6" fontWeight="bold">
+            ${order.totalPrice.toFixed(2)} {data.currency?.toUpperCase()}
+          </Typography>
+        </Box>
+      </Box>
+    );
+  };
 
   if (!pi) {
     return (
@@ -157,12 +264,17 @@ export default function OrderComplete() {
         <Typography variant="h4" fontWeight={800}>
           Order complete!
         </Typography>
-        {typeof data.amount === "number" && data.currency ? (
+        {data.order ? (
+          <Typography variant="body1" color="text.secondary">
+            Order <strong>#{data.order.id.slice(-8)}</strong> has been confirmed.
+          </Typography>
+        ) : typeof data.amount === "number" && data.currency ? (
           <Typography variant="body1" color="text.secondary">
             Charged <strong>{(data.amount / 100).toFixed(2)}</strong>{" "}
             <strong>{data.currency.toUpperCase()}</strong>.
           </Typography>
         ) : null}
+        <OrderSummary data={data} />
         <Divider sx={{ width: "100%", my: 2 }} />
         <Button onClick={handleContinueShopping} variant="contained" size="large">
           Continue Shopping
