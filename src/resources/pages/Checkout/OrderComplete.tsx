@@ -48,7 +48,7 @@ export default function OrderComplete() {
           if (res.status >= 200 && res.status < 300) {
             const j = res.data;
             setData(j);
-            
+
             // Clear cart when payment is successful and we haven't cleared it yet
             if (j.status === "paid" && !cartCleared) {
               clearCart();
@@ -56,7 +56,7 @@ export default function OrderComplete() {
               window.dispatchEvent(new CustomEvent(Constants.EVENT_CART_UPDATED));
               setCartCleared(true);
             }
-            
+
             if (j.status === "paid" || j.status === "failed") return;
           }
         } catch (_) {
@@ -94,21 +94,21 @@ export default function OrderComplete() {
       </Box>
     </Container>
   );
-  {/* Order Summary */}
+  {/* Order Summary */ }
   const OrderSummary: React.FC<{ data: OrderStatusModel }> = ({ data }) => {
     if (!data.order || !data.address || !data.shippingVendor) return null;
 
     const { order, address, shippingVendor } = data;
-    const customerName = order.user 
+    const customerName = order.user
       ? `${order.user.firstName} ${order.user.lastName}`
-      : order.guestUser 
-      ? `${order.guestUser.firstName} ${order.guestUser.lastName}`
-      : "Customer";
+      : order.guestUser
+        ? `${order.guestUser.firstName} ${order.guestUser.lastName}`
+        : "Customer";
 
     return (
       <Box sx={{ mt: 3, textAlign: "left" }}>
         <Divider sx={{ mb: 3 }} />
-        
+
         {/* Order Items */}
         <Typography variant="h6" gutterBottom>
           Order Items
@@ -118,7 +118,7 @@ export default function OrderComplete() {
             <Card key={item.id} variant="outlined">
               <CardContent sx={{ p: 2, "&:last-child": { pb: 2 } }}>
                 <Grid container spacing={2} alignItems="center">
-                  <Grid size={{xs:"auto"}}>
+                  <Grid size={{ xs: "auto" }}>
                     {item.productItem.imageUrls && Array.isArray(item.productItem.imageUrls) && item.productItem.imageUrls.length > 0 ? (
                       <Avatar
                         src={item.productItem.imageUrls[0]}
@@ -131,7 +131,7 @@ export default function OrderComplete() {
                       </Avatar>
                     )}
                   </Grid>
-                  <Grid size={{xs:"auto"}}>
+                  <Grid size={{ xs: "auto" }}>
                     <Typography variant="body1" fontWeight="medium">
                       {item.productItem.product.name}
                     </Typography>
@@ -139,7 +139,7 @@ export default function OrderComplete() {
                       Quantity: {item.quantity}
                     </Typography>
                   </Grid>
-                  <Grid size={{xs:"auto"}}>
+                  <Grid size={{ xs: "auto" }}>
                     <Typography variant="body1" fontWeight="medium">
                       ${(item.price * item.quantity).toFixed(2)}
                     </Typography>
