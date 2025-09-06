@@ -1,4 +1,4 @@
-import { Card, CardContent, Grid, List, ListItemText, Paper, Typography } from "@mui/material";
+import { Divider, Grid, Paper, Typography } from "@mui/material";
 import { ChartContainer, ChartsXAxis, LinePlot } from "@mui/x-charts";
 
 /**
@@ -7,11 +7,14 @@ import { ChartContainer, ChartsXAxis, LinePlot } from "@mui/x-charts";
 export default function SalesForecast() {
   return (
     <Grid size={12} textAlign={"center"}>
-      <Typography textAlign={"center"} fontSize={24}>Sales Forecast</Typography>
       <Paper
-        sx={{ height: 275 }}
+        sx={{ height: "100%", borderRadius: 3, p: 1 }}
         elevation={1}
       >
+        <Typography textAlign={"center"} fontSize={24} pb={1}>Sales Forecast</Typography>
+        <Divider
+          sx={{ backgroundColor: "#8EB5C0", maxWidth: "80%", mx: "auto" }}
+        />
         <ChartContainer
           margin={{ right: 80 }}
           series={[

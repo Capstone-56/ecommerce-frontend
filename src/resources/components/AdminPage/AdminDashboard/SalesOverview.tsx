@@ -1,31 +1,60 @@
-import { Grid, Paper, Typography } from "@mui/material";
-import { BarChart, BarPlot } from '@mui/x-charts/BarChart';
+import { OrderService } from "@/services/order-service";
+import { Divider, Grid, Paper, Typography } from "@mui/material";
+import { BarChart } from '@mui/x-charts/BarChart';
+import { useEffect, useState } from "react";
+
+const orderService = new OrderService;
 
 /**
  * Sales Overview component to show the number of daily sales for the past 
  * few days that have occurred on the website.
  */
 export default function SalesOverview() {
+  const [chartValue, setChartValues] = useState<number[]>([]);
+  const [xAxisData, setXAxisData] = useState<string[]>([]);
+
+  /**
+   * A useEffect required to get required information on mount.
+   */
+  useEffect(() => {
+    fetchRequiredInformation();
+  }, []);
+
+  /**
+   * Sets the values required for the X axis and chart values.
+   */
+  async function fetchRequiredInformation() {
+    const response = await orderService.getPastWeekSaleFigures();
+
+    setXAxisData(response.map((day) => day.date.split("2025-")[1]));
+    setChartValues(response.map((day) => day.total_sales));
+  }
+
   return (
     <Grid size={12}>
-      <Typography textAlign={"center"} fontSize={24}>Sales Overview</Typography>
       <Paper
         sx={{
           height: "100%",
+          p: 1,
+          borderRadius: 3
         }}
         elevation={1}
       >
+        <Typography textAlign={"center"} fontSize={24} pb={1}>Sales Overview</Typography>
+        <Divider
+          sx={{ backgroundColor: "#8EB5C0", maxWidth: "80%", mx: "auto" }}
+        />
         <BarChart
           margin={{ right: 50 }}
           height={250}
           series={
             [{
-              data: [1, 2, 5, 3, 1] // No need to specify it is a bar series
+              data: chartValue
             }]}
           xAxis={
             [
               {
-                data: ['02/06', '03/06', '04/06', '05/06', '06/06'],
+                data: xAxisData,
                 scaleType: 'band',
                 height: 45,
               },
