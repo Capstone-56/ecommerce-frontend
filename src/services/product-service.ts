@@ -2,6 +2,7 @@ import api from "@/api";
 
 import { PagedList } from "@/domain/abstract-models/PagedList";
 import { ProductModel } from "@/domain/models/ProductModel";
+import { FileWithPreview } from "@/resources/components/AdminPage/ProductManagement/AddProduct/AddProduct";
 
 export class ProductService {
   /**
@@ -16,7 +17,16 @@ export class ProductService {
    * @returns A paged result of products.
    */
   async listProducts(
-page?: number, pageSize?: number, priceMin?: number, priceMax?: number, sort?: string, colour?: string, categories?: string, search?: string, userLocation?: string | null  ) : Promise<PagedList<ProductModel>> {
+    page?: number,
+    pageSize?: number,
+    priceMin?: number,
+    priceMax?: number,
+    sort?: string,
+    colour?: string,
+    categories?: string,
+    search?: string,
+    userLocation?: string | null
+  ): Promise<PagedList<ProductModel>> {
     try {
       const params = new URLSearchParams();
       if (page) params.append("page", page.toString());
@@ -28,7 +38,7 @@ page?: number, pageSize?: number, priceMin?: number, priceMax?: number, sort?: s
       if (categories) params.append("categories", categories);
       if (search) params.append("search", search);
       if (userLocation) params.append("location", userLocation);
-    
+
       const baseUrl = `/api/product?${params.toString()}`;
 
       const products = await api.get(baseUrl);
@@ -47,7 +57,7 @@ page?: number, pageSize?: number, priceMin?: number, priceMax?: number, sort?: s
     try {
       const baseUrl = `/api/product/${productId}`;
       const products = await api.get(baseUrl);
-      
+
       return products.data;
     } catch (error) {
       return Promise.reject(error);
@@ -63,10 +73,10 @@ page?: number, pageSize?: number, priceMin?: number, priceMax?: number, sort?: s
     try {
       const params = new URLSearchParams();
       if (userLocation) params.append("location", userLocation);
-      
+
       const baseUrl = `/api/product/featured${params.toString() ? `?${params.toString()}` : ''}`;
       const products = await api.get(baseUrl);
-      
+
       return products.data;
     } catch (error) {
       return Promise.reject(error);
@@ -83,11 +93,66 @@ page?: number, pageSize?: number, priceMin?: number, priceMax?: number, sort?: s
     try {
       const params = new URLSearchParams();
       if (userLocation) params.append("location", userLocation);
-      
+
       const baseUrl = `/api/product/${productId}/related${params.toString() ? `?${params.toString()}` : ''}`;
       const relatedProducts = await api.get(baseUrl);
-      
+
       return relatedProducts.data;
+    } catch (error) {
+      return Promise.reject(error);
+    }
+  }
+
+  /**
+   * An endpoint to create a product with a set of variations.
+   * @returns A status code.
+   */
+  async addProduct(
+    productName: string,
+    productDescription: string,
+    category: string,
+    featured: string,
+    images: FileWithPreview[],
+    price: number,
+    location: string,
+    permutations: Record<string, string>[],
+    variations: Record<string, string>[][]
+  ): Promise<number> {
+    try {
+      const baseUrl = "/api/product";
+      const formattedPermutations = permutations.map((permutation, idx) => ({
+        sku: permutation.sku,
+        stock: permutation.stock,
+        price: price,
+        imageUrls: [],
+        variations: variations[idx]
+      }))
+
+      const formData = new FormData();
+
+      // Normal fields.
+      formData.append("name", productName);
+      formData.append("description", productDescription);
+      formData.append("featured", String(featured));
+      formData.append("category", category);
+      formData.append("location", location);
+
+      // Images (append each file separately).
+      images.forEach((file) => {
+        formData.append("images", file.file);
+      });
+
+      // Nested objects.
+      formData.append("product_items", JSON.stringify(formattedPermutations));
+
+      const response = await api.post(baseUrl, formData, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      });
+
+      return response.status;
+
     } catch (error) {
       return Promise.reject(error);
     }

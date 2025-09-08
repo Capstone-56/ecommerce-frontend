@@ -96,7 +96,7 @@ export default function Home() {
 
       {/* Featured Products Section */}
       <Container
-        maxWidth="lg"
+        maxWidth="xl"
         sx={{
           my: { xs: 8, md: 16 },
           textAlign: "center",

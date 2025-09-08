@@ -20,13 +20,14 @@ import ProductManagement from "@/resources/components/AdminPage/ProductManagemen
 import VendorManagement from "@/resources/components/AdminPage/VendorManagement";
 import CustomerSupport from "@/resources/components/AdminPage/CustomerSupport";
 import AdminSettings from "@/resources/components/AdminPage/AdminSettings";
+import Payment from "@/resources/pages/Checkout/Payment";
 import { Constants } from "@/domain/constants";
-import UserDashboard from "@/resources/components/Profile/Dashboard/UserDashboard";
-import UserDetails from "@/resources/components/Profile/UserDetails";
-import Payment from "@/resources/components/Profile/Payment";
-import PurchaseHistory from "@/resources/components/Profile/OrderHistory";
-import AddProduct from "@/resources/components/AdminPage/ProductManagement/AddProduct";
+import AddProduct from "@/resources/components/AdminPage/ProductManagement/AddProduct/AddProduct";
+import OrderComplete from "@/resources/pages/Checkout/OrderComplete";
 import EditProduct from "@/resources/components/AdminPage/ProductManagement/EditProduct";
+import UserDashboard from "@/resources/components/Profile/Dashboard/UserDashboard";
+import OrderHistory from "@/resources/components/Profile/OrderHistory";
+import UserDetails from "@/resources/components/Profile/UserDetails";
 
 export const router = createBrowserRouter([
   {
@@ -51,7 +52,7 @@ export const router = createBrowserRouter([
           },
           {
             path: "orders",
-            element: <PurchaseHistory />,
+            element: <OrderHistory />,
           },
           {
             path: "payment",
@@ -86,6 +87,14 @@ export const router = createBrowserRouter([
       {
         path: "signup",
         element: <SignUp />,
+      },
+      {
+        path: "checkout",
+        element: <Payment />,
+      },
+      {
+        path: "order-complete",
+        element: <OrderComplete />,
       },
     ],
   },
