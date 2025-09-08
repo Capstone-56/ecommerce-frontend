@@ -52,6 +52,8 @@ export default function OrderComplete() {
             // Clear cart when payment is successful and we haven't cleared it yet
             if (j.status === "paid" && !cartCleared) {
               clearCart();
+              // To clear the cart when authed user checks out
+              window.dispatchEvent(new CustomEvent(Constants.EVENT_CART_UPDATED));
               setCartCleared(true);
             }
             
@@ -79,7 +81,7 @@ export default function OrderComplete() {
     <Container maxWidth="sm">
       <Box minHeight="80vh" display="flex" alignItems="center" justifyContent="center">
         <Paper
-          elevation={6}
+          elevation={4}
           sx={{
             p: 4,
             borderRadius: 3,
@@ -132,9 +134,6 @@ export default function OrderComplete() {
                   <Grid size={{xs:"auto"}}>
                     <Typography variant="body1" fontWeight="medium">
                       {item.productItem.product.name}
-                    </Typography>
-                    <Typography variant="body2" color="text.secondary">
-                      SKU: {item.productItem.sku}
                     </Typography>
                     <Typography variant="body2" color="text.secondary">
                       Quantity: {item.quantity}
@@ -193,6 +192,7 @@ export default function OrderComplete() {
     );
   };
 
+  // no payment intent found
   if (!pi) {
     return (
       <Shell>
@@ -211,7 +211,7 @@ export default function OrderComplete() {
       </Shell>
     );
   }
-
+  // while order is pending
   if (data.status === "pending") {
     return (
       <Shell>
@@ -224,14 +224,11 @@ export default function OrderComplete() {
             This usually takes a few seconds. We’ll update automatically.
           </Typography>
           <Divider sx={{ width: "100%", my: 2 }} />
-          <Button onClick={handleContinueShopping} variant="text">
-            Continue Shopping
-          </Button>
         </Stack>
       </Shell>
     );
   }
-
+  // if the payment failed
   if (data.status === "failed") {
     return (
       <Shell>
@@ -267,11 +264,6 @@ export default function OrderComplete() {
         {data.order ? (
           <Typography variant="body1" color="text.secondary">
             Order <strong>#{data.order.id.slice(-8)}</strong> has been confirmed.
-          </Typography>
-        ) : typeof data.amount === "number" && data.currency ? (
-          <Typography variant="body1" color="text.secondary">
-            Charged <strong>{(data.amount / 100).toFixed(2)}</strong>{" "}
-            <strong>{data.currency.toUpperCase()}</strong>.
           </Typography>
         ) : null}
         <OrderSummary data={data} />
