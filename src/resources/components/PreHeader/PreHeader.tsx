@@ -14,7 +14,7 @@ import { locationState } from "@/domain/state";
 
 const PreHeader: React.FC = () => {
   const userLocation = locationState((state) => state.userLocation);
-  const userCurrency = locationState((state) => state.userCurrency);
+  const userCurrency = locationState((state) => state.getUserCurrency());
   const setLocation = locationState((state) => state.setLocation);
 
   const handleLocationChange = (event: SelectChangeEvent<string>) => {
@@ -58,7 +58,7 @@ const PreHeader: React.FC = () => {
           
         </Typography>
 
-        {/* Right side - Country selection */}
+        {/* Right side - Country selection and currency display */}
         <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
           <Typography variant="body2" color="text.secondary">
             Ship to
@@ -107,6 +107,15 @@ const PreHeader: React.FC = () => {
               ))}
             </Select>
           </FormControl>
+          
+          {/* Currency display */}
+          {userCurrency && (
+            <>
+              <Typography variant="body2" color="text.primary" sx={{ fontWeight: 500 }}>
+                {userCurrency}
+              </Typography>
+            </>
+          )}
         </Box>
       </Box>
     </Box>
