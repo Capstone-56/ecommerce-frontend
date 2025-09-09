@@ -95,10 +95,23 @@ type LocationStore = {
    */
   userCurrency: string | null;
   /**
+   * User's selected currency for display (can be different from location-based currency).
+   */
+  selectedCurrency: string | null;
+  /**
    * Sets the users location and automatically updates currency.
    * @param location The location of user to be set.
    */
   setLocation: (location: string) => void;
+  /**
+   * Sets the user's selected currency for price display.
+   * @param currency The currency code to be set.
+   */
+  setSelectedCurrency: (currency: string) => void;
+  /**
+   * Gets the effective currency to use (selected currency or user currency).
+   */
+  getUserCurrency: () => string | null;
 }
 
 /**
@@ -228,12 +241,19 @@ export const userState = create<UserStore>()(
  */
 export const locationState = create<LocationStore>()(
   persist(
-    (set) => ({
+    (set, get) => ({
       userLocation: null,
       userCurrency: null,
+      selectedCurrency: null,
       setLocation: (userLocation: string) => {
         const userCurrency = COUNTRY_CURRENCY_MAP[userLocation] || null;
         set({ userLocation, userCurrency });
+      },
+      setSelectedCurrency: (selectedCurrency: string) => {
+        set({ selectedCurrency });
+      },
+      getUserCurrency: () => {
+        return get().selectedCurrency || get().userCurrency;
       },
     }),
     {

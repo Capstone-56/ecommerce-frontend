@@ -26,5 +26,21 @@ export const COUNTRY_CURRENCY_MAP: Record<string, Currency> = {
   IT: Currency.EUR, // Italy
   FR: Currency.EUR, // France
   QA: Currency.QAR, // Qatar
-  US: Currency.USD, // America
+  US: Currency.USD, // United States
+};
+
+/**
+ * Mapping of currencies to their respective locales for Intl.NumberFormat.
+ * Using currency-based mapping for more reliable formatting since location can be manually changed.
+ */
+export const CURRENCY_LOCALE_MAP: Record<Currency, string> = {
+  [Currency.AUD]: "en-AU", // Australian English
+  [Currency.BDT]: "bn-BD", // Bengali (Bangladesh)
+  [Currency.ZAR]: "en-ZA", // South African English
+  [Currency.CAD]: "en-CA", // Canadian English
+  [Currency.SGD]: "en-SG", // Singapore English
+  [Currency.SAR]: "ar-SA", // Arabic (Saudi Arabia)
+  [Currency.EUR]: "en-EU", // European English (fallback)
+  [Currency.QAR]: "ar-QA", // Arabic (Qatar)
+  [Currency.USD]: "en-US", // US English
 };

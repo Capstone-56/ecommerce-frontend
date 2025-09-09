@@ -19,17 +19,18 @@ export default function ProductDetails(props: RelatedProductsProps) {
     []
   );
   const userLocation = locationState((state) => state.userLocation);
+  const userCurrency = locationState((state) => state.getUserCurrency());
 
   useEffect(() => {
     getRelatedProducts();
-  }, [props.product, userLocation]);
+  }, [props.product, userLocation, userCurrency]);
 
   /**
    * Retrieves the related products.
    */
   const getRelatedProducts = async () => {
     const productService = new ProductService();
-    const response = await productService.getRelatedProducts(props.product.id, userLocation);
+    const response = await productService.getRelatedProducts(props.product.id, userLocation, userCurrency);
     if (response) {
       setRelatedProducts(response);
     } else {

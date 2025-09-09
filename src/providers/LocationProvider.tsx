@@ -42,7 +42,7 @@ export const LocationProvider: React.FC<LocationProviderProps> = ({
       const result = await locationService.current.getCurrentLocation();
       
       if (result.success && result.countryCode) {
-        setLocation(result.countryCode);
+        setLocation(result.countryCode.toUpperCase());
         // Store the detection timestamp
         localStorage.setItem(Constants.LOCAL_STORAGE_LOCATION_LAST_DETECTION, Date.now().toString());
       }

@@ -31,9 +31,10 @@ import { grey } from "@mui/material/colors";
 import { Close } from "@mui/icons-material";
 import { ZoomIn } from "@mui/icons-material";
 
-import { cartState, authenticationState } from "@/domain/state";
+import { cartState, authenticationState, locationState } from "@/domain/state";
 
 import RelatedProducts from "@/resources/components/RelatedProducts/RelatedProducts";
+import { formatPrice } from "@/utilities/currency-utils";
 
 const maxImageListLength = 4;
 
@@ -55,6 +56,8 @@ export default function ProductDetails() {
     productDetails || {};
   const { addToCart } = cartState();
   const { authenticated } = authenticationState();
+  const userLocation = locationState((state) => state.userLocation);
+  const userCurrency = locationState((state) => state.getUserCurrency());
 
   // Event handlers for number input
   function handleChange(
@@ -126,7 +129,7 @@ export default function ProductDetails() {
 
   useEffect(() => {
     fetchProductDetails(productId);
-  }, [productId]);
+  }, [productId, userLocation, userCurrency]);
 
   // If surpassing 4 image links, the 4th image in list will be a collection
   useEffect(() => {
@@ -136,7 +139,7 @@ export default function ProductDetails() {
   }, [images]);
 
   const fetchProductDetails = async (id: string) => {
-    const result = await productService.getProduct(id);
+    const result = await productService.getProduct(id, userLocation, userCurrency);
     if (result) {
       setProductDetails(result);
       // updated to use variants api
@@ -344,7 +347,7 @@ export default function ProductDetails() {
             </Typography>
 
             {/* retrieving price from backend now */}
-            {typeof price === "number" && (
+            {price && (
               <Typography
                 variant="caption"
                 sx={{
@@ -352,7 +355,7 @@ export default function ProductDetails() {
                   fontSize: "1.5rem",
                 }}
               >
-                ${price.toFixed(2)}
+                {formatPrice(price)}
               </Typography>
             )}
 

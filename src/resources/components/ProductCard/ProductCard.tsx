@@ -3,6 +3,7 @@ import { Card, CardMedia, CardContent, Typography, Box } from "@mui/material";
 import { ProductModel } from "domain/models/ProductModel";
 import placeholderImage from "/src/assets/ProductCard/product_card_placeholder.svg";
 import { useNavigate } from "react-router-dom";
+import { formatPrice } from "@/utilities/currency-utils";
 
 interface ProductCardProps {
   /* Details relating to a particular product. */
@@ -99,7 +100,7 @@ const ProductCard: React.FC<ProductCardProps> = ({
             color: '#000',
           }}
         >
-          {price}
+          {formatPrice(price)}
         </Typography>
       </CardContent>
     </Card>
