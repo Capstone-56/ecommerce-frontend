@@ -79,7 +79,7 @@ export default function OrderComplete() {
 
   const Shell: React.FC<{ children: React.ReactNode }> = ({ children }) => (
     <Container maxWidth="sm">
-      <Box minHeight="80vh" display="flex" alignItems="center" justifyContent="center">
+      <Box minHeight="80vh" display="flex" alignItems="center" justifyContent="center" pt={4}>
         <Paper
           elevation={4}
           sx={{
