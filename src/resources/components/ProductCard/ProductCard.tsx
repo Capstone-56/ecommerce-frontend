@@ -48,6 +48,7 @@ const ProductCard: React.FC<ProductCardProps> = ({
         "&:hover": { transform: "scale(1.009)" },
         cursor: "pointer",
         overflow: "hidden",
+        boxShadow: "none",
       }}
       onClick={handleClick}
     >
@@ -61,6 +62,7 @@ const ProductCard: React.FC<ProductCardProps> = ({
             width: "100%",
             height: "100%",
             objectFit: "cover",
+            borderRadius: "10px",
           }}
         />
       </Box>
@@ -71,13 +73,12 @@ const ProductCard: React.FC<ProductCardProps> = ({
           gutterBottom
           variant="h6"
           component="div"
-          noWrap
-          sx={{ mb: 0 }}
+          sx={{ mb: 0, whiteSpace: 'normal', overflowWrap: 'anywhere' }}
         >
           {name}
         </Typography>
 
-        <Typography variant="body2" color="text.secondary" noWrap>
+        <Typography variant="body2" color="text.secondary" sx={{ whiteSpace: 'normal', overflowWrap: 'anywhere' }}>
           {description}
         </Typography>
         {product.variations?.Color && (
