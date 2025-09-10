@@ -1,47 +1,46 @@
-import { ProductItemModel } from "./ProductItemModel";
+import { OrderItemModel } from "./OrderItemModel";
+import { AddressModel } from "./AddressModel";
+import { ShippingVendorModel } from "./ShippingVendorModel";
+import { GuestUserModel } from "./GuestUserModel";
 import { UserModel } from "./UserModel";
+import { UUID } from "crypto";
+import { OrderStatus } from "../enum/orderStatus";
+import { PaymentStatus } from "../type/paymentStatus";
 
-export interface OrderItemModel {
-  readonly id: string;
-  productItem: ProductItemModel;
-  quantity: number;
-  price: number;
+// Total order model.
+export interface TotalOrderModel {
+  totalSales: number;
+  orderCount: number;
 }
 
-export interface AddressModel {
-  addressLine: string;
-  city: string;
-  postcode: string;
-  state: string;
-  country: string;
-}
-
-export interface ShippingVendorModel {
-  readonly id: number;
+// Product model of a particular order.
+export interface OrderProductModel {
+  id: string;
   name: string;
-  logoUrl: string;
-  isActive: boolean;
+  description: string;
+  images: Array<string>;
+  featured: boolean;
+  avgRating: number;
+  price: number;
+  category: string;
+  locations: [];
+  variations: JSON;
+  total_quantity_purchased: number;
+  total_items_sold: number;
 }
 
-export interface GuestUserModel {
-  readonly id: string;
-  email: string;
-  firstName: string;
-  lastName: string;
-  phone?: string;
-}
-
+// Singular order model.
 export interface OrderModel {
-  readonly id: string;
+  id: string;
   createdAt: string;
+  user: string | null;
+  guestUser: JSON;
+  address: UUID;
+  shippingVendor: number;
   totalPrice: number;
-  status: string;
-  items: OrderItemModel[];
-  user?: UserModel;
-  guestUser?: GuestUserModel;
+  status: OrderStatus;
+  items: [];
 }
-
-export type PaymentStatus = "pending" | "paid" | "failed";
 
 export interface OrderStatusModel {
   status: PaymentStatus;
@@ -49,7 +48,21 @@ export interface OrderStatusModel {
   amount?: number;
   currency?: string;
   reason?: string;
-  order?: OrderModel;
+  order?: {
+    readonly id: string;
+    createdAt: string;
+    totalPrice: number;
+    status: string;
+    items: OrderItemModel[];
+    user?: UserModel;
+    guestUser?: GuestUserModel;
+  };
   address?: AddressModel;
   shippingVendor?: ShippingVendorModel;
+}
+
+// Weekly order model.
+export interface TotalWeeklyOrders {
+  date: string;
+  total_sales: number;
 }
