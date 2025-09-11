@@ -177,6 +177,7 @@ const Navbar: React.FC = () => {
         authenticationState.setState({ authenticated: false });
         userState.setState({ role: Role.CUSTOMER });
         userState.setState({ userName: null });
+        userState.setState({ id: null });
         clearCart(); // Clear cart data on logout
         navigate(Constants.HOME_ROUTE);
       }

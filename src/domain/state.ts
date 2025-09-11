@@ -74,6 +74,10 @@ type UserStore = {
    */
   userName: string | null;
   /**
+   * User's ID
+   */
+  id: number | null;
+  /**
    * A function to set the user's role.
    * @param role The role to be set.
    */
@@ -82,6 +86,10 @@ type UserStore = {
    * A function to set the user's username.
    */
   setUserName: (userName: string) => void;
+  /**
+   * Function to set current user's id, should only be used upon login/signup
+   */
+  setId: (id: number) => void;
 }
 
 type LocationStore = {
@@ -207,8 +215,10 @@ export const userState = create<UserStore>()(
     (set) => ({
       role: Role.CUSTOMER,
       userName: null,
+      id: null,
       setRole: (role: Role) => set({ role }),
-      setUserName: (userName: string) => set({ userName })
+      setUserName: (userName: string) => set({ userName }),
+      setId: (id: number) => set ({ id })
     }),
     {
       name: Constants.LOCAL_STORAGE_USER_STORAGE,
