@@ -190,6 +190,7 @@ const OrderSummary: React.FC<ProductCardProps> = ({ cartState }) => {
         <Button
           variant="contained"
           color="primary"
+          disabled={cartState.length === 0}
           sx={{
             width: "100%",
             alignSelf: "center",

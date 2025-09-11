@@ -1,10 +1,16 @@
-import { UUID } from "crypto"
-import { OrderStatus } from "../enum/orderStatus"
+import { OrderItemModel } from "./OrderItemModel";
+import { AddressModel } from "./AddressModel";
+import { ShippingVendorModel } from "./ShippingVendorModel";
+import { GuestUserModel } from "./GuestUserModel";
+import { UserModel } from "./UserModel";
+import { UUID } from "crypto";
+import { OrderStatus } from "../enum/orderStatus";
+import { PaymentStatus } from "../type/paymentStatus";
 
 // Total order model.
 export interface TotalOrderModel {
-  totalSales: number,
-  orderCount: number
+  totalSales: number;
+  orderCount: number;
 }
 
 // Product model of a particular order.
@@ -25,19 +31,38 @@ export interface OrderProductModel {
 
 // Singular order model.
 export interface OrderModel {
-  id: string,
-  createdAt: string,
-  user: string | null,
-  guestUser: JSON,
-  address: UUID,
-  shippingVendor: number,
-  totalPrice: number,
-  status: OrderStatus
-  items: []
+  id: string;
+  createdAt: string;
+  user: string | null;
+  guestUser: JSON;
+  address: UUID;
+  shippingVendor: number;
+  totalPrice: number;
+  status: OrderStatus;
+  items: [];
+}
+
+export interface OrderStatusModel {
+  status: PaymentStatus;
+  orderId?: string;
+  amount?: number;
+  currency?: string;
+  reason?: string;
+  order?: {
+    readonly id: string;
+    createdAt: string;
+    totalPrice: number;
+    status: string;
+    items: OrderItemModel[];
+    user?: UserModel;
+    guestUser?: GuestUserModel;
+  };
+  address?: AddressModel;
+  shippingVendor?: ShippingVendorModel;
 }
 
 // Weekly order model.
 export interface TotalWeeklyOrders {
-  date: string,
-  total_sales: number
+  date: string;
+  total_sales: number;
 }
