@@ -27,7 +27,7 @@ const UserDetails: React.FC = () => {
   const [user] = useState(mockUser);
   const [showPassword] = useState(false);
   return (
-    <Box sx={{ maxWidth: 600, p: { xs: 1, md: 4 } }}>
+    <Box sx={{ maxWidth: "600px", p: { xs: 1, md: 4 } }}>
       <Typography variant="h5" sx={{ mb: 3 }}>
         Account Details
       </Typography>

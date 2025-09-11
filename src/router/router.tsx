@@ -25,9 +25,10 @@ import { Constants } from "@/domain/constants";
 import AddProduct from "@/resources/components/AdminPage/ProductManagement/AddProduct/AddProduct";
 import OrderComplete from "@/resources/pages/Checkout/OrderComplete";
 import EditProduct from "@/resources/components/AdminPage/ProductManagement/EditProduct";
-import UserDashboard from "@/resources/components/Profile/Dashboard/UserDashboard";
+// import UserDashboard from "@/resources/components/Profile/Dashboard/UserDashboard";
 import OrderHistory from "@/resources/components/Profile/OrderHistory";
 import UserDetails from "@/resources/components/Profile/UserDetails";
+import ProfileLanding from "@/resources/components/Profile/ProfileLanding";
 
 export const router = createBrowserRouter([
   {
@@ -48,15 +49,11 @@ export const router = createBrowserRouter([
         children: [
           {
             index: true,
-            element: <UserDashboard />,
+            element: <ProfileLanding />,
           },
           {
             path: "orders",
             element: <OrderHistory />,
-          },
-          {
-            path: "payment",
-            element: <Payment />,
           },
           {
             path: "account",

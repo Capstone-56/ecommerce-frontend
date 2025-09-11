@@ -34,4 +34,14 @@ export class UserService {
       throw error;
     }
   }
-};
+
+  async updateUser(details: UserModel) {
+    try {
+      const id = sessionStorage.getItem("id");
+      const response = await api.put(`api/user/${id}`);
+    } catch (error) {
+      console.error("Error updating user details: ", error);
+      throw error;
+    }
+  }
+}

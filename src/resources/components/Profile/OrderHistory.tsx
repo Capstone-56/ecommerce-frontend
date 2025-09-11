@@ -113,7 +113,7 @@ const OrderHistory: React.FC = () => {
   };
 
   return (
-    <Box sx={{ p: { xs: 1, md: 4 }, width: "100%" }}>
+    <Box sx={{ maxWidth: { md: "700px" }, p: { xs: 1, md: 4 }, width: "100%" }}>
       <Typography variant="h5" sx={{ mb: 3 }}>
         Order History
       </Typography>
@@ -153,7 +153,8 @@ const OrderHistory: React.FC = () => {
                   </IconButton>
                 </Box>
               </Box>
-              {/* Expanded Details */}
+
+              {/* Expanded view */}
               <Collapse in={isExpanded} timeout="auto" unmountOnExit>
                 <Divider sx={{ my: 2 }} />
                 <Box

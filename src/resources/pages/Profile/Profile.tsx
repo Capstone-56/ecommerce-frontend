@@ -21,7 +21,6 @@ import {
 import { useTheme } from "@mui/material/styles";
 
 const menuItems = [
-  { label: "Profile", to: "/profile", icon: <AccountBox sx={{ mr: 1 }} /> },
   {
     label: "Account details",
     to: "/profile/account",
@@ -31,11 +30,6 @@ const menuItems = [
     label: "Order history",
     to: "/profile/orders",
     icon: <ShoppingBag sx={{ mr: 1 }} />,
-  },
-  {
-    label: "Payment methods",
-    to: "/profile/payment",
-    icon: <CreditCard sx={{ mr: 1 }} />,
   },
 ];
 
@@ -66,7 +60,7 @@ const Profile: React.FC = () => {
       {/* > md - alternatively could do sx={{display: { xs: "none", lg: "flex" }}} */}
       {!isSmall && (
         <Box
-          minWidth={"280px"}
+          minWidth={"400px"}
           sx={{ p: 4, display: "flex", flexDirection: "column" }}
         >
           <Box
@@ -187,8 +181,6 @@ const Profile: React.FC = () => {
               overflow: "auto",
               display: "flex",
               flexDirection: "column",
-              alignItems: "center",
-              justifyContent: "center",
             }}
           >
             <Outlet />
