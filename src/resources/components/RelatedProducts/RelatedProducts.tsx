@@ -4,6 +4,10 @@ import { useEffect, useState } from "react";
 import ProductCard from "../ProductCard/ProductCard";
 import { Box, Typography } from "@mui/material";
 import { locationState } from "@/domain/state";
+import Slider from "react-slick";
+import "slick-carousel/slick/slick.css";
+import "slick-carousel/slick/slick-theme.css";
+import { useNavigate } from "react-router-dom";
 
 type RelatedProductsProps = {
   product: ProductModel;
@@ -19,6 +23,41 @@ export default function ProductDetails(props: RelatedProductsProps) {
     []
   );
   const userLocation = locationState((state) => state.userLocation);
+  const navigate = useNavigate();
+
+  const settings = {
+    dots: true,
+    infinite: true,
+    speed: 500,
+    slidesToShow: 5,
+    slidesToScroll: 1,
+    responsive: [
+      {
+        breakpoint: 1200,
+        settings: {
+          slidesToShow: 4,
+        },
+      },
+      {
+        breakpoint: 900,
+        settings: {
+          slidesToShow: 3,
+        },
+      },
+      {
+        breakpoint: 600,
+        settings: {
+          slidesToShow: 2,
+        },
+      },
+      {
+        breakpoint: 400,
+        settings: {
+          slidesToShow: 1,
+        },
+      },
+    ],
+  };
 
   useEffect(() => {
     getRelatedProducts();
@@ -57,24 +96,45 @@ export default function ProductDetails(props: RelatedProductsProps) {
       </Typography>
       <Box
         sx={{
-          display: "flex",
-          flexWrap: "wrap",
-          justifyContent: "center",
-          gap: 4,
-          maxWidth: "90%",
-          mx: "6rem",
+          width: "90%",
+          mx: "auto",
+          position: "relative"
         }}
       >
-        {relatedProducts.length > 0 ? (
-          relatedProducts.map((product) => (
-            <Box key={product.id} sx={{ width: 250, height: 350 }}>
-              <ProductCard product={product} width="250px" height="350px" />
-            </Box>
-          ))
-        ) : (
-          <Typography>Loading...</Typography>
-        )}
-      </Box>
+        {/* 
+          This style section is required to make the arrows appear on the screen.
+          Did not want a separate css file just for this so it has been inlined
+          into this file. 
+        */}
+        <style>
+          {`
+            .slick-prev:before,
+            .slick-next:before {
+              color: black;
+              font-size: 20px;
+            }
+          `}
+        </style>
+        <Slider {...settings} arrows>
+          {relatedProducts.length > 0 ? (
+            relatedProducts.map((product) => (
+              <Box key={product.id} sx={{
+                display: "flex",
+                justifyContent: "center",
+                px: 1,
+              }}>
+                <ProductCard product={product} width="100%" height="350px" onClickCallback={() => {
+                  navigate(`/products/${product.id}/details`);
+                  window.scrollTo({ top: 0, behavior: "smooth" })
+                }}
+                />
+              </Box>
+            ))
+          ) : (
+            <Typography>Loading...</Typography>
+          )}
+        </Slider >
+      </Box >
     </>
   );
 }
