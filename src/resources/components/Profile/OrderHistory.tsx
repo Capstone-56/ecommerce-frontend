@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import {
   Box,
   Typography,
@@ -8,6 +8,8 @@ import {
   Chip,
   Divider,
   Stack,
+  Collapse,
+  IconButton,
 } from "@mui/material";
 import {
   AttachMoney,
@@ -15,6 +17,8 @@ import {
   Payment,
   Store,
   LocalShipping,
+  ExpandMore,
+  ExpandLess,
 } from "@mui/icons-material";
 
 // TODO: consider moving these to the model data types file
@@ -102,169 +106,211 @@ const formatCurrency = (amount: number) =>
   amount.toLocaleString("en-AU", { style: "currency", currency: "AUD" });
 
 const OrderHistory: React.FC = () => {
+  const [expandedOrder, setExpandedOrder] = useState<string | null>(null);
+
+  const handleExpand = (orderId: string) => {
+    setExpandedOrder(expandedOrder === orderId ? null : orderId);
+  };
+
   return (
-    <Box sx={{ p: { xs: 1, md: 4 } }}>
+    <Box sx={{ p: { xs: 1, md: 4 }, width: "100%" }}>
       <Typography variant="h5" sx={{ mb: 3 }}>
         Order History
       </Typography>
-      <Stack spacing={3}>
-        {orders.map((order) => (
-          <Paper key={order.id} sx={{ p: 3 }}>
-            <Box
-              sx={{
-                display: "flex",
-                flexDirection: { xs: "column", sm: "row" },
-                justifyContent: "space-between",
-                alignItems: { xs: "flex-start", sm: "center" },
-                mb: 2,
-                gap: 2,
-              }}
-            >
-              <Box>
-                <Typography variant="subtitle2" color="text.secondary">
-                  Order ID: {order.id}
-                </Typography>
-                <Typography variant="body2" color="text.secondary">
-                  Date: {order.date}
-                </Typography>
-                {order.paymentMethod === "Card" && order.cardLast4 && (
-                  <Typography
-                    variant="body2"
-                    color="text.secondary"
-                    sx={{ display: "flex", alignItems: "center", gap: 1 }}
-                  >
-                    <CreditCard fontSize="small" />
-                    {order.cardType && <span>{order.cardType}</span>}
-                    <span>**** **** **** {order.cardLast4}</span>
+      <Stack spacing={3} sx={{ width: "100%" }}>
+        {orders.map((order) => {
+          const isExpanded = expandedOrder === order.id;
+          return (
+            <Paper key={order.id} sx={{ p: 3, width: "100%" }}>
+              {/* Summary Card */}
+              <Box
+                sx={{
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "space-between",
+                  cursor: "pointer",
+                }}
+                onClick={() => handleExpand(order.id)}
+              >
+                <Box>
+                  <Typography variant="subtitle2" color="text.secondary">
+                    Order ID: {order.id}
                   </Typography>
-                )}
-                {order.orderType === "In-Store" && order.storeLocation && (
-                  <Typography
-                    variant="body2"
-                    color="text.secondary"
-                    sx={{ display: "flex", alignItems: "center", gap: 1 }}
-                  >
-                    <Store fontSize="small" />
-                    <span>{order.storeLocation}</span>
+                  <Typography variant="body2" color="text.secondary">
+                    Date: {order.date}
                   </Typography>
-                )}
+                </Box>
+                <Box sx={{ display: "flex", alignItems: "center", gap: 2 }}>
+                  <Typography
+                    variant="h6"
+                    color="primary"
+                    sx={{ fontWeight: "bold" }}
+                  >
+                    {formatCurrency(order.total)}
+                  </Typography>
+                  <IconButton size="small">
+                    {isExpanded ? <ExpandLess /> : <ExpandMore />}
+                  </IconButton>
+                </Box>
               </Box>
-              <Stack direction="row" spacing={1}>
-                <Chip
-                  icon={
-                    order.paymentMethod === "Card" ? (
-                      <CreditCard />
-                    ) : (
-                      <AttachMoney />
-                    )
-                  }
-                  label={order.paymentMethod}
-                  color={order.paymentMethod === "Card" ? "success" : "warning"}
-                  variant="filled"
-                />
-                <Chip
-                  icon={
-                    order.orderType === "Online (Credit Card)" ? (
-                      <Payment />
-                    ) : (
-                      <Store />
-                    )
-                  }
-                  label={order.orderType}
-                  color={
-                    order.orderType === "Online (Credit Card)"
-                      ? "primary"
-                      : "secondary"
-                  }
-                  variant="outlined"
-                />
-              </Stack>
-            </Box>
-            <Divider sx={{ mb: 2 }} />
-            <Grid container spacing={2}>
-              {order.items.map((item, idx) => (
-                <Grid size={{ xs: 12, sm: 6 }} key={idx}>
-                  <Paper
-                    variant="outlined"
-                    sx={{
-                      display: "flex",
-                      flexDirection: "column",
-                      alignItems: "center",
-                      p: 2,
-                      height: "100%",
-                    }}
-                  >
-                    <Avatar
-                      src={item.image}
-                      alt={item.name}
-                      variant="rounded"
-                      sx={{ width: 80, height: 80, mb: 1 }}
+              {/* Expanded Details */}
+              <Collapse in={isExpanded} timeout="auto" unmountOnExit>
+                <Divider sx={{ my: 2 }} />
+                <Box
+                  sx={{
+                    display: "flex",
+                    flexDirection: { xs: "column", sm: "row" },
+                    justifyContent: "space-between",
+                    alignItems: { xs: "flex-start", sm: "center" },
+                    mb: 2,
+                    gap: 2,
+                  }}
+                >
+                  <Stack direction="row" spacing={1}>
+                    <Chip
+                      icon={
+                        order.paymentMethod === "Card" ? (
+                          <CreditCard />
+                        ) : (
+                          <AttachMoney />
+                        )
+                      }
+                      label={order.paymentMethod}
+                      color={
+                        order.paymentMethod === "Card" ? "success" : "warning"
+                      }
+                      variant="filled"
                     />
-                    <Typography variant="subtitle1" sx={{ fontWeight: "bold" }}>
-                      {item.name}
-                    </Typography>
-                    <Typography
-                      variant="body2"
-                      color="text.secondary"
-                      sx={{ mb: 1 }}
-                    >
-                      {item.details}
-                    </Typography>
-                    {item.info && (
-                      <Box sx={{ width: "100%" }}>
-                        {Object.entries(item.info).map(([key, value]) => (
-                          <Typography
-                            key={key}
-                            variant="caption"
-                            color="text.secondary"
-                            sx={{ display: "block" }}
-                          >
-                            {key}: {value}
-                          </Typography>
-                        ))}
-                      </Box>
+                    <Chip
+                      icon={
+                        order.orderType === "Online (Credit Card)" ? (
+                          <Payment />
+                        ) : (
+                          <Store />
+                        )
+                      }
+                      label={order.orderType}
+                      color={
+                        order.orderType === "Online (Credit Card)"
+                          ? "primary"
+                          : "secondary"
+                      }
+                      variant="outlined"
+                    />
+                  </Stack>
+                  <Box>
+                    {order.paymentMethod === "Card" && order.cardLast4 && (
+                      <Typography
+                        variant="body2"
+                        color="text.secondary"
+                        sx={{ display: "flex", alignItems: "center", gap: 1 }}
+                      >
+                        <CreditCard fontSize="small" />
+                        {order.cardType && <span>{order.cardType}</span>}
+                        <span>**** **** **** {order.cardLast4}</span>
+                      </Typography>
                     )}
-                    <Typography
-                      variant="subtitle2"
-                      color="text.primary"
-                      sx={{ mt: 1, fontWeight: 500 }}
-                    >
-                      {formatCurrency(item.price)}
-                    </Typography>
-                  </Paper>
+                    {order.orderType === "In-Store" && order.storeLocation && (
+                      <Typography
+                        variant="body2"
+                        color="text.secondary"
+                        sx={{ display: "flex", alignItems: "center", gap: 1 }}
+                      >
+                        <Store fontSize="small" />
+                        <span>{order.storeLocation}</span>
+                      </Typography>
+                    )}
+                  </Box>
+                </Box>
+                <Grid container spacing={2}>
+                  {order.items.map((item, idx) => (
+                    <Grid size={{ xs: 12, sm: 6 }} key={idx}>
+                      <Paper
+                        variant="outlined"
+                        sx={{
+                          display: "flex",
+                          flexDirection: "column",
+                          alignItems: "center",
+                          p: 2,
+                          height: "100%",
+                        }}
+                      >
+                        <Avatar
+                          src={item.image}
+                          alt={item.name}
+                          variant="rounded"
+                          sx={{ width: 80, height: 80, mb: 1 }}
+                        />
+                        <Typography
+                          variant="subtitle1"
+                          sx={{ fontWeight: "bold" }}
+                        >
+                          {item.name}
+                        </Typography>
+                        <Typography
+                          variant="body2"
+                          color="text.secondary"
+                          sx={{ mb: 1 }}
+                        >
+                          {item.details}
+                        </Typography>
+                        {item.info && (
+                          <Box sx={{ width: "100%" }}>
+                            {Object.entries(item.info).map(([key, value]) => (
+                              <Typography
+                                key={key}
+                                variant="caption"
+                                color="text.secondary"
+                                sx={{ display: "block" }}
+                              >
+                                {key}: {value}
+                              </Typography>
+                            ))}
+                          </Box>
+                        )}
+                        <Typography
+                          variant="subtitle2"
+                          color="text.primary"
+                          sx={{ mt: 1, fontWeight: 500 }}
+                        >
+                          {formatCurrency(item.price)}
+                        </Typography>
+                      </Paper>
+                    </Grid>
+                  ))}
                 </Grid>
-              ))}
-            </Grid>
-            <Divider sx={{ my: 2 }} />
-            <Box
-              sx={{
-                display: "flex",
-                justifyContent: "flex-end",
-                flexDirection: "column",
-                alignItems: "flex-end",
-              }}
-            >
-              <Typography
-                variant="body2"
-                color="text.secondary"
-                sx={{ display: "flex", alignItems: "center", gap: 1 }}
-              >
-                <LocalShipping fontSize="small" />
-                Shipping: {formatCurrency(order.shipping)}
-              </Typography>
-              <Typography variant="body2" color="text.secondary">
-                Tax: {formatCurrency(order.tax)}
-              </Typography>
-              <Typography
-                variant="h6"
-                color="primary"
-                sx={{ fontWeight: "bold" }}
-              >
-                Total: {formatCurrency(order.total)}
-              </Typography>
-            </Box>
-          </Paper>
-        ))}
+                <Divider sx={{ my: 2 }} />
+                <Box
+                  sx={{
+                    display: "flex",
+                    justifyContent: "flex-end",
+                    flexDirection: "column",
+                    alignItems: "flex-end",
+                  }}
+                >
+                  <Typography
+                    variant="body2"
+                    color="text.secondary"
+                    sx={{ display: "flex", alignItems: "center", gap: 1 }}
+                  >
+                    <LocalShipping fontSize="small" />
+                    Shipping: {formatCurrency(order.shipping)}
+                  </Typography>
+                  <Typography variant="body2" color="text.secondary">
+                    Tax: {formatCurrency(order.tax)}
+                  </Typography>
+                  <Typography
+                    variant="h6"
+                    color="primary"
+                    sx={{ fontWeight: "bold" }}
+                  >
+                    Total: {formatCurrency(order.total)}
+                  </Typography>
+                </Box>
+              </Collapse>
+            </Paper>
+          );
+        })}
       </Stack>
     </Box>
   );

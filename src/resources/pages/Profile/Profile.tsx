@@ -100,9 +100,13 @@ const Profile: React.FC = () => {
       {!isSmall && (
         <Box
           sx={{
-            px: { xs: 0, md: 8 },
-            width: { xs: "100%", md: "80%" },
+            px: { xs: 0, md: 2 },
+            width: "100%",
             mt: { xs: 2, md: 0 },
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "center",
+            justifyContent: "center",
           }}
         >
           <Outlet />
@@ -181,6 +185,10 @@ const Profile: React.FC = () => {
               width: "100vw",
               height: "100vh",
               overflow: "auto",
+              display: "flex",
+              flexDirection: "column",
+              alignItems: "center",
+              justifyContent: "center",
             }}
           >
             <Outlet />

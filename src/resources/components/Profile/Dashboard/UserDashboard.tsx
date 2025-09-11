@@ -63,12 +63,6 @@ const UserDashboard: React.FC = () => {
     <Box sx={{ mx: 2, px: 1 }}>
       <Grid container spacing={3}>
         <Grid size={12}>
-          <RankCard rank={"Gold"} />
-        </Grid>
-        <Grid size={12}>
-          <OrderTracker />
-        </Grid>
-        <Grid size={12}>
           <ViewingHistory history={history} />
         </Grid>
       </Grid>

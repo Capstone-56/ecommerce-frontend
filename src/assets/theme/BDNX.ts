@@ -1,8 +1,8 @@
-import { createTheme, ThemeOptions } from '@mui/material/styles';
+import { createTheme, ThemeOptions } from "@mui/material/styles";
 
 const commonSettings: Partial<ThemeOptions> = {
   typography: {
-    fontFamily: 'Inter, sans-serif',
+    fontFamily: "Inter, sans-serif",
     fontSize: 14,
     fontWeightRegular: 400,
     fontWeightMedium: 500,
@@ -46,24 +46,24 @@ const commonSettings: Partial<ThemeOptions> = {
 export const lightTheme = createTheme({
   ...commonSettings,
   palette: {
-    mode: 'light',
+    mode: "light",
     background: {
-      default: '#ffffff',
-      paper: '#ffffff',
+      default: "#ffffff",
+      paper: "#ffffff",
     },
     text: {
-      primary: '#535353', 
-      secondary: '#595bb6',
+      primary: "#535353",
+      secondary: "#acb3d6ff",
     },
     primary: {
-      main: '#de7850',
-      contrastText: '#ffffff'
+      main: "#de7850",
+      contrastText: "#ffffff",
     },
     secondary: {
-      main: '#595bb6',
-      contrastText: '#ffffff',
+      main: "#acb3d6ff",
+      contrastText: "#ffffff",
     },
-    divider: '#ececff',
+    divider: "#ececff",
   },
 });
 
@@ -71,23 +71,23 @@ export const lightTheme = createTheme({
 export const darkTheme = createTheme({
   ...commonSettings,
   palette: {
-    mode: 'dark',
+    mode: "dark",
     background: {
-      default: '#353535',
-      paper: '#444444',
+      default: "#353535",
+      paper: "#444444",
     },
     text: {
-      primary: '#ebebeb',
-      secondary: '#9fa0ff',
+      primary: "#ebebeb",
+      secondary: "#9fa0ff",
     },
     primary: {
-      main: '#7174ff',
-      contrastText: '#ffffff',
+      main: "#7174ff",
+      contrastText: "#ffffff",
     },
     secondary: {
-      main: '#444444',
-      contrastText: '#ebebeb',
+      main: "#444444",
+      contrastText: "#ebebeb",
     },
-    divider: '#5e5e5e',
+    divider: "#5e5e5e",
   },
 });

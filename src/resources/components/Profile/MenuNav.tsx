@@ -11,7 +11,6 @@ import {
 } from "@mui/icons-material";
 
 const menuItems = [
-  { label: "Profile", to: "/profile", icon: <AccountBox sx={{ mr: 1 }} /> },
   {
     label: "Account information",
     to: "/profile/account",
@@ -21,11 +20,6 @@ const menuItems = [
     label: "Order history",
     to: "/profile/orders",
     icon: <ShoppingBag sx={{ mr: 1 }} />,
-  },
-  {
-    label: "Payment methods",
-    to: "/profile/payment",
-    icon: <CreditCard sx={{ mr: 1 }} />,
   },
 ];
 
