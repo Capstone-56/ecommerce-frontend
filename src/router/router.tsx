@@ -24,7 +24,7 @@ import Payment from "@/resources/pages/Checkout/Payment";
 import { Constants } from "@/domain/constants";
 import AddProduct from "@/resources/components/AdminPage/ProductManagement/AddProduct/AddProduct";
 import OrderComplete from "@/resources/pages/Checkout/OrderComplete";
-import EditProduct from "@/resources/components/AdminPage/ProductManagement/EditProduct";
+import EditProduct from "@/resources/components/AdminPage/ProductManagement/EditProduct/EditProduct";
 
 export const router = createBrowserRouter([
   {

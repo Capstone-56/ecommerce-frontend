@@ -157,4 +157,23 @@ export class ProductService {
       return Promise.reject(error);
     }
   }
+
+  /**
+   * An endpoint to partially update a particular product.
+   * @param productId   The ID of the product to be updated.
+   * @param requestBody A JSON object containing the appropriate fields to create
+  *                     a new product item.
+   * @returns A HTTP status.
+   */
+  async updateProductPartial(productId: string, requestBody: object): Promise<number> {
+    try {
+      const baseUrl = `/api/product/${productId}`;
+
+      const productItems = await api.patch(baseUrl, requestBody);
+
+      return productItems.status;
+    } catch (error) {
+      return Promise.reject(error);
+    }
+  }
 }
