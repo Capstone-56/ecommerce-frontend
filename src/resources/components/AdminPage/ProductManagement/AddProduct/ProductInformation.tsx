@@ -23,7 +23,7 @@ import { LocationModel } from "@/domain/models/LocationModel";
 const categoryService = new CategoryService();
 const locationService = new LocationService();
 
-const VisuallyHiddenInput = styled('input')({
+export const VisuallyHiddenInput = styled('input')({
   clip: 'rect(0 0 0 0)',
   clipPath: 'inset(50%)',
   height: 1,
@@ -34,7 +34,6 @@ const VisuallyHiddenInput = styled('input')({
   whiteSpace: 'nowrap',
   width: 1,
 });
-
 
 interface ProductInformationProps {
   productName: string,

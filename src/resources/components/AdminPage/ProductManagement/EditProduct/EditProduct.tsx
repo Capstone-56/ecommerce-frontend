@@ -74,7 +74,9 @@ export default function EditProduct() {
             setDraft={setDraft}
             setValue={setValue}
             value={value}
-            draft={draft} />
+            draft={draft}
+            onImagesUpdated={fetchRequiredInformation}
+          />
         </Box>
       )}
       {tabNumber == 1 && (

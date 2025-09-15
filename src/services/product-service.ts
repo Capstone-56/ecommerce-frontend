@@ -176,4 +176,23 @@ export class ProductService {
       return Promise.reject(error);
     }
   }
+
+  async uploadImage(image: File, productId: string): Promise<{ imageURL: string, status: number }> {
+    try {
+      const baseUrl = `/api/product/${productId}/upload/image`;
+      const formData = new FormData();
+
+      formData.append("images", image);
+
+      const response = await api.post(baseUrl, formData, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      });
+
+      return { imageURL: response.data, status: response.status };
+    } catch (error) {
+      return Promise.reject(error);
+    }
+  }
 }

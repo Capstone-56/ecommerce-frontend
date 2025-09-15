@@ -19,6 +19,7 @@ import { LocationService } from "@/services/location-service";
 import { LocationModel } from "@/domain/models/LocationModel";
 import { StatusCodes } from "http-status-codes";
 import { toast } from "react-toastify";
+import ModifyImages from "@/resources/components/ModifyImages/ModifyImages";
 
 export interface EditGeneralInformationProps {
   product: ProductModel
@@ -26,6 +27,7 @@ export interface EditGeneralInformationProps {
   setValue: (value: string) => void,
   draft: Partial<ProductModel>
   setDraft: Dispatch<SetStateAction<Partial<ProductModel>>>;
+  onImagesUpdated: () => void;
 }
 
 const productService = new ProductService();
@@ -126,6 +128,7 @@ export default function EditGeneralInformation(props: EditGeneralInformationProp
                 aspectRatio: 1 / 1,
               }}
             />
+            <ModifyImages product={props.product} onImagesUpdated={props.onImagesUpdated} />
           </Card>
         )}
       </Grid>
