@@ -14,6 +14,10 @@ import {
     Accordion,
     AccordionSummary,
     AccordionDetails,
+    Radio,
+    RadioGroup,
+    FormControlLabel,
+    FormControl,
   } from "@mui/material";
   import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
   import CheckCircleIcon from "@mui/icons-material/CheckCircle";
@@ -35,6 +39,7 @@ import {
   
     const username = userState((s) => s.userName);
     const cart = cartState((state) => state.cart);
+    const clearCart = cartState((state) => state.clearCart);
     const userLocation = locationState((state) => state.userLocation);
   
     const [name, setName] = useState("");
@@ -47,6 +52,10 @@ import {
     const [savingShipping, setSavingShipping] = useState(false);
   
     const [loading, setLoading] = useState(false);
+    // Shipping method selection
+    const [shippingMethods, setShippingMethods] = useState<any[]>([]);
+    const [selectedShippingMethod, setSelectedShippingMethod] = useState<number | null>(null);
+    const [loadingShippingMethods, setLoadingShippingMethods] = useState(false);
   
     // Extract PaymentIntent ID from clientSecret
     const getIntentIdFromClientSecret = (clientSecret: string): string => {
@@ -115,6 +124,11 @@ import {
             `/api/stripe/${intentId}/shipping`,
             {
               name: name,
+              email: email,
+              firstName: name.split(' ')[0] || '',
+              lastName: name.split(' ').slice(1).join(' ') || '',
+              phone: shippingData.phone || "",
+              shippingVendorId: selectedShippingMethod,
               shipping: {
                 name: shippingData.name || name,
                 line1: shippingData.address?.line1 || "",
@@ -143,6 +157,42 @@ import {
         }
       };
   
+    // Load shipping methods
+    useEffect(() => {
+      const loadShippingMethods = async () => {
+        setLoadingShippingMethods(true);
+        try {
+          const token = localStorage.getItem("token");
+          const headers: Record<string, string> = {
+            ...(token ? { Authorization: `Bearer ${token}` } : {}),
+          };
+          
+          const response = await api.get('/api/shippingVendor?isActive=true', {
+            headers,
+            withCredentials: true,
+          });
+          
+          setShippingMethods(response.data || []);
+          
+          // Auto-select first method if only one available
+          if (response.data && response.data.length === 1) {
+            setSelectedShippingMethod(response.data[0].id);
+          }
+        } catch (error) {
+          console.error('Failed to load shipping methods:', error);
+          // Fallback: create a default shipping method if none exist
+          setShippingMethods([
+            { id: 1, name: "Standard Shipping", logoUrl: "" }
+          ]);
+          setSelectedShippingMethod(1);
+        } finally {
+          setLoadingShippingMethods(false);
+        }
+      };
+      
+      loadShippingMethods();
+    }, []);
+
     // Prefill user details
     useEffect(() => {
       (async () => {
@@ -188,6 +238,8 @@ import {
         }?pi=${encodeURIComponent(paymentIntent.id)}`;
       } else {
         // Redirect methods will land on ORDER_COMPLETE_ROUTE via return_url
+        // Clear the cart on successful payment
+        clearCart();
         window.location.href = `${Constants.ORDER_COMPLETE_ROUTE}`;
       }
     };
@@ -299,6 +351,46 @@ import {
               </AccordionDetails>
             </Accordion>
           </Box>
+
+          {/* Shipping method selection */}
+          <Typography variant="h6" sx={{ mb: 1 }}>
+            Shipping Method
+          </Typography>
+          
+          <Box sx={{ borderRadius: 2, backgroundColor: "#fafafa", p: 3 }}>
+            {loadingShippingMethods ? (
+              <Box display="flex" alignItems="center" gap={2}>
+                <CircularProgress size={20} />
+                <Typography variant="body2">Loading shipping options...</Typography>
+              </Box>
+            ) : shippingMethods.length === 0 ? (
+              <Typography variant="body2" color="error">
+                No shipping methods available.
+              </Typography>
+            ) : (
+              <FormControl component="fieldset">
+                <RadioGroup
+                  value={selectedShippingMethod || ''}
+                  onChange={(e) => setSelectedShippingMethod(Number(e.target.value))}
+                >
+                  {shippingMethods.map((method) => (
+                    <FormControlLabel
+                      key={method.id}
+                      value={method.id}
+                      control={<Radio />}
+                      label={
+                        <Box>
+                          <Typography variant="body1" fontWeight="medium">
+                            {method.name}
+                          </Typography>
+                        </Box>
+                      }
+                    />
+                  ))}
+                </RadioGroup>
+              </FormControl>
+            )}
+          </Box>
   
           {/* Payment form */}
           <Typography variant="h6">Payment</Typography>
@@ -329,6 +421,7 @@ import {
               !stripe ||
               !elements ||
               !shippingConfirmed ||
+              !selectedShippingMethod ||
               !clientSecret ||
               loading
             }
