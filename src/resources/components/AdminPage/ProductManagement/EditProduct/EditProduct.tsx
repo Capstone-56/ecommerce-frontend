@@ -60,6 +60,16 @@ export default function EditProduct() {
     setTabNumber(newValue);
   };
 
+  /**
+   * The call back function to retrieve updated product information
+   * when images have been updated. Whether that be additional images being
+   * uploaded or removed from the database. Required to await so that
+   * the child components can be re-rendered accordingly.
+   */
+  async function handleImageChanges() {
+    await fetchRequiredInformation();
+  }
+
   return (
     <Box>
       <Typography pb={2} variant={"h4"}>Edit Product</Typography>
@@ -75,7 +85,7 @@ export default function EditProduct() {
             setValue={setValue}
             value={value}
             draft={draft}
-            onImagesUpdated={fetchRequiredInformation}
+            onImagesUpdated={handleImageChanges}
           />
         </Box>
       )}

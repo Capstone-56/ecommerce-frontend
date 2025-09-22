@@ -1,6 +1,17 @@
 import { ProductModel } from "@/domain/models/ProductModel";
 import { ProductService } from "@/services/product-service";
-import { Box, Button, CardMedia, Dialog, DialogActions, DialogContent, DialogTitle, Grid, Typography } from "@mui/material";
+import {
+  Box,
+  Button,
+  CardMedia,
+  CircularProgress,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogTitle,
+  Grid,
+  Typography
+} from "@mui/material";
 import { StatusCodes } from "http-status-codes";
 import { useCallback, useState } from "react";
 import { toast } from "react-toastify";
@@ -15,7 +26,12 @@ export interface ModifyImagesProps {
 
 export default function ModifyImages(props: ModifyImagesProps) {
   const [open, setOpen] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
 
+  /**
+   * Helper function to remove a listed product's image.
+   * @param imageToRemove The particular image to remove.
+   */
   const removeImage = useCallback(async (imageToRemove: string) => {
     if (!props.product.images) return;
     const updatedImageList = props.product.images.filter((image) => image !== imageToRemove);
@@ -28,17 +44,21 @@ export default function ModifyImages(props: ModifyImagesProps) {
 
     if (response == StatusCodes.OK) {
       toast.success("Successfully removed image")
-      setOpen(false);
-      props.onImagesUpdated?.();
+      props.onImagesUpdated();
     } else {
       toast.error("Failed to remove image try again later")
     }
 
-  }, [props.product.images])
+  }, [props.product])
 
-  const uploadImage = useCallback(async (uploadedImage: FileList | null) => {
-    if (!uploadedImage) return;
-    const uploadImageResponse = await productService.uploadImage(uploadedImage[0], props.product.id);
+  /**
+   * Helper function to upload a particular image to be displayed for a product.
+   * @param imageToUpload The particular image to upload.
+   */
+  const uploadImage = useCallback(async (imageToUpload: FileList | null) => {
+    if (!imageToUpload) return;
+    setIsLoading(true);
+    const uploadImageResponse = await productService.uploadImage(imageToUpload[0], props.product.id);
 
     if (uploadImageResponse.status == StatusCodes.OK) {
       const updatedImageList = props.product.images?.concat(uploadImageResponse.imageURL[0]);
@@ -52,14 +72,14 @@ export default function ModifyImages(props: ModifyImagesProps) {
         toast.error("Failed to remove image try again later")
       }
 
-      toast.success("Successfully removed image");
-      setOpen(false);
-      props.onImagesUpdated?.();
+      toast.success("Successfully uploaded image");
+      setIsLoading(false);
+      props.onImagesUpdated();
     } else {
-      toast.error("Failed to remove image try again later")
+      toast.error("Failed to upload image try again later")
     }
 
-  }, [props.product.id])
+  }, [props.product])
 
   return (
     <Box p={1}>
@@ -81,31 +101,32 @@ export default function ModifyImages(props: ModifyImagesProps) {
           Current Product Images
         </DialogTitle>
         <DialogContent>
-          {props.product.images ?
-            props.product.images.map((image) => {
-              return (
-                <Grid container spacing={4}>
-                  <Grid size={6}>
-                    <CardMedia
-                      component="img"
-                      image={image}
-                      sx={{
-                        width: "150px",
-                        height: "150px",
-                        objectFit: "cover",
-                        aspectRatio: 1 / 1,
-                        p: 1
-                      }}
-                    />
+          {isLoading ? <Box display={"flex"} justifyContent={"center"}><CircularProgress /></Box> :
+            props.product.images ?
+              props.product.images.map((image) => {
+                return (
+                  <Grid container spacing={4}>
+                    <Grid size={6}>
+                      <CardMedia
+                        component="img"
+                        image={image}
+                        sx={{
+                          width: "150px",
+                          height: "150px",
+                          objectFit: "cover",
+                          aspectRatio: 1 / 1,
+                          p: 1
+                        }}
+                      />
+                    </Grid>
+                    <Grid size={6} container justifyContent={"center"} alignItems={"center"}>
+                      <Button onClick={() => removeImage(image)}>Remove</Button>
+                    </Grid>
                   </Grid>
-                  <Grid size={6} container justifyContent={"center"} alignItems={"center"}>
-                    <Button onClick={() => removeImage(image)}>Remove</Button>
-                  </Grid>
-                </Grid>
-              )
-            })
-            :
-            <Typography>No images to display</Typography>
+                )
+              })
+              :
+              <Typography>No images to display</Typography>
           }
         </DialogContent>
         <DialogActions>
