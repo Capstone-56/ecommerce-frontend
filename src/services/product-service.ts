@@ -177,6 +177,12 @@ export class ProductService {
     }
   }
 
+  /**
+   * An endpoint to upload an for a product.
+   * @param image     The Image to be uploaded.   
+   * @param productId The ID of the product for which the image is intended for.
+   * @returns An image URL along with a HTTP status.
+   */
   async uploadImage(image: File, productId: string): Promise<{ imageURL: string, status: number }> {
     try {
       const baseUrl = `/api/product/${productId}/upload/image`;
