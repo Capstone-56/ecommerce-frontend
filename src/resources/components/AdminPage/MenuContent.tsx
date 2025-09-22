@@ -10,7 +10,6 @@ import AnalyticsRoundedIcon from "@mui/icons-material/AnalyticsRounded";
 import ContentPasteSearchIcon from "@mui/icons-material/ContentPasteSearch";
 import SettingsRoundedIcon from "@mui/icons-material/SettingsRounded";
 import SupportAgentIcon from "@mui/icons-material/SupportAgent";
-import SupervisedUserCircleIcon from "@mui/icons-material/SupervisedUserCircle";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import Divider from "@mui/material/Divider";
 import { Link } from "react-router-dom";
@@ -19,6 +18,8 @@ import { useState } from "react";
 import { Box, Typography } from "@mui/material";
 import AccountCircleIcon from "@mui/icons-material/AccountCircle";
 import { UserModel } from "@/domain/models/UserModel";
+import CategoryIcon from '@mui/icons-material/Category';
+import LocalShippingIcon from '@mui/icons-material/LocalShipping'
 
 const mainListItems = [
   {
@@ -37,14 +38,14 @@ const mainListItems = [
     to: Constants.ADMIN_DASHBOARD_ROUTE + "/product/management",
   },
   {
-    text: "Vendor Management",
-    icon: <SupervisedUserCircleIcon />,
-    to: Constants.ADMIN_DASHBOARD_ROUTE + "/vendor/management",
+    text: "Category Management",
+    icon: <CategoryIcon />,
+    to: Constants.ADMIN_DASHBOARD_ROUTE + "/category",
   },
   {
-    text: "Customer Support",
-    icon: <SupportAgentIcon />,
-    to: Constants.ADMIN_DASHBOARD_ROUTE + "/support",
+    text: "Order History",
+    icon: <LocalShippingIcon />,
+    to: Constants.ADMIN_DASHBOARD_ROUTE + "/orders",
   },
   {
     text: "Back to Website",
