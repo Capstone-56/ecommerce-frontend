@@ -6,7 +6,6 @@ import {
   Card,
   CardContent,
   Checkbox,
-  CircularProgress,
   Dialog,
   DialogActions,
   DialogContent,
