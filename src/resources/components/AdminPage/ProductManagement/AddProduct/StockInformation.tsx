@@ -37,6 +37,7 @@ import { ProductService } from "@/services/product-service";
 import { StatusCodes } from "http-status-codes";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
+import ProcessingDialog from "@/resources/components/ProcessingDialog/ProcessDialog";
 
 const variationService = new VariationService();
 const productService = new ProductService();
@@ -62,7 +63,7 @@ export default function StockInformation(props: StockInformationProps) {
   const [removedPermutations, setRemovedPermutations] = useState<Record<string, string>[]>([]);
   const [selectedRemoved, setSelectedRemoved] = useState<Record<string, string>[]>([]);
   const [open, setOpen] = useState(false);
-  const [isAdding, setIsAdding] = useState(false);
+  const [openDialog, setOpenDialog] = useState(false);
   const navigate = useNavigate();
 
   /**
@@ -234,7 +235,7 @@ export default function StockInformation(props: StockInformationProps) {
       }))
     );
 
-    setIsAdding(true);
+    setOpenDialog(true);
 
     const response = await productService.addProduct(
       props.productName,
@@ -249,7 +250,7 @@ export default function StockInformation(props: StockInformationProps) {
     );
 
     if (response == StatusCodes.CREATED) {
-      setIsAdding(false);
+      setOpenDialog(false);
       toast.success("Product added successfully");
       navigate("/admin/product/management");
     }
@@ -489,19 +490,7 @@ export default function StockInformation(props: StockInformationProps) {
           </span>
         </Tooltip>
       </Box>
-      <Dialog
-        open={isAdding}
-        onClose={() => !isAdding}
-      >
-        <DialogContent>
-          <DialogContentText>
-            <Typography variant={"h5"} pr={3} pl={3} color="black">Processing new product</Typography>
-            <Box display={"flex"} justifyContent={"center"} p={3}>
-              <CircularProgress />
-            </Box>
-          </DialogContentText>
-        </DialogContent>
-      </Dialog >
+      <ProcessingDialog openDialog={openDialog} dialogHeading={"Processing new product"} />
     </Box >
   )
 }
