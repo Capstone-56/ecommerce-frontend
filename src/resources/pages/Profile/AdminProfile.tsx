@@ -34,20 +34,27 @@ export default function AdminProfile() {
   return (
     <>
       <RequireAdmin>
-        <div style={{ display: "flex", minHeight: "100vh" }}>
+        <div style={{ display: "flex", height: "100dvh" }}>
           <div
             style={{
               minWidth: "260px",
               borderRight: "1px solid #ddd",
               backgroundColor: "#212E4A",
               color: "#8EB5C0",
+              height: "100%",
+              overflowY: "auto",
             }}
           >
             <MenuContent userInformation={userInformation} />
           </div>
 
           <div
-            style={{ flexGrow: 1, padding: "1rem", backgroundColor: "#F0F4F8" }}
+            style={{
+              flexGrow: 1,
+              padding: "1rem",
+              backgroundColor: "#F0F4F8",
+              overflowY: "auto",
+            }}
           >
             <Outlet context={userInformation} />
           </div>

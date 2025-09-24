@@ -17,8 +17,6 @@ import AdminProfile from "@/resources/pages/Profile/AdminProfile";
 import Analytics from "@/resources/components/AdminPage/Analytics";
 import AdminDashboard from "@/resources/components/AdminPage/AdminDashboard/AdminDashboard";
 import ProductManagement from "@/resources/components/AdminPage/ProductManagement/ProductManagement";
-import VendorManagement from "@/resources/components/AdminPage/VendorManagement";
-import CustomerSupport from "@/resources/components/AdminPage/CustomerSupport";
 import AdminSettings from "@/resources/components/AdminPage/AdminSettings";
 import Payment from "@/resources/pages/Checkout/Payment";
 import { Constants } from "@/domain/constants";
@@ -29,6 +27,8 @@ import EditProduct from "@/resources/components/AdminPage/ProductManagement/Edit
 import OrderHistory from "@/resources/components/Profile/OrderHistory";
 import UserDetails from "@/resources/components/Profile/UserDetails";
 import ProfileLanding from "@/resources/components/Profile/ProfileLanding";
+import OrderHistory from "@/resources/components/AdminPage/Orders";
+import CategoryManagement from "@/resources/components/AdminPage/CategoryManagement";
 
 export const router = createBrowserRouter([
   {
@@ -120,12 +120,12 @@ export const router = createBrowserRouter([
         element: <EditProduct />,
       },
       {
-        path: "vendor/management",
-        element: <VendorManagement />,
+        path: "category",
+        element: <CategoryManagement />,
       },
       {
-        path: "support",
-        element: <CustomerSupport />,
+        path: "orders",
+        element: <OrderHistory />,
       },
       {
         path: "settings",
