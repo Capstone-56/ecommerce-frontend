@@ -23,7 +23,7 @@ import { Constants } from "@/domain/constants";
 import AddProduct from "@/resources/components/AdminPage/ProductManagement/AddProduct/AddProduct";
 import OrderComplete from "@/resources/pages/Checkout/OrderComplete";
 import EditProduct from "@/resources/components/AdminPage/ProductManagement/EditProduct";
-import OrderHistory from "@/resources/components/AdminPage/Orders";
+import OrderHistory from "@/resources/components/AdminPage/OrderHistory/OrderHistory";
 import CategoryManagement from "@/resources/components/AdminPage/CategoryManagement";
 
 export const router = createBrowserRouter([

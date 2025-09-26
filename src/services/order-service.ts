@@ -1,6 +1,7 @@
 import api from "@/api";
 import { OrderStatus } from "@/domain/enum/orderStatus";
-import { OrderModel, OrderProductModel, TotalOrderModel, TotalWeeklyOrders } from "@/domain/models/OrderModel";
+import { OrderModel, OrderProductModel, OrderStatusModel, TotalOrderModel, TotalWeeklyOrders } from "@/domain/models/OrderModel";
+import { toast } from "react-toastify";
 
 export class OrderService {
   /**
@@ -71,6 +72,41 @@ export class OrderService {
       });
       return response.data.results;
 
+    } catch (error) {
+      console.error("Error getting product item by product id:", error);
+      throw error;
+    }
+  }
+
+  /**
+   * Retrieves total sales for the past week.
+   * @returns The total sales figure and number of sales.
+   */
+  async getStripeDetails(paymentIntent: string): Promise<OrderStatusModel> {
+    try {
+      const response = await api.get("/api/orderstatus", {
+        params:
+          { pi: paymentIntent }
+      });
+
+      return response.data;
+    } catch (error) {
+      console.error("Error getting product item by product id:", error);
+      throw error;
+    }
+  }
+
+  /**
+   * Retrieves total sales for the past week.
+   * @returns The total sales figure and number of sales.
+   */
+  async updateOrderStatus(requestBody: object): Promise<OrderStatusModel> {
+    try {
+      const response = await api.post("/api/order/update", requestBody);
+
+      console.log(response)
+      toast.success(response.data.message)
+      return response.data;
     } catch (error) {
       console.error("Error getting product item by product id:", error);
       throw error;

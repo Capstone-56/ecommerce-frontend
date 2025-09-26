@@ -33,13 +33,14 @@ export interface OrderProductModel {
 export interface OrderModel {
   id: string;
   createdAt: string;
-  user: string | null;
-  guestUser: JSON;
-  address: UUID;
-  shippingVendor: number;
+  user: UserModel | null;
+  guestUser: GuestUserModel;
+  address: AddressModel;
+  shippingVendor: ShippingVendorModel;
   totalPrice: number;
   status: OrderStatus;
-  items: [];
+  items: Array<OrderItemModel>;
+  paymentIntentId: string
 }
 
 export interface OrderStatusModel {
