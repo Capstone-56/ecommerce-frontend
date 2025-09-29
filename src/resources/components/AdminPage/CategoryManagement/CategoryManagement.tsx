@@ -1,7 +1,10 @@
 import {
   Box,
   Button,
+  FormControl,
   InputAdornment,
+  InputLabel,
+  Select,
   TextField,
   Typography
 } from "@mui/material";
@@ -25,6 +28,8 @@ export default function CategoryManagement() {
   const handleSearch = useCallback(() => {
     setSearchTerm(searchInput);
   }, [setSearchTerm, searchInput]);
+
+  // TODO: Implement filtering by category. Select category, then show subcategories of that category.
 
   return (
     <Box>
@@ -74,6 +79,23 @@ export default function CategoryManagement() {
               maxWidth: "70%"
             }}
           />
+          <FormControl sx={{
+            minWidth: "30%",
+            '& .MuiInputBase-root': {
+              marginTop: '10px',
+            }
+          }}>
+            <InputLabel id="category-select" sx={{ marginBottom: "5px" }}>Filter by Category</InputLabel>
+            <Select
+              labelId="category-select"
+              id="category-simple-select"
+              //value={category}
+              //onChange={handleChange}
+              variant="standard"
+              disableUnderline
+            >
+            </Select>
+          </FormControl>
         </Box>
         <Button variant="contained" onClick={handleSearch}>Search</Button>
       </Box>
