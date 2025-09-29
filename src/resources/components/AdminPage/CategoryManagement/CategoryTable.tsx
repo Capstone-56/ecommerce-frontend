@@ -149,6 +149,8 @@ export default function CategoryTable(props: CategoryTableProps) {
     // Placeholder for future backend integration
   }
 
+  // TODO: update internalName field to be parentCategory or show both.
+
   // Get categories for current page
   const paginatedCategories = filteredCategories.slice(
     page * rowsPerPage,
