@@ -24,7 +24,7 @@ import AddProduct from "@/resources/components/AdminPage/ProductManagement/AddPr
 import OrderComplete from "@/resources/pages/Checkout/OrderComplete";
 import EditProduct from "@/resources/components/AdminPage/ProductManagement/EditProduct";
 import OrderHistory from "@/resources/components/AdminPage/Orders";
-import CategoryManagement from "@/resources/components/AdminPage/CategoryManagement";
+import CategoryManagement from "@/resources/components/AdminPage/CategoryManagement/CategoryManagement";
 
 export const router = createBrowserRouter([
   {
@@ -105,6 +105,14 @@ export const router = createBrowserRouter([
       {
         path: "category",
         element: <CategoryManagement />
+      },
+      {
+        path: "category/management/add",
+        element: <div>Add Category (Coming Soon)</div>
+      },
+      {
+        path: "category/management/:internalName",
+        element: <div>Edit Category (Coming Soon)</div>
       },
       {
         path: "orders",
