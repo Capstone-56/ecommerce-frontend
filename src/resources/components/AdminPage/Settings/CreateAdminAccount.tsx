@@ -8,6 +8,10 @@ import {
   Typography,
   CircularProgress,
   Paper,
+  FormControl,
+  InputLabel,
+  Select,
+  MenuItem,
 } from "@mui/material";
 import { Visibility, VisibilityOff, ArrowBack } from "@mui/icons-material";
 import { useNavigate } from "react-router-dom";
@@ -17,11 +21,11 @@ import { Role } from "@/domain/enum/role";
 import { UserSignUpModel } from "@/domain/models/UserModel";
 import { toast } from "react-toastify";
 
-// CreateAdminAccount component allows existing admin users to create new admin accounts.
+// CreateAdminAccount component allows existing admin users to create new admin or manager accounts.
 export default function CreateAdminAccount() {
   const navigate = useNavigate();
   
-  // Form state for admin account creation
+  // Form state for admin/manager account creation
   const [form, setForm] = useState({
     username: "",
     email: "",
@@ -30,6 +34,7 @@ export default function CreateAdminAccount() {
     phone: "",
     password: "",
     confirmPassword: "",
+    role: "admin",
   });
 
   // UI state for password visibility and loading
@@ -48,6 +53,10 @@ export default function CreateAdminAccount() {
     if (fieldErrors[name]) {
       setFieldErrors({ ...fieldErrors, [name]: "" });
     }
+  };
+
+  const handleRoleChange = (e: any) => {
+    setForm({ ...form, role: e.target.value });
   };
 
   // Check if all fields are filled and valid
@@ -80,13 +89,18 @@ export default function CreateAdminAccount() {
 
     setLoading(true);
     try {
-      // Use existing signup endpoint but with admin role
-      const response = await api.post("/auth/signup", {
-        ...form,
-        role: Role.ADMIN,
-      } as UserSignUpModel);
-      if (response.status === StatusCodes.OK) {
-        toast.success("Admin account created successfully");
+      // Use admin-specific user creation endpoint
+      const response = await api.post("/api/user", {
+        username: form.username,
+        email: form.email,
+        firstName: form.firstName,
+        lastName: form.lastName,
+        phone: form.phone,
+        password: form.password,
+        role: form.role,
+      });
+      if (response.status === StatusCodes.CREATED) {
+        toast.success("Account created successfully");
         // Redirect back to settings menu after successful creation
         navigate("/admin/settings");
       }
@@ -114,10 +128,10 @@ export default function CreateAdminAccount() {
           // Fall back to detail message if no field-specific errors
           toast.error(errorData.detail);
         } else {
-          toast.error("Admin account creation failed");
+          toast.error("Account creation failed");
         }
       } else {
-        toast.error("Admin account creation failed");
+        toast.error("Account creation failed");
       }
     } finally {
       setLoading(false);
@@ -132,14 +146,14 @@ export default function CreateAdminAccount() {
           <ArrowBack />
         </IconButton>
         <Typography variant="h4" sx={{ fontWeight: "bold" }}>
-          Create Admin Account
+          Create Privileged Account
         </Typography>
       </Box>
 
       {/* Main form container */}
       <Paper sx={{ p: 4, maxWidth: 600, mx: "auto" }}>
         <Typography variant="h6" gutterBottom sx={{ mb: 3 }}>
-          Add a new administrator to the system
+          Add a new admin or manager to the system
         </Typography>
         {[
           { label: "Username", name: "username", type: "text" },
@@ -212,6 +226,19 @@ export default function CreateAdminAccount() {
             },
           }}
         />
+
+        {/* Role selection */}
+        <FormControl fullWidth margin="normal" required>
+          <InputLabel>Role</InputLabel>
+          <Select
+            value={form.role}
+            label="Role"
+            onChange={handleRoleChange}
+          >
+            <MenuItem value="admin">Admin</MenuItem>
+            <MenuItem value="manager">Manager</MenuItem>w
+          </Select>
+        </FormControl>
 
         {/* Action buttons */}
         <Box sx={{ display: "flex", gap: 2, mt: 3, justifyContent: "center" }}>

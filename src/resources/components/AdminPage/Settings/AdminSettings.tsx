@@ -26,8 +26,8 @@ export default function AdminSettings() {
    */
   const settingsOptions = [
     {
-      title: "Create Admin Account",
-      description: "Add new administrator users to the system",
+      title: "Create Privileged Account",
+      description: "Add new admin or manager users to the system",
       icon: <PersonAdd />,
       action: () => navigate("/admin/settings/create-admin"),
     },
