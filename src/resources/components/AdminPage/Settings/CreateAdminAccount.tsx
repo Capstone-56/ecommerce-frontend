@@ -17,8 +17,6 @@ import { Visibility, VisibilityOff, ArrowBack } from "@mui/icons-material";
 import { useNavigate } from "react-router-dom";
 import api from "@/api";
 import { StatusCodes } from "http-status-codes";
-import { Role } from "@/domain/enum/role";
-import { UserSignUpModel } from "@/domain/models/UserModel";
 import { toast } from "react-toastify";
 
 // CreateAdminAccount component allows existing admin users to create new admin or manager accounts.
