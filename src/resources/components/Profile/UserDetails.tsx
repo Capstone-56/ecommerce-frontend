@@ -23,6 +23,10 @@ const mockUser = {
   phone: "+61 400 123 456",
 };
 
+/**
+ *
+ * @description Page to allow users to update their details.
+ */
 const UserDetails: React.FC = () => {
   const [user] = useState(mockUser);
   const [showPassword] = useState(false);
@@ -84,7 +88,7 @@ const UserDetails: React.FC = () => {
             slotProps={{ input: { readOnly: true } }}
           />
         </Grid>
-        <Typography variant="subtitle1" sx={{ mt: 2 }}>
+        {/* <Typography variant="subtitle1" sx={{ mt: 2 }}>
           Location
         </Typography>
         <Grid size={12}>
@@ -118,7 +122,7 @@ const UserDetails: React.FC = () => {
             fullWidth
             slotProps={{ input: { readOnly: true } }}
           />
-        </Grid>
+        </Grid> */}
       </Grid>
       <Box sx={{ mt: 3, textAlign: "right" }}>
         <Button variant="contained" color="primary" disabled>

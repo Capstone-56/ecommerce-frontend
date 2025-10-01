@@ -1,14 +1,7 @@
 import React from "react";
 import { NavLink } from "react-router-dom";
 import { Box, Typography } from "@mui/material";
-import {
-  Home,
-  AccountBox,
-  ShoppingBag,
-  LocalShipping,
-  Person,
-  CreditCard,
-} from "@mui/icons-material";
+import { ShoppingBag, LocalShipping, Person } from "@mui/icons-material";
 
 const menuItems = [
   {
@@ -21,9 +14,17 @@ const menuItems = [
     to: "/profile/orders",
     icon: <ShoppingBag sx={{ mr: 1 }} />,
   },
+  {
+    label: "Your addresses",
+    to: "/profile/shipping",
+    icon: <LocalShipping sx={{ mr: 1 }} />,
+  },
 ];
 
-const MenuNav: React.FC = () => {
+/**
+ * @description Side navigation menu for user profile pages
+ */
+const Navigation: React.FC = () => {
   return (
     <Box
       component="nav"
@@ -61,4 +62,4 @@ const MenuNav: React.FC = () => {
   );
 };
 
-export default MenuNav;
+export default Navigation;

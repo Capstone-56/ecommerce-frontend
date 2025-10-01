@@ -105,6 +105,10 @@ const orders: Order[] = [
 const formatCurrency = (amount: number) =>
   amount.toLocaleString("en-AU", { style: "currency", currency: "AUD" });
 
+/**
+ *
+ * @description Page for users to view their purchasing history
+ */
 const OrderHistory: React.FC = () => {
   const [expandedOrder, setExpandedOrder] = useState<string | null>(null);
 

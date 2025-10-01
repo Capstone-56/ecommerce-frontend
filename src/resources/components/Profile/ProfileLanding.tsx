@@ -1,5 +1,5 @@
 import { Grid, Paper, Typography, Box } from "@mui/material";
-import { Person, ShoppingBag } from "@mui/icons-material";
+import { LocalShipping, Person, ShoppingBag } from "@mui/icons-material";
 import { useNavigate } from "react-router-dom";
 
 const menuOptions = [
@@ -13,8 +13,16 @@ const menuOptions = [
     icon: <ShoppingBag sx={{ fontSize: 48, color: "primary.main" }} />,
     to: "/profile/orders",
   },
+  {
+    label: "Shipping Address",
+    to: "/profile/address",
+    icon: <LocalShipping sx={{ fontSize: 48, color: "primary.main" }} />,
+  },
 ];
 
+/**
+ *  @description Landing page for users when they first enter user profile page
+ */
 const ProfileLanding: React.FC = () => {
   const navigate = useNavigate();
 

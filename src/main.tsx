@@ -2,23 +2,14 @@ import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
 import "./index.css";
 import { RouterProvider } from "react-router-dom";
-import {
-  ThemeProvider,
-  createTheme,
-  CssBaseline,
-  GlobalStyles,
-} from "@mui/material";
+import { ThemeProvider, CssBaseline, GlobalStyles } from "@mui/material";
 
-// Themes
-import { modernTheme } from "./assets/theme/modernTheme";
 import { lightTheme } from "./assets/theme/BDNX.ts";
 
 import LocationProvider from "./providers/LocationProvider";
 
 import { router } from "./router/router.tsx";
 import { Slide, ToastContainer } from "react-toastify";
-
-const customTheme = createTheme(modernTheme);
 
 createRoot(document.getElementById("root")!).render(
   <StrictMode>

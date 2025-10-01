@@ -23,12 +23,12 @@ import { Constants } from "@/domain/constants";
 import AddProduct from "@/resources/components/AdminPage/ProductManagement/AddProduct/AddProduct";
 import OrderComplete from "@/resources/pages/Checkout/OrderComplete";
 import EditProduct from "@/resources/components/AdminPage/ProductManagement/EditProduct";
-// import UserDashboard from "@/resources/components/Profile/Dashboard/UserDashboard";
-import OrderHistory from "@/resources/components/Profile/OrderHistory";
+import OrderDetails from "@/resources/components/Profile/OrderHistory";
 import UserDetails from "@/resources/components/Profile/UserDetails";
 import ProfileLanding from "@/resources/components/Profile/ProfileLanding";
 import OrderHistory from "@/resources/components/AdminPage/Orders";
 import CategoryManagement from "@/resources/components/AdminPage/CategoryManagement";
+import ShippingAddress from "@/resources/components/Profile/ShippingAddress";
 
 export const router = createBrowserRouter([
   {
@@ -53,11 +53,15 @@ export const router = createBrowserRouter([
           },
           {
             path: "orders",
-            element: <OrderHistory />,
+            element: <OrderDetails />,
           },
           {
             path: "account",
             element: <UserDetails />,
+          },
+          {
+            path: "shipping",
+            element: <ShippingAddress />,
           },
         ],
       },
