@@ -56,9 +56,13 @@ export default function CreateAdminAccount() {
   const validateForm = () => {
     const errors: { [key: string]: string } = {};
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    const phoneRegex = /^[\d\s\-\+\(\)]+$/;
     
     if (form.email && !emailRegex.test(form.email)) {
       errors.email = "Enter a valid email address";
+    }
+    if (form.phone && (!phoneRegex.test(form.phone) || form.phone.replace(/\D/g, '').length < 10)) {
+      errors.phone = "Enter a valid phone number (at least 10 digits)";
     }
     if (form.password !== form.confirmPassword) {
       errors.confirmPassword = "Passwords do not match";
