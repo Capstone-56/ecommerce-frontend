@@ -37,40 +37,84 @@ export default function CreateAdminAccount() {
   const [showConfirm, setShowConfirm] = useState(false);
   const [loading, setLoading] = useState(false);
 
+  // Field-specific errors from API or validation
+  const [fieldErrors, setFieldErrors] = useState<{ [key: string]: string }>({});
+
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setForm({ ...form, [e.target.name]: e.target.value });
+    const { name, value } = e.target;
+    setForm({ ...form, [name]: value });
+
+    // Clear field error when user starts typing
+    if (fieldErrors[name]) {
+      setFieldErrors({ ...fieldErrors, [name]: "" });
+    }
+  };
+
+  // Check if all fields are filled and valid
+  const isFormValid = Object.values(form).every(value => value.trim());
+
+  const validateForm = () => {
+    const errors: { [key: string]: string } = {};
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    
+    if (form.email && !emailRegex.test(form.email)) {
+      errors.email = "Enter a valid email address";
+    }
+    if (form.password !== form.confirmPassword) {
+      errors.confirmPassword = "Passwords do not match";
+    }
+
+    setFieldErrors(errors);
+    return Object.keys(errors).length === 0;
   };
 
   const handleSubmit = async () => {
-    // Validate password confirmation
-    if (form.password !== form.confirmPassword) {
-      return toast.error("Passwords do not match");
+    // Run client-side validation first
+    if (!validateForm()) {
+      return;
     }
 
     setLoading(true);
     try {
-      // Create admin user object with Role.ADMIN
-      const adminUser: UserSignUpModel = {
-        username: form.username,
-        email: form.email,
-        firstName: form.firstName,
-        lastName: form.lastName,
-        phone: form.phone,
-        password: form.password,
-        role: Role.ADMIN,
-      };
-
       // Use existing signup endpoint but with admin role
-      const response = await api.post("/auth/signup", adminUser);
+      const response = await api.post("/auth/signup", {
+        ...form,
+        role: Role.ADMIN,
+      } as UserSignUpModel);
       if (response.status === StatusCodes.OK) {
         toast.success("Admin account created successfully");
         // Redirect back to settings menu after successful creation
         navigate("/admin/settings");
       }
     } catch (err: any) {
-      toast.error(
-        err?.response?.data?.detail || "Admin account creation failed"
-      );
+      // check for field-specific validation errors
+      if (err?.response?.data) {
+        const errorData = err.response.data;
+        
+        // Check if response has field-specific errors
+        const fieldErrorsFromAPI: { [key: string]: string } = {};
+        let hasFieldErrors = false;
+        
+        // Parse field-specific errors from API response
+        Object.entries(errorData).forEach(([fieldName, errors]) => {
+          if (Array.isArray(errors) && errors.length > 0) {
+            // Display more user-friendly errors
+            fieldErrorsFromAPI[fieldName] = errors[0].replace(/user model with this/gi, 'User with this');
+            hasFieldErrors = true;
+          }
+        });
+        
+        if (hasFieldErrors) {
+          setFieldErrors(fieldErrorsFromAPI);
+        } else if (errorData.detail) {
+          // Fall back to detail message if no field-specific errors
+          toast.error(errorData.detail);
+        } else {
+          toast.error("Admin account creation failed");
+        }
+      } else {
+        toast.error("Admin account creation failed");
+      }
     } finally {
       setLoading(false);
     }
@@ -80,10 +124,7 @@ export default function CreateAdminAccount() {
     <Box sx={{ p: 3 }}>
       {/* Header + back navigation */}
       <Box sx={{ display: "flex", alignItems: "center", mb: 3 }}>
-        <IconButton
-          onClick={() => navigate("/admin/settings")}
-          sx={{ mr: 2 }}
-        >
+        <IconButton onClick={() => navigate("/admin/settings")} sx={{ mr: 2 }}>
           <ArrowBack />
         </IconButton>
         <Typography variant="h4" sx={{ fontWeight: "bold" }}>
@@ -113,6 +154,8 @@ export default function CreateAdminAccount() {
             value={form[field.name as keyof typeof form]}
             onChange={handleChange}
             required
+            error={!!fieldErrors[field.name]}
+            helperText={fieldErrors[field.name] || ""}
           />
         ))}
 
@@ -126,6 +169,8 @@ export default function CreateAdminAccount() {
           value={form.password}
           onChange={handleChange}
           required
+          error={!!fieldErrors.password}
+          helperText={fieldErrors.password || ""}
           slotProps={{
             input: {
               endAdornment: (
@@ -149,6 +194,8 @@ export default function CreateAdminAccount() {
           value={form.confirmPassword}
           onChange={handleChange}
           required
+          error={!!fieldErrors.confirmPassword}
+          helperText={fieldErrors.confirmPassword || ""}
           slotProps={{
             input: {
               endAdornment: (
@@ -163,18 +210,11 @@ export default function CreateAdminAccount() {
         />
 
         {/* Action buttons */}
-        <Box sx={{ display: "flex", gap: 2, mt: 3}}>
-          <Button
-            variant="outlined"
-            onClick={() => navigate("/admin/settings")}
-            disabled={loading}
-          >
-            Cancel
-          </Button>
+        <Box sx={{ display: "flex", gap: 2, mt: 3, justifyContent: "center" }}>
           <Button
             variant="contained"
             onClick={handleSubmit}
-            disabled={loading}
+            disabled={loading || !isFormValid}
             sx={{
               backgroundColor: "black",
               color: "white",
