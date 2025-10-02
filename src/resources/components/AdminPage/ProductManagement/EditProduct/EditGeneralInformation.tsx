@@ -113,26 +113,6 @@ export default function EditGeneralInformation(props: EditGeneralInformationProp
 
   return (
     <Grid container spacing={3}>
-      {/* Product Image */}
-      <Grid size={{ xs: 12, lg: 4 }} height={"100%"}>
-        {props.product?.images && (
-          <Card>
-            <CardMedia
-              component="img"
-              image={props.product.images[0]}
-              alt={props.product.name}
-              sx={{
-                width: "100%",
-                height: "auto",
-                objectFit: "cover",
-                aspectRatio: 1 / 1,
-              }}
-            />
-            <ModifyImages product={props.product} onImagesUpdated={props.onImagesUpdated} />
-          </Card>
-        )}
-      </Grid>
-
       {/* Product Details */}
       <Grid size={{ xs: 12, lg: 8 }}>
         {props.product && (
@@ -246,6 +226,26 @@ export default function EditGeneralInformation(props: EditGeneralInformationProp
                 )}
               </Grid>
             </Grid>
+          </Card>
+        )}
+      </Grid>
+
+      {/* Product Image */}
+      <Grid size={{ xs: 12, lg: 4 }} height={"100%"}>
+        {props.product?.images && (
+          <Card>
+            <CardMedia
+              component="img"
+              image={props.product.images[0]}
+              alt={props.product.name}
+              sx={{
+                width: "100%",
+                height: "auto",
+                objectFit: "cover",
+                aspectRatio: 1 / 1,
+              }}
+            />
+            <ModifyImages product={props.product} onImagesUpdated={props.onImagesUpdated} />
           </Card>
         )}
       </Grid>
