@@ -53,7 +53,7 @@ export default function OrderHistory() {
                 >
                   <Grid container width={"100%"}>
                     <Grid size={10} display={"flex"} justifyContent={"left"}>
-                      <Typography>Order#: Number</Typography>
+                      <Typography>Order: {order.id}</Typography>
                     </Grid>
                     <Grid size={2} display={"flex"} justifyContent={"right"}>
                       <Typography>{order.totalPrice}</Typography>

@@ -5,7 +5,6 @@ import { Grid, Typography } from "@mui/material";
 import SalesOverview from "./SalesOverview";
 import TopSellingItems from "./TopSellingItems";
 import OrderHistory from "./OrderHistory";
-import SalesForecast from "./SalesForecast";
 
 /**
  * The main dashboard to be shown to admins.
@@ -27,9 +26,6 @@ export default function AdminDashboard() {
         </Grid>
         <Grid size={{ xs: 12, md: 6, lg: 4 }}>
           <OrderHistory />
-        </Grid>
-        <Grid size={12}>
-          <SalesForecast />
         </Grid>
       </Grid>
     </>

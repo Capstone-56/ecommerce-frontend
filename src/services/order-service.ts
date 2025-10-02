@@ -79,8 +79,8 @@ export class OrderService {
   }
 
   /**
-   * Retrieves total sales for the past week.
-   * @returns The total sales figure and number of sales.
+   * Gets the STRIPE details of a particular payment Intent.
+   * @returns The order status model containing STRIPE details..
    */
   async getStripeDetails(paymentIntent: string): Promise<OrderStatusModel> {
     try {
@@ -97,10 +97,9 @@ export class OrderService {
   }
 
   /**
-   * Retrieves total sales for the past week.
-   * @returns The total sales figure and number of sales.
+   * Updates an orders status. From processing to delivered and so forth.
    */
-  async updateOrderStatus(requestBody: object): Promise<OrderStatusModel> {
+  async updateOrderStatus(requestBody: object): Promise<{ message: string }> {
     try {
       const response = await api.post("/api/order/update", requestBody);
 

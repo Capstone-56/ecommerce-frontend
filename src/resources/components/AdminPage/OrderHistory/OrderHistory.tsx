@@ -38,29 +38,38 @@ export default function OrderHistory() {
   const [paymentIntent, setPaymentIntent] = useState<OrderStatusModel>();
   const [editOrderStatus, setEditOrderStatus] = useState(false);
 
-  const toggleDrawer = (newOpen: boolean, order?: OrderModel) => () => {
+  /**
+   * Toggles the drawer to be open.
+   * @param open  A boolean determining whether to open the drawer or not.
+   * @param order The order to open the drawer with. 
+   */
+  const toggleDrawer = (open: boolean, order?: OrderModel) => () => {
     if (order) {
       setDrawerOrder(order);
       fetchPaymentGatewayDetails(order.paymentIntentId);
     };
     setEditOrderStatus(false);
-    setOpen(newOpen);
+    setOpen(open);
   };
 
   /**
-   * A useEffect required to get product categories.
+   * A useEffect required to get orders.
    */
   useEffect(() => {
     fetchOrders();
   }, []);
 
   /**
-   * Sets list of categories from categories in the database.
+   * Sets list of orders.
    */
   const fetchOrders = async () => {
     setOrders(await orderService.getLatestOrders());
   }
 
+  /**
+   * Gets the payment gateway details, i.e. details from STRIPE.
+   * @param paymentIntent The ID from the payment gateway.
+   */
   const fetchPaymentGatewayDetails = async (paymentIntent: string) => {
     const response = await orderService.getStripeDetails(paymentIntent);
     setPaymentIntent(response);
