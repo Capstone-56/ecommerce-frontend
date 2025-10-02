@@ -265,7 +265,7 @@ export default function OrderHistory() {
                     <Typography>Postcode: {drawerOrder.address.postcode}</Typography>
                     <Typography>State: {drawerOrder.address.state}</Typography>
                     <Typography>Country: {drawerOrder.address.country}</Typography>
-                    <Typography>Shipping Vendor: {drawerOrder.shippingVendor.name}</Typography>
+                    {/* <Typography>Shipping Vendor: {drawerOrder.shippingVendor.name}</Typography> */}
                   </Box>
                   <Box display="flex" alignItems="center" pl={2} pt={2}>
                     <Typography variant="h6" fontSize={18}>Order Status</Typography>
