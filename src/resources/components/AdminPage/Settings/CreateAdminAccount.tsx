@@ -253,7 +253,7 @@ export default function CreateAdminAccount() {
             {loading ? (
               <CircularProgress size={24} color="inherit" />
             ) : (
-              "Create Admin Account"
+              "Create Account"
             )}
           </Button>
         </Box>
