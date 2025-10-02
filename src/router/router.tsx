@@ -17,7 +17,8 @@ import AdminProfile from "@/resources/pages/Profile/AdminProfile";
 import Analytics from "@/resources/components/AdminPage/Analytics";
 import AdminDashboard from "@/resources/components/AdminPage/AdminDashboard/AdminDashboard";
 import ProductManagement from "@/resources/components/AdminPage/ProductManagement/ProductManagement";
-import AdminSettings from "@/resources/components/AdminPage/AdminSettings";
+import AdminSettings from "@/resources/components/AdminPage/Settings/AdminSettings";
+import CreateAdminAccount from "@/resources/components/AdminPage/Settings/CreateAdminAccount";
 import Payment from "@/resources/pages/Checkout/Payment";
 import { Constants } from "@/domain/constants";
 import AddProduct from "@/resources/components/AdminPage/ProductManagement/AddProduct/AddProduct";
@@ -113,6 +114,10 @@ export const router = createBrowserRouter([
       {
         path: "settings",
         element: <AdminSettings />
+      },
+      {
+        path: "settings/create-admin",
+        element: <CreateAdminAccount />
       },
     ]
   },
