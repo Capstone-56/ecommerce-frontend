@@ -1,132 +1,152 @@
-import React, { useState } from "react";
-import {
-  Box,
-  Typography,
-  TextField,
-  Grid,
-  Button,
-  InputAdornment,
-  IconButton,
-} from "@mui/material";
-import VisibilityOffIcon from "@mui/icons-material/VisibilityOff";
-
-// TODO: consider using UserModel type
-const mockUser = {
-  firstName: "John",
-  lastName: "Doe",
-  street: "123 Main St",
-  suburb: "Sydney",
-  state: "NSW",
-  post: "2000",
-  email: "john.doe@example.com",
-  password: "pass",
-  phone: "+61 400 123 456",
-};
+import React, { useEffect, useState } from "react";
+import { Box, Typography, TextField, Grid, Button } from "@mui/material";
+import { UserService } from "@/services/user-service";
+import { UserModel } from "@/domain/models/UserModel";
+import { Constants } from "@/domain/constants";
+import { userState } from "@/domain/state";
+import { toast } from "react-toastify";
+import { STATUS_CODES } from "http";
+import { StatusCodes } from "http-status-codes";
 
 /**
  *
  * @description Page to allow users to update their details.
  */
 const UserDetails: React.FC = () => {
-  const [user] = useState(mockUser);
-  const [showPassword] = useState(false);
+  const [user, setUser] = useState<UserModel | null>(null);
+  const [initialUser, setInitialUser] = useState<UserModel | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [saving, setSaving] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [success, setSuccess] = useState(false);
+  const userService = new UserService();
+
+  useEffect(() => {
+    const fetchUser = async () => {
+      try {
+        const userData = await userService.getUser("me");
+        setUser(userData);
+        setInitialUser(userData);
+      } catch (err) {
+        console.error("Failed to fetch user:", err);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchUser();
+  }, []);
+
+  const isChanged =
+    user &&
+    initialUser &&
+    (user.firstName !== initialUser.firstName ||
+      user.lastName !== initialUser.lastName ||
+      user.email !== initialUser.email ||
+      user.phone !== initialUser.phone);
+
+  const handleChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+  ) => {
+    if (!user) return;
+    setUser({ ...user, [e.target.name]: e.target.value });
+  };
+
+  const handleSave = async () => {
+    if (!user) return; // probably toast an error here
+    setSaving(true);
+    setError(null);
+    setSuccess(false);
+
+    let userId = userState.getState().userId;
+
+    if (!userId) {
+      try {
+        const userStorage = localStorage.getItem(
+          Constants.LOCAL_STORAGE_USER_STORAGE
+        );
+        if (userStorage) {
+          const parsed = JSON.parse(userStorage);
+          userId = parsed?.userId || null;
+        }
+      } catch {}
+    }
+
+    if (!userId) {
+      toast.error("Cannot update details: user Id was not found");
+      setSaving(false);
+      return;
+    }
+
+    const status = await userService.updateUser(user, userId);
+
+    if (status === StatusCodes.OK) {
+      setSaving(false);
+      setInitialUser(user);
+      toast.success("Details saved successfully");
+    }
+    console.log("DEBUG - Saved user:", user);
+    console.log("DEBUG - Initial user: ", initialUser);
+  };
+
+  if (loading || !user) {
+    return (
+      <Box sx={{ maxWidth: "700px", p: { xs: 1, md: 4 } }}>
+        <Typography variant="h6">Loading user details...</Typography>
+      </Box>
+    );
+  }
+
   return (
-    <Box sx={{ maxWidth: "600px", p: { xs: 1, md: 4 } }}>
+    <Box sx={{ maxWidth: "700px", p: { xs: 1, md: 4 } }}>
       <Typography variant="h5" sx={{ mb: 3 }}>
         Account Details
       </Typography>
       <Grid container spacing={2}>
-        <Grid size={{ xs: 12, sm: 6 }}>
+        <Grid size={{ xs: 6 }}>
           <TextField
             label="First Name"
+            name="firstName"
             value={user.firstName}
             fullWidth
-            slotProps={{ input: { readOnly: true } }}
+            onChange={handleChange}
           />
         </Grid>
-        <Grid size={{ xs: 12, sm: 6 }}>
+        <Grid size={{ xs: 6 }}>
           <TextField
             label="Last Name"
+            name="lastName"
             value={user.lastName}
             fullWidth
-            slotProps={{ input: { readOnly: true } }}
+            onChange={handleChange}
           />
         </Grid>
-        <Grid size={12}>
+        <Grid size={{ xs: 12 }}>
           <TextField
             label="Email"
+            name="email"
             value={user.email}
             fullWidth
-            slotProps={{ input: { readOnly: true } }}
+            onChange={handleChange}
           />
         </Grid>
-        <Grid size={12}>
-          <TextField
-            label="Password"
-            type={showPassword ? "text" : "password"}
-            value={user.password}
-            fullWidth
-            slotProps={{
-              input: {
-                readOnly: true,
-                endAdornment: (
-                  <InputAdornment position="end">
-                    <IconButton disabled>
-                      <VisibilityOffIcon />
-                    </IconButton>
-                  </InputAdornment>
-                ),
-              },
-            }}
-          />
-        </Grid>
-        <Grid size={12}>
+        <Grid size={{ xs: 12 }}>
           <TextField
             label="Phone Number"
+            name="phone"
             value={user.phone}
             fullWidth
-            slotProps={{ input: { readOnly: true } }}
+            onChange={handleChange}
           />
         </Grid>
-        {/* <Typography variant="subtitle1" sx={{ mt: 2 }}>
-          Location
-        </Typography>
-        <Grid size={12}>
-          <TextField
-            label="Street"
-            value={user.street}
-            fullWidth
-            slotProps={{ input: { readOnly: true } }}
-          />
-        </Grid>
-        <Grid size={{ xs: 12, sm: 6 }}>
-          <TextField
-            label="Suburb"
-            value={user.suburb}
-            fullWidth
-            slotProps={{ input: { readOnly: true } }}
-          />
-        </Grid>
-        <Grid size={{ xs: 6, sm: 3 }}>
-          <TextField
-            label="State"
-            value={user.state}
-            fullWidth
-            slotProps={{ input: { readOnly: true } }}
-          />
-        </Grid>
-        <Grid size={{ xs: 6, sm: 3 }}>
-          <TextField
-            label="Postcode"
-            value={user.post}
-            fullWidth
-            slotProps={{ input: { readOnly: true } }}
-          />
-        </Grid> */}
       </Grid>
       <Box sx={{ mt: 3, textAlign: "right" }}>
-        <Button variant="contained" color="primary" disabled>
-          Edit Details
+        <Button
+          variant="contained"
+          color="primary"
+          disabled={!isChanged}
+          onClick={handleSave}
+        >
+          Save Details
         </Button>
       </Box>
     </Box>

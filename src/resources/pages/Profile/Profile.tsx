@@ -7,6 +7,7 @@ import {
   Button,
   useMediaQuery,
   IconButton,
+  Divider,
 } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
 import { useEffect, useState } from "react";
@@ -60,25 +61,25 @@ const Profile: React.FC = () => {
   };
 
   return (
-    <Box sx={{ display: "flex", width: "100%", p: { xs: 0, md: 3 } }}>
-      {/* > md - alternatively could do sx={{display: { xs: "none", lg: "flex" }}} */}
+    <Box sx={{ display: "flex", width: "100%" }}>
       {!isSmall && (
         <>
           <Box
             minWidth={"400px"}
             sx={{
-              p: 4,
+              p: 3,
               display: "flex",
               flexDirection: "column",
-              bgcolor: "grey.100",
-              height: "100%",
+              bgcolor: "grey.50",
+              borderRight: "1px solid grey",
+              height: "100vh",
             }}
           >
             <Box
               sx={{
                 display: "flex",
                 flexDirection: "column",
-                textAlign: "left",
+                alignItems: "center",
               }}
             >
               <Avatar
@@ -90,11 +91,21 @@ const Profile: React.FC = () => {
                   border: "4px solid white",
                   boxShadow: 3,
                   bgcolor: "grey.100",
-                  mb: 2,
+                  my: 2,
                 }}
               />
-              <Typography variant="h2">Hey John,</Typography>
-              <Typography variant="subtitle1" sx={{ mb: 3, color: "grey.500" }}>
+            </Box>
+            <Box
+              sx={{
+                display: "flex",
+                flexDirection: "column",
+                alignItems: "flex-start",
+                px: 2,
+                mb: 2,
+              }}
+            >
+              <Typography variant="h2">Hello John</Typography>
+              <Typography variant="body1" sx={{ color: "grey.500" }}>
                 Welcome back!
               </Typography>
             </Box>
@@ -107,8 +118,7 @@ const Profile: React.FC = () => {
               mt: { xs: 2, md: 0 },
               display: "flex",
               flexDirection: "column",
-              alignItems: "center",
-              justifyContent: "center",
+              alignItems: { xs: "center", md: "center" },
             }}
           >
             <Outlet />

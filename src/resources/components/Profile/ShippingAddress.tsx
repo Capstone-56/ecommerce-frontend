@@ -28,7 +28,7 @@ const ShippingAddress: React.FC = () => {
   };
 
   return (
-    <Box sx={{ maxWidth: "600px", p: { xs: 1, md: 4 } }}>
+    <Box sx={{ maxWidth: "700px", p: { xs: 1, md: 4 } }}>
       <Typography variant="h5" sx={{ mb: 3 }}>
         Shipping Address
       </Typography>
