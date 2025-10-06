@@ -211,105 +211,108 @@ export default function OrderHistory() {
                 <Typography textAlign={"center"} p={2} variant={"h5"}>{drawerOrder?.id} Breakdown</Typography>
               </Grid>
             </Grid>
-            {drawerOrder ? drawerOrder.items.map(item => {
-              return (
-                <Box>
-                  <Typography variant={"h6"} fontSize={18} p={2}>Purchased Products</Typography>
-                  <Box maxHeight={"250px"} overflow={"auto"}>
-                    <Grid container pl={2}>
-                      <Grid size={4}>
-                        <Box
-                          component="img"
-                          src={item.productItem.product.images![0]}
-                          alt={item.productItem.product.name}
-                          sx={{
-                            width: 128,
-                            height: 128,
-                            borderRadius: 2,
-                            objectFit: "cover",
-                            mr: 2,
-                          }}
-                        />
+            {drawerOrder ?
+              <Box>
+                <Typography variant={"h6"} fontSize={18} p={2}>Purchased Products</Typography>
+                {drawerOrder.items && drawerOrder.items.map((item) => {
+                  return (
+                    <Box maxHeight={"250px"} overflow={"auto"}>
+                      <Grid container pl={2}>
+                        <Grid size={4}>
+                          <Box
+                            component="img"
+                            src={item.productItem.product.images![0]}
+                            alt={item.productItem.product.name}
+                            sx={{
+                              width: 128,
+                              height: 128,
+                              borderRadius: 2,
+                              objectFit: "cover",
+                              mr: 2,
+                            }}
+                          />
+                        </Grid>
+                        <Grid size={8}>
+                          <Typography>
+                            {item.productItem.product.name}
+                          </Typography>
+                          <Typography>
+                            {item.productItem.sku}
+                          </Typography>
+                          <Typography pt={2}>
+                            Price Per Unit: {item.productItem.price}
+                          </Typography>
+                          <Typography>
+                            Amount Purchased: {item.quantity}
+                          </Typography>
+                        </Grid>
                       </Grid>
-                      <Grid size={8}>
-                        <Typography>
-                          {item.productItem.product.name}
-                        </Typography>
-                        <Typography>
-                          {item.productItem.sku}
-                        </Typography>
-                        <Typography pt={2}>
-                          Price Per Unit: {item.productItem.price}
-                        </Typography>
-                        <Typography>
-                          Amount Purchased: {item.quantity}
-                        </Typography>
-                      </Grid>
-                    </Grid>
-                  </Box>
-                  <Typography variant={"h6"} fontSize={18} pl={2} pt={2}>Payment details</Typography>
-                  {paymentIntent &&
-                    <Box pl={2}>
-                      <Typography>Payment Status: {paymentIntent.status.charAt(0).toUpperCase() + paymentIntent.status.slice(1)}</Typography>
-                      <Typography>Amount: {paymentIntent.amount ? (paymentIntent.amount / 100).toFixed(2) : "Not Available"}</Typography>
-                      <Typography>Currency Type: {paymentIntent.currency?.toUpperCase()}</Typography>
                     </Box>
-                  }
-                  <Typography variant={"h6"} fontSize={18} pl={2} pt={2}>Shipping details</Typography>
+                  )
+                })}
+                <Typography variant={"h6"} fontSize={18} pl={2} pt={2}>Payment details</Typography>
+                {paymentIntent &&
                   <Box pl={2}>
-                    <Typography>Billing Name: {
-                      drawerOrder.user ? drawerOrder.user.firstName + " " + drawerOrder.user.lastName :
-                        drawerOrder.guestUser.firstName + " " + drawerOrder.guestUser.lastName}</Typography>
-                    <Typography>Address: {drawerOrder.address.addressLine}</Typography>
-                    <Typography>City: {drawerOrder.address.city}</Typography>
-                    <Typography>Postcode: {drawerOrder.address.postcode}</Typography>
-                    <Typography>State: {drawerOrder.address.state}</Typography>
-                    <Typography>Country: {drawerOrder.address.country}</Typography>
-                    {/* <Typography>Shipping Vendor: {drawerOrder.shippingVendor.name}</Typography> */}
+                    <Typography>Payment Status: {paymentIntent.status.charAt(0).toUpperCase() + paymentIntent.status.slice(1)}</Typography>
+                    <Typography>Amount: {paymentIntent.amount ? (paymentIntent.amount / 100).toFixed(2) : "Not Available"}</Typography>
+                    <Typography>Currency Type: {paymentIntent.currency?.toUpperCase()}</Typography>
                   </Box>
-                  <Box display="flex" alignItems="center" pl={2} pt={2}>
-                    <Typography variant="h6" fontSize={18}>Order Status</Typography>
-                    <IconButton onClick={() => setEditOrderStatus(!editOrderStatus)}>
-                      <EditIcon />
-                    </IconButton>
-                  </Box>
-                  <Box pl={2}>
-                    {editOrderStatus ?
-                      <TextField
-                        select
-                        defaultValue={"initial"}
-                        onChange={(e) => {
-                          const requestBody = {
-                            id: drawerOrder.id,
-                            updatedStatus: e.target.value
-                          }
-                          orderService.updateOrderStatus(requestBody).finally(() => {
-                            setEditOrderStatus(false);
-                            fetchOrders();
-                            setDrawerOrder(prev =>
-                              prev ? { ...prev, status: e.target.value as OrderStatus } : prev
-                            );
-                          })
-                        }}
-                        sx={{ pb: 2, minWidth: "60%", mr: "10px" }}
-                      >
-                        <MenuItem key={"initial"} value={"initial"} disabled>
-                          Choose new order status...
-                        </MenuItem>
-                        {Object.values(OrderStatus)?.map((option) => (
-                          <MenuItem key={option} value={option}>
-                            {option}
-                          </MenuItem>
-                        ))}
-                      </TextField> :
-                      <Typography>
-                        Current Status: {drawerOrder.status.charAt(0).toUpperCase() + drawerOrder.status.slice(1)}
-                      </Typography>
-                    }
-                  </Box>
+                }
+                <Typography variant={"h6"} fontSize={18} pl={2} pt={2}>Shipping details</Typography>
+                <Box pl={2}>
+                  <Typography>Billing Name: {
+                    drawerOrder.user ? drawerOrder.user.firstName + " " + drawerOrder.user.lastName :
+                      drawerOrder.guestUser.firstName + " " + drawerOrder.guestUser.lastName}</Typography>
+                  <Typography>Address: {drawerOrder.address.addressLine}</Typography>
+                  <Typography>City: {drawerOrder.address.city}</Typography>
+                  <Typography>Postcode: {drawerOrder.address.postcode}</Typography>
+                  <Typography>State: {drawerOrder.address.state}</Typography>
+                  <Typography>Country: {drawerOrder.address.country}</Typography>
+                  {/* <Typography>Shipping Vendor: {drawerOrder.shippingVendor.name}</Typography> */}
                 </Box>
-              )
-            }) : ""}
+                <Box display="flex" alignItems="center" pl={2} pt={2}>
+                  <Typography variant="h6" fontSize={18}>Order Status</Typography>
+                  <IconButton onClick={() => setEditOrderStatus(!editOrderStatus)}>
+                    <EditIcon />
+                  </IconButton>
+                </Box>
+                <Box pl={2}>
+                  {editOrderStatus ?
+                    <TextField
+                      select
+                      defaultValue={"initial"}
+                      onChange={(e) => {
+                        const requestBody = {
+                          id: drawerOrder.id,
+                          updatedStatus: e.target.value
+                        }
+                        orderService.updateOrderStatus(requestBody).finally(() => {
+                          setEditOrderStatus(false);
+                          fetchOrders();
+                          setDrawerOrder(prev =>
+                            prev ? { ...prev, status: e.target.value as OrderStatus } : prev
+                          );
+                        })
+                      }}
+                      sx={{ pb: 2, minWidth: "60%", mr: "10px" }}
+                    >
+                      <MenuItem key={"initial"} value={"initial"} disabled>
+                        Choose new order status...
+                      </MenuItem>
+                      {Object.values(OrderStatus)?.map((option) => (
+                        <MenuItem key={option} value={option}>
+                          {option}
+                        </MenuItem>
+                      ))}
+                    </TextField> :
+                    <Typography>
+                      Current Status: {drawerOrder.status.charAt(0).toUpperCase() + drawerOrder.status.slice(1)}
+                    </Typography>
+                  }
+                </Box>
+              </Box>
+
+              : ""}
           </Box>
         </Drawer>
       </Paper >

@@ -9,7 +9,7 @@ const orderService = new OrderService;
 /**
  * Shows latest orders that were purchased by users.
  */
-export default function OrderHistory() {
+export default function LatestOrders() {
   const [orderHistory, setOrderHistory] = useState<OrderModel[]>();
 
   /**
