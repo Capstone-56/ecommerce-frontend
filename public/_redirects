@@ -1,1 +1,5 @@
+# Redirect root domain to www
+https://bdnx.com/*  https://www.bdnx.com/:splat  301!
+
+# SPA catch-all (must be last)
 /*    /index.html   200
