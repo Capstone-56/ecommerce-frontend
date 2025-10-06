@@ -63,8 +63,8 @@ export default function EditCategory() {
   };
 
   return (
-    <Box sx={{ padding: 3 }}>
-      <Typography variant="h4" sx={{ marginBottom: 3 }}>
+    <Box >
+      <Typography variant="h4" sx={{ paddingBottom: 2 }}>
         Edit Category
       </Typography>
       
