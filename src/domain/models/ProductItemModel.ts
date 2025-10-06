@@ -6,5 +6,4 @@ export interface ProductItemModel {
   sku: string;
   stock: number;
   price: number;
-  imageUrls: string[];
 }
