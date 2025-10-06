@@ -37,7 +37,8 @@ export interface OrderModel {
   address: AddressModel;
   totalPrice: number;
   status: OrderStatus;
-  items: [];
+  items: Array<OrderItemModel>;
+  paymentIntentId: string
 }
 
 export interface OrderStatusModel {

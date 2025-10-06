@@ -23,8 +23,8 @@ import Payment from "@/resources/pages/Checkout/Payment";
 import { Constants } from "@/domain/constants";
 import AddProduct from "@/resources/components/AdminPage/ProductManagement/AddProduct/AddProduct";
 import OrderComplete from "@/resources/pages/Checkout/OrderComplete";
+import OrderHistory from "@/resources/components/AdminPage/OrderHistory/OrderHistory";
 import EditProduct from "@/resources/components/AdminPage/ProductManagement/EditProduct/EditProduct";
-import OrderHistory from "@/resources/components/AdminPage/Orders";
 import CategoryManagement from "@/resources/components/AdminPage/CategoryManagement/CategoryManagement";
 
 export const router = createBrowserRouter([

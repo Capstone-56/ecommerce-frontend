@@ -1,6 +1,7 @@
 import api from "@/api";
 import { OrderStatus } from "@/domain/enum/orderStatus";
-import { OrderModel, OrderProductModel, TotalOrderModel, TotalWeeklyOrders } from "@/domain/models/OrderModel";
+import { OrderModel, OrderProductModel, OrderStatusModel, TotalOrderModel, TotalWeeklyOrders } from "@/domain/models/OrderModel";
+import { toast } from "react-toastify";
 
 export class OrderService {
   /**
@@ -71,6 +72,40 @@ export class OrderService {
       });
       return response.data.results;
 
+    } catch (error) {
+      console.error("Error getting product item by product id:", error);
+      throw error;
+    }
+  }
+
+  /**
+   * Gets the STRIPE details of a particular payment Intent.
+   * @returns The order status model containing STRIPE details..
+   */
+  async getStripeDetails(paymentIntent: string): Promise<OrderStatusModel> {
+    try {
+      const response = await api.get("/api/orderstatus", {
+        params:
+          { pi: paymentIntent }
+      });
+
+      return response.data;
+    } catch (error) {
+      console.error("Error getting product item by product id:", error);
+      throw error;
+    }
+  }
+
+  /**
+   * Updates an orders status. From processing to delivered and so forth.
+   */
+  async updateOrderStatus(requestBody: object): Promise<{ message: string }> {
+    try {
+      const response = await api.post("/api/order/update", requestBody);
+
+      console.log(response)
+      toast.success(response.data.message)
+      return response.data;
     } catch (error) {
       console.error("Error getting product item by product id:", error);
       throw error;
