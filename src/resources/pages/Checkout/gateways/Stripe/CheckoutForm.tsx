@@ -352,7 +352,7 @@ import {
             </Accordion>
           </Box>
 
-          {/* Shipping method selection */}
+          {/* Shipping method selection 
           <Typography variant="h6" sx={{ mb: 1 }}>
             Shipping Method
           </Typography>
@@ -390,7 +390,7 @@ import {
                 </RadioGroup>
               </FormControl>
             )}
-          </Box>
+          </Box>*/}
   
           {/* Payment form */}
           <Typography variant="h6">Payment</Typography>
