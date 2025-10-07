@@ -15,6 +15,7 @@ import placeholderImage from "/src/assets/ProductCard/product_card_placeholder.s
 import { Constants } from "@/domain/constants";
 import { cartState, authenticationState } from "@/domain/state";
 import { UpdateShoppingCartItemModel, ShoppingCartItemModel, LocalShoppingCartItemModel } from "@/domain/models/ShoppingCartItemModel";
+import { formatPrice } from "@/utilities/currency-utils";
 
 import { ShoppingCartService } from "@/services/shopping-cart-service";
 
@@ -28,7 +29,8 @@ const shoppingCartService = new ShoppingCartService();
  * The card component to display products when users view their cart. 
  */
 const CartProductCard: React.FC<ProductCardProps> = ({ cartItem }) => {
-  const { name, description, images, price } = cartItem.productItem.product;
+  const { name, description, images } = cartItem.productItem.product;
+  const { price, currency } = cartItem.productItem;
   const { authenticated } = authenticationState();
 
   // Unified cart state management for both user types
@@ -123,7 +125,7 @@ const CartProductCard: React.FC<ProductCardProps> = ({ cartItem }) => {
               </CardContent>
             </Grid>
 
-            {/* Price of Item. TODO: Swap with the products price type when available. */}
+            {/* Price of Item */}
             <Grid size={3}>
               <CardContent sx={{ py: 0.5, px: 1, textAlign: "right" }}>
                 <Typography
@@ -131,7 +133,7 @@ const CartProductCard: React.FC<ProductCardProps> = ({ cartItem }) => {
                   fontWeight={"bold"}
                   component="div"
                 >
-                  {price}
+                  {formatPrice(price, currency)}
                 </Typography>
               </CardContent>
             </Grid>

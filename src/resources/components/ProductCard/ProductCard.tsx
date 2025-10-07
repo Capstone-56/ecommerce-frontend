@@ -23,7 +23,7 @@ const ProductCard: React.FC<ProductCardProps> = ({
   width,
   height,
 }) => {
-  const { id, name, description, images, price } = product;
+  const { id, name, description, images, price, currency } = product;
   const navigate = useNavigate();
   /**
    * When clicked direct the user to the product's detail page.
@@ -100,7 +100,7 @@ const ProductCard: React.FC<ProductCardProps> = ({
             color: '#000',
           }}
         >
-          {formatPrice(price)}
+          {formatPrice(price, currency)}
         </Typography>
       </CardContent>
     </Card>

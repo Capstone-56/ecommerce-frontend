@@ -52,7 +52,7 @@ export default function ProductDetails() {
   const [itemSize, setItemSize] = useState<string>();
   const [qty, setQty] = useState<number>(1);
   const { id: productId = "null" } = useParams();
-  const { name, description, images, price, avgRating, featured } =
+  const { name, description, images, price, currency, avgRating, featured } =
     productDetails || {};
   const { addToCart } = cartState();
   const { authenticated } = authenticationState();
@@ -101,7 +101,7 @@ export default function ProductDetails() {
   async function handleAddToCart() {
     // Get the actual ProductItemModel data for both authenticated and unauthenticated users
     // TODO: construct productItemId by configurations
-    const productItems = await productItemService.getByProductId(productId);
+    const productItems = await productItemService.getByProductId(productId, userLocation, userCurrency);
     const selectedProductItem = productItems[0];
     
     if (authenticated) {
@@ -347,7 +347,7 @@ export default function ProductDetails() {
             </Typography>
 
             {/* retrieving price from backend now */}
-            {price && (
+            {price && currency && (
               <Typography
                 variant="caption"
                 sx={{
@@ -355,7 +355,7 @@ export default function ProductDetails() {
                   fontSize: "1.5rem",
                 }}
               >
-                {formatPrice(price)}
+                {formatPrice(price, currency)}
               </Typography>
             )}
 

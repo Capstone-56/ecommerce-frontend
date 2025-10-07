@@ -7,10 +7,8 @@ export interface ProductModel {
   images: Array<string> | null,
   featured: boolean,
   avgRating: number,
-  price: {
-    amount: number;
-    currency: string;
-  },  
+  price: number;
+  currency: string; // Changed from CurrencyModel to string
   variations: {
     [variationType: string]: string[];
   };
