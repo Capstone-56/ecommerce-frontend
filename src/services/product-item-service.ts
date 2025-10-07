@@ -51,14 +51,7 @@ export class ProductItemService {
         variantIds: variantIds,
       };
 
-      const params = new URLSearchParams();
-      if (userLocation) params.append("location", userLocation);
-      if (currency) params.append("currency", currency);
-
-      const queryString = params.toString();
-      const url = `/api/productItem/${productId}/retrieveByConfigurations${queryString ? `?${queryString}` : ''}`;
-      
-      const response = await api.post(url, model);
+      const response = await api.post(`/api/productItem/${productId}/retrieveByConfigurations`, model);
 
       return response.data;
     } catch (error) {
@@ -70,12 +63,24 @@ export class ProductItemService {
   /**
    * An endpoint to retrieve a set of related product items.
    * @param productId The ID of the product to get related product items for.
+   * @param userLocation User's location for filtering product items.
+   * @param currency User's preferred currency for pricing.
    * @returns A set of product items.
    */
-  async getProductItems(productId: string): Promise<ProductItemModel[]> {
+  async getProductItems(
+    productId: string,
+    userLocation?: string | null,
+    currency?: string | null
+  ): Promise<ProductItemModel[]> {
     try {
-      const baseUrl = `/api/productItem/${productId}/byProduct`;
-      const productItems = await api.get(baseUrl);
+      const params = new URLSearchParams();
+      if (userLocation) params.append("location", userLocation);
+      if (currency) params.append("currency", currency);
+
+      const queryString = params.toString();
+      const url = `/api/productItem/${productId}/byProduct${queryString ? `?${queryString}` : ''}`;
+      
+      const productItems = await api.get(url);
 
       return productItems.data;
     } catch (error) {
