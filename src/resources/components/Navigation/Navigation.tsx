@@ -380,6 +380,19 @@ const Navbar: React.FC = () => {
                     horizontal: "right",
                   }}
                 >
+                  { 
+                    isAuthenticated && 
+                    (userInformation?.role === Role.ADMIN || userInformation?.role === Role.MANAGER) &&
+
+                    <MenuItem
+                      component={RouterLink}
+                      to={Constants.ADMIN_DASHBOARD_ROUTE}
+                      onClick={handleProfileMenuClose}
+                    >
+                      Admin Dashboard
+                    </MenuItem>
+                  }
+
                   <MenuItem
                     component={RouterLink}
                     to={Constants.PROFILE_ROUTE}
@@ -387,6 +400,7 @@ const Navbar: React.FC = () => {
                   >
                     Profile
                   </MenuItem>
+
                   <MenuItem onClick={handleLogout}>Logout</MenuItem>
                 </Menu>
               </>
