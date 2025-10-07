@@ -12,6 +12,7 @@ interface ProductCardProps {
   width: string;
   /* The height to set the product card. */
   height: string;
+  onClickCallback?: () => void;
 }
 
 /**
@@ -22,6 +23,7 @@ const ProductCard: React.FC<ProductCardProps> = ({
   product,
   width,
   height,
+  onClickCallback
 }) => {
   const { id, name, description, images, price, currency } = product;
   const navigate = useNavigate();
@@ -29,8 +31,8 @@ const ProductCard: React.FC<ProductCardProps> = ({
    * When clicked direct the user to the product's detail page.
    */
   const handleClick = () => {
-    // window.location.href = `/products/${id}/details`;
     navigate(`/products/${id}/details`);
+    window.scrollTo(0, 0);
   };
 
   // Currently choose the first image, otherwise if no image specified display a placeholder image.
@@ -51,7 +53,7 @@ const ProductCard: React.FC<ProductCardProps> = ({
         overflow: "hidden",
         boxShadow: "none",
       }}
-      onClick={handleClick}
+      onClick={onClickCallback ? onClickCallback : handleClick}
     >
       {/* product image */}
       <Box sx={{ flexGrow: 1 }}>
@@ -92,11 +94,11 @@ const ProductCard: React.FC<ProductCardProps> = ({
             {product.variations.Color.length > 1 ? "s" : ""}
           </Typography>
         )}
-        <Typography 
-          variant="subtitle1" 
-          sx={{ 
+        <Typography
+          variant="subtitle1"
+          sx={{
             fontWeight: 'bold',
-            mt: 1, 
+            mt: 1,
             color: '#000',
           }}
         >

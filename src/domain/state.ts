@@ -12,6 +12,11 @@ type cartStore = {
   cart: Array<LocalShoppingCartItemModel>;
 
   /**
+   * Flag to track if cart has been loaded from API for authenticated users.
+   */
+  cartLoaded: boolean;
+
+  /**
    * A function to insert a selected cart item into the cart state.
    * @param cartItem The cart item to add to the cart.
    * @returns A cart containing the selected item.
@@ -50,6 +55,11 @@ type cartStore = {
    * @returns The cart item if found.
    */
   getCartItem: (cartItemId: string) => LocalShoppingCartItemModel | undefined;
+
+  /**
+   * A function to mark cart as loaded from API.
+   */
+  setCartLoaded: (loaded: boolean) => void;
 };
 
 type AuthenticationStore = {
@@ -75,6 +85,14 @@ type UserStore = {
    */
   userName: string | null;
   /**
+   * User's ID
+   */
+  id: number | null;
+  /**
+   * The user's detailed information.
+   */
+  userInformation: any | null;
+  /**
    * A function to set the user's role.
    * @param role The role to be set.
    */
@@ -83,6 +101,14 @@ type UserStore = {
    * A function to set the user's username.
    */
   setUserName: (userName: string) => void;
+  /**
+   * Function to set current user's id, should only be used upon login/signup
+   */
+  setId: (id: number) => void;
+  /**
+   * A function to set the user's detailed information.
+   */
+  setUserInformation: (userInformation: any) => void;
 }
 
 type LocationStore = {
@@ -124,6 +150,7 @@ export const cartState = create<cartStore>()(
   persist(
     (set, get) => ({
       cart: [],
+      cartLoaded: false,
 
       addToCart: (cartItem: LocalShoppingCartItemModel) => {
         // Check if product already exists in cart by product item ID
@@ -174,13 +201,15 @@ export const cartState = create<cartStore>()(
         })),
 
       setCart: (cartItems: Array<LocalShoppingCartItemModel>) =>
-        set({ cart: cartItems }),
+        set({ cart: cartItems, cartLoaded: true }),
 
-      clearCart: () => set({ cart: [] }),
+      clearCart: () => set({ cart: [], cartLoaded: false }),
       
       getCartItem: (cartItemId: string) => {
         return get().cart.find((item) => item.id === cartItemId);
       },
+
+      setCartLoaded: (loaded: boolean) => set({ cartLoaded: loaded }),
     }),
     {
       name: Constants.LOCAL_STORAGE_CART_STORAGE,
@@ -225,8 +254,12 @@ export const userState = create<UserStore>()(
     (set) => ({
       role: Role.CUSTOMER,
       userName: null,
+      id: null,
+      userInformation: null,
       setRole: (role: Role) => set({ role }),
-      setUserName: (userName: string) => set({ userName })
+      setUserName: (userName: string) => set({ userName }),
+      setId: (id: number) => set ({ id }),
+      setUserInformation: (userInformation: any) => set({ userInformation })
     }),
     {
       name: Constants.LOCAL_STORAGE_USER_STORAGE,

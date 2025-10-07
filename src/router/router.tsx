@@ -17,14 +17,15 @@ import AdminProfile from "@/resources/pages/Profile/AdminProfile";
 import Analytics from "@/resources/components/AdminPage/Analytics";
 import AdminDashboard from "@/resources/components/AdminPage/AdminDashboard/AdminDashboard";
 import ProductManagement from "@/resources/components/AdminPage/ProductManagement/ProductManagement";
-import VendorManagement from "@/resources/components/AdminPage/VendorManagement";
-import CustomerSupport from "@/resources/components/AdminPage/CustomerSupport";
-import AdminSettings from "@/resources/components/AdminPage/AdminSettings";
+import AdminSettings from "@/resources/components/AdminPage/Settings/AdminSettings";
+import CreateAdminAccount from "@/resources/components/AdminPage/Settings/CreateAdminAccount";
 import Payment from "@/resources/pages/Checkout/Payment";
 import { Constants } from "@/domain/constants";
 import AddProduct from "@/resources/components/AdminPage/ProductManagement/AddProduct/AddProduct";
 import OrderComplete from "@/resources/pages/Checkout/OrderComplete";
-import EditProduct from "@/resources/components/AdminPage/ProductManagement/EditProduct";
+import OrderHistory from "@/resources/components/AdminPage/OrderHistory/OrderHistory";
+import EditProduct from "@/resources/components/AdminPage/ProductManagement/EditProduct/EditProduct";
+import CategoryManagement from "@/resources/components/AdminPage/CategoryManagement/CategoryManagement";
 
 export const router = createBrowserRouter([
   {
@@ -103,16 +104,28 @@ export const router = createBrowserRouter([
         element: <EditProduct />
       },
       {
-        path: "vendor/management",
-        element: <VendorManagement />
+        path: "category",
+        element: <CategoryManagement />
       },
       {
-        path: "support",
-        element: <CustomerSupport />
+        path: "category/management/add",
+        element: <div>Add Category (Coming Soon)</div>
+      },
+      {
+        path: "category/management/:internalName",
+        element: <div>Edit Category (Coming Soon)</div>
+      },
+      {
+        path: "orders",
+        element: <OrderHistory />
       },
       {
         path: "settings",
         element: <AdminSettings />
+      },
+      {
+        path: "settings/create-admin",
+        element: <CreateAdminAccount />
       },
     ]
   },

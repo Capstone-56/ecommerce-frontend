@@ -11,6 +11,14 @@ export interface UserModel {
   role: Role;
 }
 
+export interface GuestUserModel {
+  readonly id: string;
+  email: string;
+  firstName: string;
+  lastName: string;
+  phone: string;
+}
+
 export interface UserSignUpModel extends Omit<UserModel, "id"> {
   id?: string;
   password: string;

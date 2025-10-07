@@ -16,11 +16,14 @@ import AddCircleIcon from '@mui/icons-material/AddCircle';
 import { useEffect, useState } from "react";
 import { CategoryModel } from "@/domain/models/CategoryModel";
 import { CategoryService } from "@/services/category-service";
-import { Location } from "@/domain/enum/location";
 import { FileWithPreview } from "./AddProduct";
+import { LocationService } from "@/services/location-service";
+import { LocationModel } from "@/domain/models/LocationModel";
 
 const categoryService = new CategoryService();
-const VisuallyHiddenInput = styled('input')({
+const locationService = new LocationService();
+
+export const VisuallyHiddenInput = styled('input')({
   clip: 'rect(0 0 0 0)',
   clipPath: 'inset(50%)',
   height: 1,
@@ -31,7 +34,6 @@ const VisuallyHiddenInput = styled('input')({
   whiteSpace: 'nowrap',
   width: 1,
 });
-
 
 interface ProductInformationProps {
   productName: string,
@@ -56,6 +58,7 @@ interface ProductInformationProps {
  */
 export default function ProductInformation(props: ProductInformationProps) {
   const [listOfCategories, setListOfCategories] = useState<CategoryModel[]>();
+  const [listOfLocations, setListOfLocations] = useState<LocationModel[]>();
   const [selectedIndex, setSelectedIndex] = useState<number>(0);
   const [preview, setPreview] = useState<string>("");
 
@@ -72,6 +75,7 @@ export default function ProductInformation(props: ProductInformationProps) {
    */
   const fetchRequiredInformation = async () => {
     setListOfCategories(await categoryService.listCategories());
+    setListOfLocations(await locationService.getLocations());
   }
 
   /**
@@ -403,9 +407,9 @@ export default function ProductInformation(props: ProductInformationProps) {
                   <MenuItem key={"initial"} value={"initial"} disabled>
                     Choose listing location...
                   </MenuItem>
-                  {Object.entries(Location).map(([key, value]) => (
-                    <MenuItem key={key} value={key}>
-                      {value}
+                  {listOfLocations && listOfLocations.map((location) => (
+                    <MenuItem key={location.country_code} value={location.country_code}>
+                      {location.country_name}
                     </MenuItem>
                   ))}
                 </TextField>
