@@ -69,12 +69,16 @@ export class ProductService {
    * @param userLocation Optional location filter for products.
    * @returns A set of featured products.
    */
-  async getFeaturedProducts(userLocation?: string | null): Promise<ProductModel[]> {
+  async getFeaturedProducts(
+    userLocation?: string | null
+  ): Promise<ProductModel[]> {
     try {
       const params = new URLSearchParams();
       if (userLocation) params.append("location", userLocation);
 
-      const baseUrl = `/api/product/featured${params.toString() ? `?${params.toString()}` : ''}`;
+      const baseUrl = `/api/product/featured${
+        params.toString() ? `?${params.toString()}` : ""
+      }`;
       const products = await api.get(baseUrl);
 
       return products.data;
@@ -89,12 +93,17 @@ export class ProductService {
    * @param userLocation Optional location filter for products.
    * @returns A set of related products.
    */
-  async getRelatedProducts(productId?: string, userLocation?: string | null): Promise<ProductModel[]> {
+  async getRelatedProducts(
+    productId?: string,
+    userLocation?: string | null
+  ): Promise<ProductModel[]> {
     try {
       const params = new URLSearchParams();
       if (userLocation) params.append("location", userLocation);
 
-      const baseUrl = `/api/product/${productId}/related${params.toString() ? `?${params.toString()}` : ''}`;
+      const baseUrl = `/api/product/${productId}/related${
+        params.toString() ? `?${params.toString()}` : ""
+      }`;
       const relatedProducts = await api.get(baseUrl);
 
       return relatedProducts.data;
@@ -125,8 +134,8 @@ export class ProductService {
         stock: permutation.stock,
         price: price,
         imageUrls: [],
-        variations: variations[idx]
-      }))
+        variations: variations[idx],
+      }));
 
       const formData = new FormData();
 
@@ -152,7 +161,6 @@ export class ProductService {
       });
 
       return response.status;
-
     } catch (error) {
       return Promise.reject(error);
     }
@@ -162,10 +170,13 @@ export class ProductService {
    * An endpoint to partially update a particular product.
    * @param productId   The ID of the product to be updated.
    * @param requestBody A JSON object containing the appropriate fields to create
-  *                     a new product item.
+   *                     a new product item.
    * @returns A HTTP status.
    */
-  async updateProductPartial(productId: string, requestBody: object): Promise<number> {
+  async updateProductPartial(
+    productId: string,
+    requestBody: object
+  ): Promise<number> {
     try {
       const baseUrl = `/api/product/${productId}`;
 
@@ -179,11 +190,14 @@ export class ProductService {
 
   /**
    * An endpoint to upload an for a product.
-   * @param image     The Image to be uploaded.   
+   * @param image     The Image to be uploaded.
    * @param productId The ID of the product for which the image is intended for.
    * @returns An image URL along with a HTTP status.
    */
-  async uploadImage(image: File, productId: string): Promise<{ imageURL: string, status: number }> {
+  async uploadImage(
+    image: File,
+    productId: string
+  ): Promise<{ imageURL: string; status: number }> {
     try {
       const baseUrl = `/api/product/${productId}/upload/image`;
       const formData = new FormData();
@@ -197,6 +211,20 @@ export class ProductService {
       });
 
       return { imageURL: response.data, status: response.status };
+    } catch (error) {
+      return Promise.reject(error);
+    }
+  }
+
+  /**
+   * An endpoint to soft delete a product.
+   * @param productId The ID of the product to soft delete
+   * @returns 204
+   */
+  async deleteProduct(productId: string) {
+    try {
+      const baseUrl = `/api/product/${productId}`;
+      await api.delete(baseUrl);
     } catch (error) {
       return Promise.reject(error);
     }
