@@ -12,6 +12,7 @@ import {
 } from "@mui/material";
 import CheckCircleOutlineIcon from "@mui/icons-material/CheckCircleOutline";
 import ErrorOutlineIcon from "@mui/icons-material/ErrorOutline";
+import { formatCurrency } from "@/utilities/currency-utils";
 import api from "@/api";
 
 type Status = "pending" | "paid" | "failed";
@@ -159,8 +160,7 @@ export default function OrderComplete() {
         </Typography>
         {typeof data.amount === "number" && data.currency ? (
           <Typography variant="body1" color="text.secondary">
-            Charged <strong>{(data.amount / 100).toFixed(2)}</strong>{" "}
-            <strong>{data.currency.toUpperCase()}</strong>.
+            Charged <strong>{formatCurrency(data.amount / 100, data.currency)}</strong>.
           </Typography>
         ) : null}
         <Divider sx={{ width: "100%", my: 2 }} />
