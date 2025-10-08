@@ -2,6 +2,7 @@ import { create } from "zustand";
 import { persist, createJSONStorage } from "zustand/middleware";
 import { Constants } from "./constants";
 import { LocalShoppingCartItemModel } from "./models/ShoppingCartItemModel";
+import { UserModel } from "./models/UserModel";
 import { Role } from "./enum/role";
 import { COUNTRY_CURRENCY_MAP } from "./enum/currency";
 
@@ -91,7 +92,7 @@ type UserStore = {
   /**
    * The user's detailed information.
    */
-  userInformation: any | null;
+  userInformation: UserModel | null;
   /**
    * A function to set the user's role.
    * @param role The role to be set.
@@ -108,7 +109,7 @@ type UserStore = {
   /**
    * A function to set the user's detailed information.
    */
-  setUserInformation: (userInformation: any) => void;
+  setUserInformation: (userInformation: UserModel) => void;
 }
 
 type LocationStore = {
