@@ -47,7 +47,7 @@ interface StockInformationProps {
   productDescription: string,
   price: number,
   images: FileWithPreview[],
-  location: string,
+  locations: string[],
   featured: string
 }
 
@@ -243,7 +243,7 @@ export default function StockInformation(props: StockInformationProps) {
       props.featured,
       props.images,
       props.price,
-      props.location,
+      props.locations,
       permutations,
       allVariations
     );

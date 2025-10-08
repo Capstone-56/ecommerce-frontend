@@ -2,11 +2,15 @@ import {
   Button,
   Card,
   CardMedia,
+  Checkbox,
   FormControlLabel,
   Grid,
+  ListItemText,
   MenuItem,
+  OutlinedInput,
   Radio,
   RadioGroup,
+  Select,
   TextField,
   Typography,
 } from "@mui/material";
@@ -20,6 +24,7 @@ import { LocationModel } from "@/domain/models/LocationModel";
 import { StatusCodes } from "http-status-codes";
 import { toast } from "react-toastify";
 import ModifyImages from "@/resources/components/ModifyImages/ModifyImages";
+import { isEqual } from "lodash";
 
 export interface EditGeneralInformationProps {
   product: ProductModel
@@ -74,7 +79,7 @@ export default function EditGeneralInformation(props: EditGeneralInformationProp
       props.draft.price !== props.product.price ||
       props.draft.featured !== props.product.featured ||
       props.draft.category !== props.product.category ||
-      props.draft.locations?.[0] !== props.product.locations?.[0]
+      !isEqual(props.draft.locations, props.product.locations)
     );
   };
 
@@ -187,22 +192,55 @@ export default function EditGeneralInformation(props: EditGeneralInformationProp
               </Grid>
 
               <Grid size={{ xs: 12, sm: 6 }}>
-                <Typography>Location</Typography>
-                <TextField
-                  select
-                  value={props.draft.locations && listOfLocations ? props.draft.locations[0] : ""}
-                  onChange={(e) =>
-                    props.setDraft((prev) => ({ ...prev, locations: [e.target.value] }))
-                  }
+                <Typography>Location Availability</Typography>
+                <Select
                   disabled={isDisabled}
+                  multiple
+                  displayEmpty
                   fullWidth
+                  value={props.draft.locations ?? []}
+                  onChange={(event) => {
+                    const {
+                      target: { value },
+                    } = event;
+
+                    const newLocations = typeof value === 'string' ? value.split(',') : value;
+
+                    props.setDraft((prev) => ({
+                      ...prev,
+                      locations: newLocations,
+                    }));
+                  }}
+                  renderValue={(selected) => {
+                    if (selected.length === 0) {
+                      return (
+                        <Typography fontStyle="italic" color="textDisabled">
+                          Choose a location
+                        </Typography>
+                      );
+                    }
+
+                    return (
+                      <Typography
+                        sx={{
+                          overflow: 'hidden',
+                          textOverflow: 'ellipsis',
+                          whiteSpace: 'nowrap',
+                        }}
+                      >
+                        {selected.join(', ')}
+                      </Typography>
+                    );
+                  }}
+                  input={<OutlinedInput label="Tag" />}
                 >
-                  {(listOfLocations ?? []).map((option) => (
-                    <MenuItem key={option.country_code} value={option.country_code}>
-                      {option.country_name}
+                  {(listOfLocations ?? []).map((location) => (
+                    <MenuItem key={location.country_code} value={location.country_code}>
+                      <Checkbox checked={props.draft.locations?.includes(location.country_code) || false} />
+                      <ListItemText primary={location.country_name} />
                     </MenuItem>
                   ))}
-                </TextField>
+                </Select>
               </Grid>
 
               <Grid size={12} display="flex" justifyContent="flex-end">

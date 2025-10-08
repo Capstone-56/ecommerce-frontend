@@ -114,7 +114,7 @@ export class ProductService {
     featured: string,
     images: FileWithPreview[],
     price: number,
-    location: string,
+    locations: string[],
     permutations: Record<string, string>[],
     variations: Record<string, string>[][]
   ): Promise<number> {
@@ -135,7 +135,10 @@ export class ProductService {
       formData.append("description", productDescription);
       formData.append("featured", String(featured));
       formData.append("category", category);
-      formData.append("location", location);
+
+      locations.forEach((location) => {
+        formData.append("locations", location)
+      })
 
       // Images (append each file separately).
       images.forEach((file) => {
