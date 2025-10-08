@@ -5,9 +5,13 @@ import {
   CardContent,
   FormControlLabel,
   Grid,
+  ListItemText,
   MenuItem,
+  OutlinedInput,
   Radio,
   RadioGroup,
+  Select,
+  SelectChangeEvent,
   styled,
   TextField,
   Typography
@@ -19,6 +23,7 @@ import { CategoryService } from "@/services/category-service";
 import { FileWithPreview } from "./AddProduct";
 import { LocationService } from "@/services/location-service";
 import { LocationModel } from "@/domain/models/LocationModel";
+import Checkbox from '@mui/material/Checkbox';
 
 const categoryService = new CategoryService();
 const locationService = new LocationService();
@@ -44,8 +49,8 @@ interface ProductInformationProps {
   setCategory: (v: string) => void,
   price: number,
   setPrice: (v: number) => void,
-  location: string,
-  setLocation: (v: string) => void,
+  locations: string[],
+  setLocations: (v: string[]) => void,
   files: FileWithPreview[],
   setFiles: React.Dispatch<React.SetStateAction<FileWithPreview[]>>,
   featured: string,
@@ -117,6 +122,21 @@ export default function ProductInformation(props: ProductInformationProps) {
     props.setFiles(props.files.filter((_, i) => i !== selectedIndex));
     setPreview("");
   }
+
+  /**
+   * Helper function to append chosen locations to then be sent.
+   * @param event The checkbox selection.
+   */
+  const handleLocationSelection = (event: SelectChangeEvent<typeof props.locations>) => {
+    const {
+      target: { value },
+    } = event;
+
+    props.setLocations(
+      // On autofill we get a stringified value.
+      typeof value === 'string' ? value.split(',') : value,
+    );
+  };
 
   return (
     <Box>
@@ -397,22 +417,36 @@ export default function ProductInformation(props: ProductInformationProps) {
               <CardContent>
                 <Typography variant={"body1"} pb={2} fontSize={18} fontWeight={"bold"}>Location</Typography>
                 <Typography variant={"body1"} pb={1}>Location of Product</Typography>
-                <TextField
-                  select
-                  value={props.location}
-                  onChange={(e) => { console.log(e.target.value); props.setLocation(e.target.value) }}
-                  sx={{ pb: 2, minWidth: "33%", mr: "10px" }}
+                <Select
+                  multiple
+                  displayEmpty
+                  value={props.locations}
                   fullWidth
+                  onChange={handleLocationSelection}
+                  renderValue={(selected) => {
+                    if (selected.length === 0) {
+                      return <Typography fontStyle={"italic"} color={"textDisabled"}>Choose a location</Typography>;
+                    }
+
+                    return (
+                      <Typography sx={{
+                        overflow: 'hidden',
+                        textOverflow: 'ellipsis',
+                        whiteSpace: 'nowrap',
+                      }}>
+                        {selected.join(', ')}
+                      </Typography>
+                    )
+                  }}
+                  input={<OutlinedInput label="Tag" />}
                 >
-                  <MenuItem key={"initial"} value={"initial"} disabled>
-                    Choose listing location...
-                  </MenuItem>
                   {listOfLocations && listOfLocations.map((location) => (
                     <MenuItem key={location.country_code} value={location.country_code}>
-                      {location.country_name}
+                      <Checkbox checked={props.locations.includes(location.country_code)} />
+                      <ListItemText primary={location.country_name} />
                     </MenuItem>
                   ))}
-                </TextField>
+                </Select>
               </CardContent>
             </Card>
           </Grid>
