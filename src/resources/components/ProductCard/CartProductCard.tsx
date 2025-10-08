@@ -30,7 +30,8 @@ const shoppingCartService = new ShoppingCartService();
  */
 const CartProductCard: React.FC<ProductCardProps> = ({ cartItem }) => {
   const { name, description, images } = cartItem.productItem.product;
-  const { price, currency } = cartItem.productItem;
+  const { price, currency } = cartItem.productItem.product;
+  
   const { authenticated } = authenticationState();
 
   // Unified cart state management for both user types
