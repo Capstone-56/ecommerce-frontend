@@ -141,7 +141,7 @@ export default function OrderComplete() {
                   </Grid>
                   <Grid size={{xs:"auto"}}>
                     <Typography variant="body1" fontWeight="medium">
-                      ${(item.price * item.quantity).toFixed(2)}
+                      {formatCurrency(item.price * item.quantity, data.currency || 'USD')}
                     </Typography>
                   </Grid>
                 </Grid>
@@ -179,7 +179,7 @@ export default function OrderComplete() {
             Total
           </Typography>
           <Typography variant="h6" fontWeight="bold">
-            ${order.totalPrice.toFixed(2)} {data.currency?.toUpperCase()}
+            {formatCurrency(order.totalPrice, data.currency || 'USD')}
           </Typography>
         </Box>
       </Box>
@@ -257,7 +257,7 @@ export default function OrderComplete() {
         </Typography>
         {data.order ? (
           <Typography variant="body1" color="text.secondary">
-            Order <strong>#{data.order.id.slice(-8)}</strong> has been confirmed.
+            Order <strong>{data.order.id}</strong> has been confirmed.
           </Typography>
         ) : null}
         <OrderSummary data={data} />
