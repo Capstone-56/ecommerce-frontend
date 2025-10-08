@@ -256,7 +256,7 @@ export default function OrderComplete() {
         </Typography>
         {data.order ? (
           <Typography variant="body1" color="text.secondary">
-            Order <strong>#{data.order.id.slice(-8)}</strong> has been confirmed.
+            Order <strong>{data.order.id}</strong> has been confirmed.
           </Typography>
         ) : null}
         <OrderSummary data={data} />
