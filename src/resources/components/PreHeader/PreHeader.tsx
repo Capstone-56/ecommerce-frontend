@@ -40,7 +40,7 @@ const PreHeader: React.FC = () => {
       sx={{
         backgroundColor: "#F8F8F8",
         py: 0.5,
-        px: 2,
+        px: 3,
         borderBottom: `1px solid ${grey[300]}`,
       }}
     >
@@ -111,7 +111,7 @@ const PreHeader: React.FC = () => {
           {/* Currency display */}
           {userCurrency && (
             <>
-              <Typography variant="body2" color="text.primary" sx={{ fontWeight: 500 }}>
+              <Typography variant="body2" color="text.secondary" sx={{ fontWeight: 500 }}>
                 {userCurrency}
               </Typography>
             </>

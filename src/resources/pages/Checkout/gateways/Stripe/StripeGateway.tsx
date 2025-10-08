@@ -64,7 +64,7 @@ const StripeGateway = () => {
             currency: currency.toLowerCase(),
             country: userLocation ? userLocation.toLowerCase() : undefined,
             cart: cart.map((ci) => ({
-              product: { id: ci.productItem.product.id },
+              product: { id: ci.productItem.id },
               quantity: ci.quantity,
             })),
           },

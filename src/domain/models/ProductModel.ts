@@ -7,11 +7,11 @@ export interface ProductModel {
   images: Array<string> | null,
   featured: boolean,
   avgRating: number,
-  price: {
-    amount: number;
-    currency: string;
-  },  
+  price: number,
+  currency: string,
   variations: {
     [variationType: string]: string[];
-  };
+  },
+  category: string,
+  locations: Array<string>
 };

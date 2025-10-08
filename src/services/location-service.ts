@@ -1,5 +1,5 @@
 import api from "@/api";
-import { Constants } from "@/domain/constants";
+import { LocationModel } from "@/domain/models/LocationModel";
 
 export interface LocationResult {
   success: boolean;
@@ -40,16 +40,25 @@ export class LocationService {
 
       // Get user's coordinates
       const position = await this.getCurrentPosition();
-      
+
       // Convert coordinates to country code
       const countryCode = await this.coordinatesToCountry(position);
-      
+
       return {
         success: true,
         countryCode,
       };
     } catch (error) {
       console.error("Failed to get current location:", error);
+      
+      // Handle specific geolocation errors
+      if (error instanceof Error && error.message === "Location access denied by user") {
+        return {
+          success: false,
+          error: "Permission denied",
+        };
+      }
+      
       return {
         success: false,
         error: error instanceof Error ? error.message : "Unknown error occurred",
@@ -119,8 +128,20 @@ export class LocationService {
    */
   public isValidCountryCode(countryCode: string): boolean {
     // Basic validation - country codes are typically 2 characters
-    return typeof countryCode === "string" && 
-           countryCode.length === 2 && 
-           /^[a-zA-Z]{2}$/.test(countryCode);
+    return typeof countryCode === "string" &&
+      countryCode.length === 2 &&
+      /^[a-zA-Z]{2}$/.test(countryCode);
+  }
+
+  /**
+   * Retrieves all current locations available for products.
+   */
+  async getLocations(): Promise<LocationModel[]> {
+    try {
+      const response = await api.get("/api/location")
+      return response.data;
+    } catch (error) {
+      throw new Error("Failed to get product locations.");
+    }
   }
 }

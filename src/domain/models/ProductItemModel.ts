@@ -6,5 +6,5 @@ export interface ProductItemModel {
   sku: string;
   stock: number;
   price: number;
-  imageUrls: string[];
+  currency: string; // Changed from CurrencyModel to string
 }

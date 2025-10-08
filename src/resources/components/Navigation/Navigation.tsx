@@ -63,8 +63,12 @@ const Navbar: React.FC = () => {
   // Global store state
   const isAuthenticated = authenticationState((state) => state.authenticated);
   const username = userState((state) => state.userName);
+  const userInformation = userState((state) => state.userInformation);
+  const setUserInformation = userState((state) => state.setUserInformation);
   const cart = cartState((state) => state.cart);
+  const cartLoaded = cartState((state) => state.cartLoaded);
   const setCart = cartState((state) => state.setCart);
+  const setCartLoaded = cartState((state) => state.setCartLoaded);
   const clearCart = cartState((state) => state.clearCart);
   const cartCount = cart.length;
 
@@ -72,9 +76,6 @@ const Navbar: React.FC = () => {
   const [mobileDrawerOpen, setMobileDrawerOpen] = useState(false);
   const [searchDrawerOpen, setSearchDrawerOpen] = useState(false);
   const [profileAnchorEl, setProfileAnchorEl] = useState<null | HTMLElement>(null);
-
-  // User state
-  const [userInformation, setUserInformation] = useState(null);
 
   // Category state
   const [categories, setCategories] = useState<CategoryModel[]>([]);
@@ -116,8 +117,8 @@ const Navbar: React.FC = () => {
 
   // Cart effects & helpers
   const loadCartData = useCallback(async () => {
-    if (isAuthenticated) {
-      // Authenticated users: Load cart from API into Zustand store
+    if (isAuthenticated && !cartLoaded) {
+      // Authenticated users: Load cart from API into Zustand store only if not already loaded
       try {
         const cartItems = await shoppingCartService.getShoppingCart();
 
@@ -134,12 +135,15 @@ const Navbar: React.FC = () => {
       }
     }
     // Unauthenticated users: cart data is already in Zustand store (persisted)
-  }, [isAuthenticated, setCart, clearCart]);
+  }, [isAuthenticated, cartLoaded, setCart, clearCart]);
 
   useEffect(() => {
     // Listen for cart updates from other components
     const handleCartUpdate = () => {
-      loadCartData();
+      if (isAuthenticated) {
+        setCartLoaded(false); // Reset loaded state to allow fresh fetch
+        loadCartData();
+      }
     };
     window.addEventListener(Constants.EVENT_CART_UPDATED, handleCartUpdate);
 
@@ -147,19 +151,30 @@ const Navbar: React.FC = () => {
     return () => {
       window.removeEventListener(Constants.EVENT_CART_UPDATED, handleCartUpdate);
     };
-  }, [loadCartData]);
+  }, [isAuthenticated, loadCartData, setCartLoaded]);
 
   // User effects & handlers
   const fetchUser = useCallback(async () => {
-    if (username) {
+    if (username && !userInformation) {
+      console.log("fetching user", username);
       setUserInformation(await userService.getUser(username));
     }
-  }, [username]);
+  }, [username, userInformation, setUserInformation]);
 
   useEffect(() => {
     fetchUser();
     loadCartData();
   }, [fetchUser, loadCartData]);
+
+  // Reset cart loaded state when authentication changes
+  const prevAuthRef = React.useRef(isAuthenticated);
+  useEffect(() => {
+    // Only reset if authentication state actually changed
+    if (prevAuthRef.current !== isAuthenticated) {
+      setCartLoaded(false);
+      prevAuthRef.current = isAuthenticated;
+    }
+  }, [isAuthenticated, setCartLoaded]);
 
   const handleProfileMenuOpen = (event: React.MouseEvent<HTMLElement>) => {
     setProfileAnchorEl(event.currentTarget);
@@ -177,6 +192,8 @@ const Navbar: React.FC = () => {
         authenticationState.setState({ authenticated: false });
         userState.setState({ role: Role.CUSTOMER });
         userState.setState({ userName: null });
+        userState.setState({ id: null });
+        userState.setState({ userInformation: null });
         clearCart(); // Clear cart data on logout
         navigate(Constants.HOME_ROUTE);
       }

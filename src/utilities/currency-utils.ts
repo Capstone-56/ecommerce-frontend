@@ -25,13 +25,15 @@ export function formatCurrency(amount: number, currency: string): string {
 }
 
 /**
- * Formats a price object with amount and currency properties.
- * @param price Object containing amount and currency, or null/undefined
- * @returns Formatted currency string or 'no currency available' if price is invalid
+ * Formats a price with the given amount and currency.
+ * @param amount The numeric price amount
+ * @param currency The currency code (e.g., 'USD', 'EUR')
+ * @returns Formatted currency string or 'no currency available' if invalid
  */
-export function formatPrice(price: { amount: number; currency: string } | null | undefined): string {
-    if (!price || !price.currency) {
-      return 'no currency available';
-    }
-    return formatCurrency(price.amount, price.currency);
+export function formatPrice(amount: number, currency: string): string {
+    // Example with "Price not available"
+if (amount == null || !currency) {
+  return 'Price not available';
+}
+    return formatCurrency(amount, currency);
   }
