@@ -36,6 +36,7 @@ import { ProductService } from "@/services/product-service";
 import { StatusCodes } from "http-status-codes";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
+import ProcessingDialog from "@/resources/components/ProcessingDialog/ProcessDialog";
 
 const variationService = new VariationService();
 const productService = new ProductService();
@@ -46,7 +47,7 @@ interface StockInformationProps {
   productDescription: string,
   price: number,
   images: FileWithPreview[],
-  location: string,
+  locations: string[],
   featured: string
 }
 
@@ -61,6 +62,7 @@ export default function StockInformation(props: StockInformationProps) {
   const [removedPermutations, setRemovedPermutations] = useState<Record<string, string>[]>([]);
   const [selectedRemoved, setSelectedRemoved] = useState<Record<string, string>[]>([]);
   const [open, setOpen] = useState(false);
+  const [openDialog, setOpenDialog] = useState(false);
   const navigate = useNavigate();
 
   /**
@@ -232,6 +234,8 @@ export default function StockInformation(props: StockInformationProps) {
       }))
     );
 
+    setOpenDialog(true);
+
     const response = await productService.addProduct(
       props.productName,
       props.productDescription,
@@ -239,17 +243,16 @@ export default function StockInformation(props: StockInformationProps) {
       props.featured,
       props.images,
       props.price,
-      props.location,
+      props.locations,
       permutations,
       allVariations
     );
 
     if (response == StatusCodes.CREATED) {
+      setOpenDialog(false);
       toast.success("Product added successfully");
       navigate("/admin/product/management");
     }
-
-
   }, [permutations, chosenVariations])
 
   /**
@@ -486,6 +489,7 @@ export default function StockInformation(props: StockInformationProps) {
           </span>
         </Tooltip>
       </Box>
+      <ProcessingDialog openDialog={openDialog} dialogHeading={"Processing new product"} />
     </Box >
   )
 }

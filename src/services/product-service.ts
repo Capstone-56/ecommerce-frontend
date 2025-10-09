@@ -114,7 +114,7 @@ export class ProductService {
     featured: string,
     images: FileWithPreview[],
     price: number,
-    location: string,
+    locations: string[],
     permutations: Record<string, string>[],
     variations: Record<string, string>[][]
   ): Promise<number> {
@@ -135,7 +135,10 @@ export class ProductService {
       formData.append("description", productDescription);
       formData.append("featured", String(featured));
       formData.append("category", category);
-      formData.append("location", location);
+
+      locations.forEach((location) => {
+        formData.append("locations", location)
+      })
 
       // Images (append each file separately).
       images.forEach((file) => {
@@ -153,6 +156,50 @@ export class ProductService {
 
       return response.status;
 
+    } catch (error) {
+      return Promise.reject(error);
+    }
+  }
+
+  /**
+   * An endpoint to partially update a particular product.
+   * @param productId   The ID of the product to be updated.
+   * @param requestBody A JSON object containing the appropriate fields to create
+  *                     a new product item.
+   * @returns A HTTP status.
+   */
+  async updateProductPartial(productId: string, requestBody: object): Promise<number> {
+    try {
+      const baseUrl = `/api/product/${productId}`;
+
+      const productItems = await api.patch(baseUrl, requestBody);
+
+      return productItems.status;
+    } catch (error) {
+      return Promise.reject(error);
+    }
+  }
+
+  /**
+   * An endpoint to upload an for a product.
+   * @param image     The Image to be uploaded.   
+   * @param productId The ID of the product for which the image is intended for.
+   * @returns An image URL along with a HTTP status.
+   */
+  async uploadImage(image: File, productId: string): Promise<{ imageURL: string, status: number }> {
+    try {
+      const baseUrl = `/api/product/${productId}/upload/image`;
+      const formData = new FormData();
+
+      formData.append("images", image);
+
+      const response = await api.post(baseUrl, formData, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      });
+
+      return { imageURL: response.data, status: response.status };
     } catch (error) {
       return Promise.reject(error);
     }

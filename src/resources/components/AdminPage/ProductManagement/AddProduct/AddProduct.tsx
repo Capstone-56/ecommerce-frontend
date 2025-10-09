@@ -15,7 +15,7 @@ export default function AddProduct() {
   const [productName, setProductName] = useState("");
   const [productDescription, setProductDescription] = useState("");
   const [category, setCategory] = useState("initial");
-  const [location, setLocation] = useState("initial");
+  const [locations, setLocations] = useState<string[]>([]);
   const [files, setFiles] = useState<FileWithPreview[]>([]);
   const [price, setPrice] = useState(0);
   const [featured, setFeatured] = useState<string>("");
@@ -44,7 +44,7 @@ export default function AddProduct() {
         <Tab label="Stock Information" disabled={category === "initial" ||
           productName === "" ||
           productDescription === "" ||
-          location === "initial" ||
+          locations.length === 0 ||
           price === 0} />
       </Tabs>
       {tabNumber == 0 && (
@@ -58,8 +58,8 @@ export default function AddProduct() {
             setCategory={setCategory}
             price={price}
             setPrice={setPrice}
-            location={location}
-            setLocation={setLocation}
+            locations={locations}
+            setLocations={setLocations}
             files={files}
             setFiles={setFiles}
             featured={featured}
@@ -73,7 +73,7 @@ export default function AddProduct() {
                 category === "initial" ||
                 productName === "" ||
                 productDescription === "" ||
-                location === "initial" ||
+                locations.length === 0 ||
                 price === 0 ||
                 featured === ""
               }
@@ -90,7 +90,7 @@ export default function AddProduct() {
             productName={productName}
             productDescription={productDescription}
             price={price}
-            location={location}
+            locations={locations}
             images={files}
             featured={featured}
           />

@@ -1,9 +1,8 @@
 import { OrderItemModel } from "./OrderItemModel";
 import { AddressModel } from "./AddressModel";
-import { ShippingVendorModel } from "./ShippingVendorModel";
 import { GuestUserModel } from "./GuestUserModel";
 import { UserModel } from "./UserModel";
-import { UUID } from "crypto";
+
 import { OrderStatus } from "../enum/orderStatus";
 import { PaymentStatus } from "../type/paymentStatus";
 
@@ -33,13 +32,13 @@ export interface OrderProductModel {
 export interface OrderModel {
   id: string;
   createdAt: string;
-  user: string | null;
-  guestUser: JSON;
-  address: UUID;
-  shippingVendor: number;
+  user: UserModel | null;
+  guestUser: GuestUserModel;
+  address: AddressModel;
   totalPrice: number;
   status: OrderStatus;
-  items: [];
+  items: Array<OrderItemModel>;
+  paymentIntentId: string
 }
 
 export interface OrderStatusModel {
@@ -58,7 +57,6 @@ export interface OrderStatusModel {
     guestUser?: GuestUserModel;
   };
   address?: AddressModel;
-  shippingVendor?: ShippingVendorModel;
 }
 
 // Weekly order model.

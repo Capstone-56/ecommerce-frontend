@@ -17,18 +17,19 @@ import AdminProfile from "@/resources/pages/Profile/AdminProfile";
 import Analytics from "@/resources/components/AdminPage/Analytics";
 import AdminDashboard from "@/resources/components/AdminPage/AdminDashboard/AdminDashboard";
 import ProductManagement from "@/resources/components/AdminPage/ProductManagement/ProductManagement";
-import AdminSettings from "@/resources/components/AdminPage/AdminSettings";
+import AdminSettings from "@/resources/components/AdminPage/Settings/AdminSettings";
+import CreateAdminAccount from "@/resources/components/AdminPage/Settings/CreateAdminAccount";
 import Payment from "@/resources/pages/Checkout/Payment";
 import { Constants } from "@/domain/constants";
 import AddProduct from "@/resources/components/AdminPage/ProductManagement/AddProduct/AddProduct";
 import OrderComplete from "@/resources/pages/Checkout/OrderComplete";
-import EditProduct from "@/resources/components/AdminPage/ProductManagement/EditProduct";
 import OrderDetails from "@/resources/components/Profile/OrderHistory";
 import UserDetails from "@/resources/components/Profile/UserDetails";
 import ProfileLanding from "@/resources/components/Profile/ProfileLanding";
-import OrderHistory from "@/resources/components/AdminPage/Orders";
-import CategoryManagement from "@/resources/components/AdminPage/CategoryManagement";
 import ShippingAddress from "@/resources/components/Profile/ShippingAddress";
+import OrderHistory from "@/resources/components/AdminPage/OrderHistory/OrderHistory";
+import EditProduct from "@/resources/components/AdminPage/ProductManagement/EditProduct/EditProduct";
+import CategoryManagement from "@/resources/components/AdminPage/CategoryManagement/CategoryManagement";
 
 export const router = createBrowserRouter([
   {
@@ -128,12 +129,24 @@ export const router = createBrowserRouter([
         element: <CategoryManagement />,
       },
       {
+        path: "category/management/add",
+        element: <div>Add Category (Coming Soon)</div>,
+      },
+      {
+        path: "category/management/:internalName",
+        element: <div>Edit Category (Coming Soon)</div>,
+      },
+      {
         path: "orders",
         element: <OrderHistory />,
       },
       {
         path: "settings",
         element: <AdminSettings />,
+      },
+      {
+        path: "settings/create-admin",
+        element: <CreateAdminAccount />,
       },
     ],
   },

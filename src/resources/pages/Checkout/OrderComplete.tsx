@@ -16,7 +16,6 @@ import {
 } from "@mui/material";
 import CheckCircleOutlineIcon from "@mui/icons-material/CheckCircleOutline";
 import ErrorOutlineIcon from "@mui/icons-material/ErrorOutline";
-import LocalShippingIcon from "@mui/icons-material/LocalShipping";
 import api from "@/api";
 import { OrderStatusModel } from "@/domain/models/OrderModel";
 import { cartState } from "@/domain/state";
@@ -96,9 +95,9 @@ export default function OrderComplete() {
   );
   {/* Order Summary */}
   const OrderSummary: React.FC<{ data: OrderStatusModel }> = ({ data }) => {
-    if (!data.order || !data.address || !data.shippingVendor) return null;
+    if (!data.order || !data.address) return null;
 
-    const { order, address, shippingVendor } = data;
+    const { order, address } = data;
     const customerName = order.user 
       ? `${order.user.firstName} ${order.user.lastName}`
       : order.guestUser 
@@ -119,9 +118,9 @@ export default function OrderComplete() {
               <CardContent sx={{ p: 2, "&:last-child": { pb: 2 } }}>
                 <Grid container spacing={2} alignItems="center">
                   <Grid size={{xs:"auto"}}>
-                    {item.productItem.imageUrls && Array.isArray(item.productItem.imageUrls) && item.productItem.imageUrls.length > 0 ? (
+                    {item.productItem.product.images && Array.isArray(item.productItem.product.images) && item.productItem.product.images.length > 0 ? (
                       <Avatar
-                        src={item.productItem.imageUrls[0]}
+                        src={item.productItem.product.images[0]}
                         sx={{ width: 60, height: 60 }}
                         variant="rounded"
                       />
@@ -157,12 +156,6 @@ export default function OrderComplete() {
         <Card variant="outlined" sx={{ mb: 3 }}>
           <CardContent sx={{ p: 2, "&:last-child": { pb: 2 } }}>
             <Stack spacing={1}>
-              <Box display="flex" alignItems="center" gap={1}>
-                <LocalShippingIcon color="primary" fontSize="small" />
-                <Typography variant="body1" fontWeight="medium">
-                  {shippingVendor.name}
-                </Typography>
-              </Box>
               <Typography variant="body2" color="text.secondary">
                 {customerName}
               </Typography>
@@ -263,7 +256,7 @@ export default function OrderComplete() {
         </Typography>
         {data.order ? (
           <Typography variant="body1" color="text.secondary">
-            Order <strong>#{data.order.id.slice(-8)}</strong> has been confirmed.
+            Order <strong>{data.order.id}</strong> has been confirmed.
           </Typography>
         ) : null}
         <OrderSummary data={data} />
