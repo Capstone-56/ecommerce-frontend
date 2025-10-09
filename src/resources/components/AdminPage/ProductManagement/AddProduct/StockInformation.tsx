@@ -18,6 +18,7 @@ import {
   ListItemButton,
   ListItemIcon,
   ListItemText,
+  MenuItem,
   Paper,
   Table,
   TableBody,
@@ -37,6 +38,7 @@ import { StatusCodes } from "http-status-codes";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import ProcessingDialog from "@/resources/components/ProcessingDialog/ProcessDialog";
+import AddCircleIcon from '@mui/icons-material/AddCircle';
 
 const variationService = new VariationService();
 const productService = new ProductService();
@@ -122,6 +124,7 @@ export default function StockInformation(props: StockInformationProps) {
 
     const generated = cartesianProduct(Object.values(chosenVariations)).map(values => {
       const combination: Record<string, string> = {
+        location: "",
         sku: "",
         stock: ""
       };
@@ -248,10 +251,13 @@ export default function StockInformation(props: StockInformationProps) {
       allVariations
     );
 
-    if (response == StatusCodes.CREATED) {
+    if (response.status == StatusCodes.CREATED) {
       setOpenDialog(false);
       toast.success("Product added successfully");
       navigate("/admin/product/management");
+    } else {
+      setOpenDialog(false);
+      toast.error(response.errorMessage)
     }
   }, [permutations, chosenVariations])
 
@@ -288,13 +294,28 @@ export default function StockInformation(props: StockInformationProps) {
       <Grid container spacing={3}>
         <Grid size={2}>
           <Card sx={{ height: "75vh", maxHeight: "75vh" }}>
+            <Box
+              sx={{
+                backgroundColor: "#212E4A",
+                color: "#8EB5C0",
+                px: 2,
+                py: 2,
+                borderTopLeftRadius: 8,
+                borderTopRightRadius: 8,
+                textAlign: "center"
+              }}
+            >
+              <Typography variant="h6" fontWeight="bold" fontSize={15}>
+                Variations
+              </Typography>
+            </Box>
             <CardContent sx={{
               height: "100%", overflowY: "auto",
               "&::-webkit-scrollbar": { width: "6px" },
               "&::-webkit-scrollbar-thumb": { backgroundColor: "#888", borderRadius: "3px" },
               "&::-webkit-scrollbar-thumb:hover": { backgroundColor: "#555" }
             }}>
-              {listOfVariants &&
+              {listOfVariants && listOfVariants.length > 0 ?
                 listOfVariants
                   .map((variant) => {
                     return (
@@ -325,7 +346,7 @@ export default function StockInformation(props: StockInformationProps) {
                       </Box>
                     )
                   })
-              }
+                : <Typography>No listed variants for this product</Typography>}
             </CardContent>
           </Card>
         </Grid>
@@ -334,29 +355,34 @@ export default function StockInformation(props: StockInformationProps) {
             <TableContainer sx={{
               maxHeight: "75vh", minHeight: "75vh"
             }}>
-              <Table stickyHeader>
+              <Table stickyHeader sx={{ tableLayout: "fixed" }}>
                 <TableHead>
                   <TableRow>
                     {listOfVariants?.map(variation => (
                       <TableCell sx={{
                         backgroundColor: "#212E4A",
-                        color: "#8EB5C0", width: "25%",
+                        color: "#8EB5C0",
                         fontWeight: "bold"
                       }}>{variation.name}</TableCell>
                     ))}
                     <TableCell sx={{
                       backgroundColor: "#212E4A",
-                      color: "#8EB5C0", width: "25%",
+                      color: "#8EB5C0",
+                      fontWeight: "bold"
+                    }}>Location</TableCell>
+                    <TableCell sx={{
+                      backgroundColor: "#212E4A",
+                      color: "#8EB5C0",
                       fontWeight: "bold"
                     }}>SKU</TableCell>
                     <TableCell sx={{
                       backgroundColor: "#212E4A",
-                      color: "#8EB5C0", width: "25%",
+                      color: "#8EB5C0",
                       fontWeight: "bold"
                     }}>Stock</TableCell>
                     <TableCell sx={{
                       backgroundColor: "#212E4A",
-                      color: "#8EB5C0", width: "25%",
+                      color: "#8EB5C0",
                       fontWeight: "bold"
                     }}>Controls</TableCell>
                   </TableRow>
@@ -365,48 +391,104 @@ export default function StockInformation(props: StockInformationProps) {
                 <TableBody>
                   {permutations.map((permutation, rowIdx) => (
                     <TableRow key={rowIdx}>
-                      {listOfVariants?.map(variant => (
+                      {listOfVariants?.map((variant) => (
                         <TableCell key={variant.name}>
                           {permutation[variant.name] ?? ""}
                         </TableCell>
                       ))}
+
+                      <TableCell>
+                        <TextField
+                          select
+                          value={permutation["location"]}
+                          onChange={(e) => {
+                            setPermutations((prev) =>
+                              prev.map((p, idx) =>
+                                idx === rowIdx ? { ...p, location: e.target.value } : p
+                              )
+                            )
+                          }}
+                          sx={{ minWidth: "33%", mr: "10px" }}
+                          fullWidth
+                        >
+                          <MenuItem key={"initial"} value={"initial"} disabled>
+                            Choose listing location...
+                          </MenuItem>
+                          {props.locations && props.locations.map((location) => (
+                            <MenuItem key={location} value={location}>
+                              {location}
+                            </MenuItem>
+                          ))}
+                        </TextField>
+                      </TableCell>
+
                       <TableCell>
                         <TextField
                           value={permutation["sku"] ?? ""}
-                          onChange={(e) => (setPermutations(prev =>
-                            prev.map((p, idx) =>
-                              idx === rowIdx
-                                ? { ...p, sku: e.target.value }  // add or update sku
-                                : p
+                          onChange={(e) =>
+                            setPermutations((prev) =>
+                              prev.map((p, idx) =>
+                                idx === rowIdx ? { ...p, sku: e.target.value } : p
+                              )
                             )
-                          ))
-                          }></TextField>
+                          }
+                        />
                       </TableCell>
+
                       <TableCell>
                         <TextField
                           value={permutation["stock"] ?? ""}
-                          onChange={(e) => (setPermutations(prev =>
-                            prev.map((p, idx) =>
-                              idx === rowIdx
-                                ? { ...p, stock: e.target.value }  // add or update sku
-                                : p
+                          onChange={(e) =>
+                            setPermutations((prev) =>
+                              prev.map((p, idx) =>
+                                idx === rowIdx ? { ...p, stock: e.target.value } : p
+                              )
                             )
-                          ))
-                          }></TextField>
+                          }
+                        />
                       </TableCell>
+
                       <TableCell>
-                        <Tooltip title={"Remove variation"}>
-                          <IconButton onClick={() => {
-                            setPermutations(permutations.filter((row) => row !== permutation));
-                            setRemovedPermutations([...removedPermutations, permutation])
-                          }}>
-                            <CancelIcon fontSize={"medium"} color={"error"} />
+                        <Tooltip title="Remove variation">
+                          <IconButton
+                            onClick={() => {
+                              setPermutations((prev) =>
+                                prev.filter((_, idx) => idx !== rowIdx)
+                              );
+                              setRemovedPermutations((prev) => [...prev, permutation]);
+                            }}
+                          >
+                            <CancelIcon fontSize="medium" color="error" />
                           </IconButton>
                         </Tooltip>
                       </TableCell>
                     </TableRow>
                   ))}
+
+                  <TableRow>
+                    <TableCell sx={{ textAlign: "center" }} colSpan={(listOfVariants?.length ?? 0) + 4}>
+                      <Button
+                        endIcon={<AddCircleIcon />}
+                        variant="outlined"
+                        onClick={() => {
+                          if (!listOfVariants) return;
+
+                          // build an empty row with all variant names
+                          const emptyRow: Record<string, string> = listOfVariants.reduce(
+                            (acc, variant) => ({ ...acc, [variant.name]: "" }),
+                            { sku: "", stock: "" }
+                          );
+
+                          // append it to permutations
+                          setPermutations((prev) => [...prev, emptyRow]);
+                        }}
+                      >
+                        Add row
+                      </Button>
+                    </TableCell>
+                  </TableRow>
                 </TableBody>
+
               </Table>
             </TableContainer>
           </Paper>

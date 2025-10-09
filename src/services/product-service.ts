@@ -117,14 +117,14 @@ export class ProductService {
     locations: string[],
     permutations: Record<string, string>[],
     variations: Record<string, string>[][]
-  ): Promise<number> {
+  ): Promise<{ errorMessage?: string, status: number }> {
     try {
       const baseUrl = "/api/product";
       const formattedPermutations = permutations.map((permutation, idx) => ({
+        location: permutation.location,
         sku: permutation.sku,
         stock: permutation.stock,
         price: price,
-        imageUrls: [],
         variations: variations[idx]
       }))
 
@@ -154,10 +154,13 @@ export class ProductService {
         },
       });
 
-      return response.status;
+      return { status: response.status };
 
-    } catch (error) {
-      return Promise.reject(error);
+    } catch (error: any) {
+      const status = error.response?.status ?? 500; // fallback to 500 if undefined
+      const message = error.response?.data?.message ?? "Failed to create product";
+
+      return { status, errorMessage: message };
     }
   }
 
