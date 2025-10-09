@@ -5,3 +5,9 @@ export interface AddressModel {
   state: string;
   country: string;
 }
+
+export interface AddressModelData {
+  id: string;
+  address: AddressModel;
+  isDefault: boolean;
+}

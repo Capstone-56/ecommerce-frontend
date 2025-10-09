@@ -20,11 +20,13 @@ const UserDetails: React.FC = () => {
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState(false);
   const userService = new UserService();
+  const username = userState((s) => s.userName);
 
   useEffect(() => {
+    if (!username) return;
     const fetchUser = async () => {
       try {
-        const userData = await userService.getUser("me");
+        const userData = await userService.getUser(username);
         setUser(userData);
         setInitialUser(userData);
       } catch (err) {
@@ -57,7 +59,7 @@ const UserDetails: React.FC = () => {
     setError(null);
     setSuccess(false);
 
-    let userId = userState.getState().userId;
+    let userId = userState.getState().id;
 
     if (!userId) {
       try {
@@ -77,7 +79,7 @@ const UserDetails: React.FC = () => {
       return;
     }
 
-    const status = await userService.updateUser(user, userId);
+    const status = await userService.updateUser(user, user.id);
 
     if (status === StatusCodes.OK) {
       setSaving(false);

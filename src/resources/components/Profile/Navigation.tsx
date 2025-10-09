@@ -5,7 +5,7 @@ import { ShoppingBag, LocalShipping, Person } from "@mui/icons-material";
 
 const menuItems = [
   {
-    label: "Account information",
+    label: "Account details",
     to: "/profile/account",
     icon: <Person sx={{ mr: 1 }} />,
   },

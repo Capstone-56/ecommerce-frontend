@@ -14,18 +14,18 @@ export interface TotalOrderModel {
 
 // Product model of a particular order.
 export interface OrderProductModel {
-  id: string,
-  name: string,
-  description: string,
-  images: Array<string>,
-  featured: boolean,
-  avgRating: number,
-  price: number,
-  category: string,
-  locations: [],
-  variations: JSON,
-  total_quantity_purchased: number,
-  total_items_sold: number
+  id: string;
+  name: string;
+  description: string;
+  images: Array<string>;
+  featured: boolean;
+  avgRating: number;
+  price: number;
+  category: string;
+  locations: [];
+  variations: JSON;
+  total_quantity_purchased: number;
+  total_items_sold: number;
 }
 
 // Singular order model.
@@ -38,7 +38,7 @@ export interface OrderModel {
   totalPrice: number;
   status: OrderStatus;
   items: Array<OrderItemModel>;
-  paymentIntentId: string
+  paymentIntentId: string;
 }
 
 export interface OrderStatusModel {

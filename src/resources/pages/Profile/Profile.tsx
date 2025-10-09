@@ -19,6 +19,9 @@ import {
   LocalShipping,
 } from "@mui/icons-material";
 import { useTheme } from "@mui/material/styles";
+import { UserService } from "@/services/user-service";
+import { UserModel } from "@/domain/models/UserModel";
+import { userState } from "@/domain/state";
 
 const menuItems = [
   {
@@ -32,7 +35,7 @@ const menuItems = [
     icon: <ShoppingBag sx={{ mr: 1 }} />,
   },
   {
-    label: "Shipping Addresses",
+    label: "Your Addresses",
     to: "/profile/shipping",
     icon: <LocalShipping sx={{ mr: 1 }} />,
   },
@@ -42,12 +45,28 @@ const profileUrl = "https://randomuser.me/api/portraits/men/32.jpg"; // Example 
 
 const Profile: React.FC = () => {
   const [drawerOpen, setDrawerOpen] = useState(false);
+  const [user, setUser] = useState<UserModel | null>(null);
   const navigate = useNavigate();
   const theme = useTheme();
   const isSmall = useMediaQuery(theme.breakpoints.down("md"));
+  const username = userState((state) => state.userName);
 
   useEffect(() => {
     document.title = "Profile Page";
+    // Fetch user details
+    const fetchUser = async () => {
+      if (!username) return;
+      try {
+        // Replace "me" with the actual username if needed
+        const userService = new UserService();
+        const userData = await userService.getUser(username);
+        setUser(userData);
+      } catch (err) {
+        // Optionally handle error
+        setUser(null);
+      }
+    };
+    fetchUser();
   }, []);
 
   // Only for small screens
@@ -59,6 +78,8 @@ const Profile: React.FC = () => {
   const handleDrawerClose = () => {
     setDrawerOpen(false);
   };
+
+  const greetingName = user?.firstName || "User";
 
   return (
     <Box sx={{ display: "flex", width: "100%" }}>
@@ -104,7 +125,7 @@ const Profile: React.FC = () => {
                 mb: 2,
               }}
             >
-              <Typography variant="h2">Hello John</Typography>
+              <Typography variant="h2">Hello {greetingName}</Typography>
               <Typography variant="body1" sx={{ color: "grey.500" }}>
                 Welcome back!
               </Typography>
@@ -156,7 +177,7 @@ const Profile: React.FC = () => {
               }}
             />
             <Typography variant="h5" align="center" sx={{ mb: 3 }}>
-              Hey John, welcome back!
+              Hey {greetingName}, welcome back!
             </Typography>
             {menuItems.map((item) => (
               <Button

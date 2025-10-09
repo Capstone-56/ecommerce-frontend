@@ -14,8 +14,8 @@ const menuOptions = [
     to: "/profile/orders",
   },
   {
-    label: "Shipping Address",
-    to: "/profile/address",
+    label: "Your Addresses",
+    to: "/profile/shipping",
     icon: <LocalShipping sx={{ fontSize: 48, color: "primary.main" }} />,
   },
 ];
