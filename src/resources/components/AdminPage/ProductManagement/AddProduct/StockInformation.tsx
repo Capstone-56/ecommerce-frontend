@@ -119,6 +119,13 @@ export default function StockInformation(props: StockInformationProps) {
    * Sets the new list of permutations.
    */
   useEffect(() => {
+    // Required check to not render any rows given no variations are chosen.
+    const variationValues = Object.values(chosenVariations).filter(v => v.length > 0);
+    if (variationValues.length === 0) {
+      setPermutations([]);
+      return;
+    }
+
     // Build a set of valid keys from new generated combos.
     const validKeys = new Set<string>();
 
