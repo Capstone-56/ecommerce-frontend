@@ -92,6 +92,7 @@ export default function EditProduct() {
       {tabNumber == 1 && (
         <Box>
           <EditStockInformation
+            product={product!}
             productId={productId}
             categoryId={product?.category}
             draft={draft}

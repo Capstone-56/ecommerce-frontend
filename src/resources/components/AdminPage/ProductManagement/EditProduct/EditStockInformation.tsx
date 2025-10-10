@@ -34,6 +34,7 @@ import { ProductModel } from "@/domain/models/ProductModel";
 import { ProductItemService } from "@/services/product-item-service";
 
 export interface EditStockInformationProps {
+  product: ProductModel
   productId: string
   categoryId?: string
   draft: Partial<ProductModel>
@@ -56,6 +57,7 @@ export default function EditStockInformation(props: EditStockInformationProps) {
   const [variations, setVariations] = useState<VariationModel[]>();
   const [addItemStockCount, setAddItemStockCount] = useState(0);
   const [SKU, setSKU] = useState('');
+  const [location, setLocation] = useState('');
 
   /**
    * A useEffect required to get required information.
@@ -172,10 +174,10 @@ export default function EditStockInformation(props: EditStockInformationProps) {
 
     const requestBody = {
       product: props.productId,
+      location: location,
       sku: SKU,
       stock: addItemStockCount,
       price: props.draft.price,
-      imageUrls: [],
       variations: mappedVariations
     };
 
@@ -197,8 +199,8 @@ export default function EditStockInformation(props: EditStockInformationProps) {
 
   return (
     <Box>
-      <Paper>
-        <TableContainer sx={{ maxHeight: "70vh", minHeight: "70vh" }}>
+      <Paper sx={{ borderRadius: 4 }}>
+        <TableContainer sx={{ maxHeight: "70vh", minHeight: "70vh", borderRadius: 4 }}>
           <Table stickyHeader sx={{ minWidth: 650 }} aria-label="simple table">
             <TableHead>
               <TableRow>
@@ -206,7 +208,16 @@ export default function EditStockInformation(props: EditStockInformationProps) {
                   align="center"
                   sx={{
                     backgroundColor: "#212E4A",
-                    color: "#8EB5C0", width: "25%",
+                    color: "#8EB5C0", width: "20%",
+                    fontWeight: "bold"
+                  }}>
+                  Location
+                </TableCell>
+                <TableCell
+                  align="center"
+                  sx={{
+                    backgroundColor: "#212E4A",
+                    color: "#8EB5C0", width: "20%",
                     fontWeight: "bold"
                   }}>
                   SKU
@@ -215,7 +226,7 @@ export default function EditStockInformation(props: EditStockInformationProps) {
                   align="center"
                   sx={{
                     backgroundColor: "#212E4A",
-                    color: "#8EB5C0", width: "25%",
+                    color: "#8EB5C0", width: "20%",
                     fontWeight: "bold",
                   }}>
                   Stock
@@ -225,7 +236,7 @@ export default function EditStockInformation(props: EditStockInformationProps) {
                   sx={{
                     backgroundColor: "#212E4A",
                     color: "#8EB5C0",
-                    width: "25%",
+                    width: "20%",
                     fontWeight: "bold",
                     justifyContent: "center"
                   }}>
@@ -236,7 +247,7 @@ export default function EditStockInformation(props: EditStockInformationProps) {
                   sx={{
                     backgroundColor: "#212E4A",
                     color: "#8EB5C0",
-                    width: "25%",
+                    width: "20%",
                     fontWeight: "bold"
                   }}>
                   Controls
@@ -249,6 +260,9 @@ export default function EditStockInformation(props: EditStockInformationProps) {
                   key={row.id}
                   sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
                 >
+                  <TableCell component="th" scope="row" align="center">
+                    {row.location}
+                  </TableCell>
                   <TableCell component="th" scope="row" align="center">
                     {row.sku}
                   </TableCell>
@@ -352,6 +366,27 @@ export default function EditStockInformation(props: EditStockInformationProps) {
                   </TextField>
                 </Box>
               )}
+              <Box p={1}>
+                <Typography>Location</Typography>
+                <TextField
+                  select
+                  value={location}
+                  onChange={(e) => {
+                    setLocation(e.target.value)
+                  }}
+                  sx={{ minWidth: "33%", mr: "10px" }}
+                  fullWidth
+                >
+                  <MenuItem key={"initial"} value={"initial"} disabled>
+                    Choose listing location...
+                  </MenuItem>
+                  {props.product && props.product.locations.map((location) => (
+                    <MenuItem key={location} value={location}>
+                      {location}
+                    </MenuItem>
+                  ))}
+                </TextField>
+              </Box>
               <Box p={1}>
                 <Typography>SKU</Typography>
                 <TextField onChange={(e) => setSKU(e.target.value)}></TextField>

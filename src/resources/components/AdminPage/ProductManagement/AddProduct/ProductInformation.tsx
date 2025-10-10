@@ -178,11 +178,18 @@ export default function ProductInformation(props: ProductInformationProps) {
                       <MenuItem key={"initial"} value={"initial"} disabled>
                         Choose category...
                       </MenuItem>
-                      {listOfCategories?.map((option) => (
+                      {listOfCategories?.map((option) => [
+                        // Map the Top parent level.
                         <MenuItem key={option.internalName} value={option.internalName}>
                           {option.name}
-                        </MenuItem>
-                      ))}
+                        </MenuItem>,
+                        // Map children as actual MenuItems.
+                        option.children?.map((child) => (
+                          <MenuItem key={child.internalName} value={child.internalName}>
+                            {`${option.name} - ${child.name}`}
+                          </MenuItem>
+                        ))
+                      ])}
                     </TextField>
                     <div>
                       <Button variant={"contained"}>Add Category</Button>
