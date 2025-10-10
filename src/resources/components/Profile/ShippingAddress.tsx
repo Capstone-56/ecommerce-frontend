@@ -225,7 +225,7 @@ const ShippingAddress: React.FC = () => {
                 ) : (
                   renderedRows.map((addr) => (
                     <TableRow key={addr.id} hover>
-                      <TableCell>{addr.isDefault ? "Default" : "—"}</TableCell>
+                      <TableCell>{addr.isDefault ? "True" : "—"}</TableCell>
                       <TableCell
                         sx={{
                           maxWidth: 320,

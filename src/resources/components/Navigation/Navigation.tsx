@@ -3,7 +3,7 @@ import {
   Menu as MenuIcon,
   ShoppingCartOutlined,
   Search as SearchIcon,
-  ChevronLeft
+  ChevronLeft,
 } from "@mui/icons-material";
 import {
   AppBar,
@@ -19,7 +19,12 @@ import {
   Menu,
   Avatar,
 } from "@mui/material";
-import { NavLink, Link as RouterLink, useLocation, useNavigate } from "react-router-dom";
+import {
+  NavLink,
+  Link as RouterLink,
+  useLocation,
+  useNavigate,
+} from "react-router-dom";
 import { grey, common } from "@mui/material/colors";
 import { Constants } from "@/domain/constants";
 import { CategoryModel } from "@/domain/models/CategoryModel";
@@ -52,7 +57,7 @@ const userService = new UserService();
 
 // get users initial for profile avatar
 function getInitial(name?: string | null) {
-  return name?.trim()?.[0]?.toUpperCase() ?? 'U';
+  return name?.trim()?.[0]?.toUpperCase() ?? "U";
 }
 
 const Navbar: React.FC = () => {
@@ -75,7 +80,9 @@ const Navbar: React.FC = () => {
   // Local UI state
   const [mobileDrawerOpen, setMobileDrawerOpen] = useState(false);
   const [searchDrawerOpen, setSearchDrawerOpen] = useState(false);
-  const [profileAnchorEl, setProfileAnchorEl] = useState<null | HTMLElement>(null);
+  const [profileAnchorEl, setProfileAnchorEl] = useState<null | HTMLElement>(
+    null
+  );
 
   // Category state
   const [categories, setCategories] = useState<CategoryModel[]>([]);
@@ -98,8 +105,8 @@ const Navbar: React.FC = () => {
         setCategories(topLevelCategories);
         setCategoriesError(null);
       } catch (err) {
-        console.error('Failed to fetch categories:', err);
-        setCategoriesError('Failed to load categories');
+        console.error("Failed to fetch categories:", err);
+        setCategoriesError("Failed to load categories");
         setCategories([]);
       } finally {
         setCategoriesLoading(false);
@@ -123,9 +130,9 @@ const Navbar: React.FC = () => {
         const cartItems = await shoppingCartService.getShoppingCart();
 
         // Convert API response to LocalShoppingCartItemModel format
-        const localCartItems = cartItems.map(item => ({
+        const localCartItems = cartItems.map((item) => ({
           ...item,
-          totalPrice: item.totalPrice || item.productItem.price * item.quantity
+          totalPrice: item.totalPrice || item.productItem.price * item.quantity,
         }));
 
         setCart(localCartItems);
@@ -149,7 +156,10 @@ const Navbar: React.FC = () => {
 
     // Cleanup listener on unmount
     return () => {
-      window.removeEventListener(Constants.EVENT_CART_UPDATED, handleCartUpdate);
+      window.removeEventListener(
+        Constants.EVENT_CART_UPDATED,
+        handleCartUpdate
+      );
     };
   }, [isAuthenticated, loadCartData, setCartLoaded]);
 
@@ -227,15 +237,25 @@ const Navbar: React.FC = () => {
         <Toolbar
           sx={{
             backgroundColor: common.white,
-            justifyContent: {xs: "space-between" , sm: "space-between", md: "space-between", lg: "space-between", xl: "space-evenly"},
+            justifyContent: {
+              xs: "space-between",
+              sm: "space-between",
+              md: "space-between",
+              lg: "space-between",
+              xl: "space-evenly",
+            },
             px: 2,
             minHeight: { xs: 64, sm: 64, md: 64 }, // Force consistent height
           }}
         >
           {/* Nav Menu on < md (uses MUI Menu component) */}
           {/* Mobile Menu Button */}
-          <Box sx={{ display:"flex"}}>
-            <Box sx={{ display: { xs: "flex", md: "flex", lg: "flex", xl: "none" } }}>
+          <Box sx={{ display: "flex" }}>
+            <Box
+              sx={{
+                display: { xs: "flex", md: "flex", lg: "flex", xl: "none" },
+              }}
+            >
               <IconButton
                 size="large"
                 edge="start"
@@ -253,22 +273,31 @@ const Navbar: React.FC = () => {
                 alignItems: "center",
               }}
             >
-              <Typography
-                variant="h1"
+              {/* Logo image (replace src with your asset path) */}
+              <Box
                 component={RouterLink}
                 to={Constants.HOME_ROUTE}
-                noWrap
                 sx={{
-                  fontSize: { xs: "32px", md: "32px" },
-                  color: "primary.light",
-                  fontWeight: 900
+                  display: "flex",
+                  alignItems: "center",
+                  textDecoration: "none",
                 }}
               >
-                BDNX
-              </Typography>
+                <Box
+                  component="img"
+                  src="src/assets/logo_bdnx.png" // <-- replace with your logo path
+                  alt="BDNX"
+                  sx={{
+                    height: { xs: 32, md: 40 },
+                    width: "auto",
+                    mr: 1.5,
+                    objectFit: "contain",
+                  }}
+                />
+              </Box>
             </Box>
           </Box>
-            
+
           {/* Nav Menu on > md */}
           <Box
             sx={{
@@ -281,7 +310,7 @@ const Navbar: React.FC = () => {
           >
             {/* Categories with mega dropdown */}
             {categoriesLoading ? (
-              <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+              <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
                 <Typography variant="subtitle1" color="text.secondary">
                   Loading...
                 </Typography>
@@ -291,13 +320,12 @@ const Navbar: React.FC = () => {
                 Categories unavailable
               </Typography>
             ) : (
-              <CategoryMenu 
-                categories={categories} 
-                onCategoryClick={handleCategoryClick} 
+              <CategoryMenu
+                categories={categories}
+                onCategoryClick={handleCategoryClick}
               />
             )}
           </Box>
-
 
           {/* Cart and User related Buttons */}
           <Box
@@ -332,11 +360,11 @@ const Navbar: React.FC = () => {
                 sx={{
                   "& .MuiBadge-badge": {
                     top: -4,
-                    right: -0, 
+                    right: -0,
                     fontSize: "0.6rem",
                     height: "16px",
                     minWidth: "16px",
-                    padding: "0 4px", 
+                    padding: "0 4px",
                   },
                 }}
               >
@@ -359,7 +387,7 @@ const Navbar: React.FC = () => {
                     sx={{
                       width: 32,
                       height: 32,
-                      bgcolor: 'primary.light',
+                      bgcolor: "primary.light",
                       fontSize: 14,
                       fontWeight: 600,
                     }}
@@ -380,18 +408,17 @@ const Navbar: React.FC = () => {
                     horizontal: "right",
                   }}
                 >
-                  { 
-                    isAuthenticated && 
-                    (userInformation?.role === Role.ADMIN || userInformation?.role === Role.MANAGER) &&
-
-                    <MenuItem
-                      component={RouterLink}
-                      to={Constants.ADMIN_DASHBOARD_ROUTE}
-                      onClick={handleProfileMenuClose}
-                    >
-                      Admin Dashboard
-                    </MenuItem>
-                  }
+                  {isAuthenticated &&
+                    (userInformation?.role === Role.ADMIN ||
+                      userInformation?.role === Role.MANAGER) && (
+                      <MenuItem
+                        component={RouterLink}
+                        to={Constants.ADMIN_DASHBOARD_ROUTE}
+                        onClick={handleProfileMenuClose}
+                      >
+                        Admin Dashboard
+                      </MenuItem>
+                    )}
 
                   <MenuItem
                     component={RouterLink}
@@ -460,29 +487,29 @@ const Navbar: React.FC = () => {
         open={searchDrawerOpen}
         onClose={handleSearchDrawerClose}
         sx={{
-          '& .MuiDrawer-paper': {
-            width: '100%',
-            height: '100vh',
+          "& .MuiDrawer-paper": {
+            width: "100%",
+            height: "100vh",
           },
         }}
       >
         <Box
           sx={{
             p: 2,
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'space-between',
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "space-between",
             gap: 2,
-            borderBottom: '1px solid',
+            borderBottom: "1px solid",
             borderColor: grey[300],
           }}
         >
-          <Box sx={{ display: 'flex', justifyContent: 'flex-start', flex: 1 }}>
+          <Box sx={{ display: "flex", justifyContent: "flex-start", flex: 1 }}>
             <IconButton onClick={handleSearchDrawerClose}>
               <ChevronLeft />
             </IconButton>
           </Box>
-          <Box sx={{ display: 'flex', justifyContent: 'center', flex: 1 }}>
+          <Box sx={{ display: "flex", justifyContent: "center", flex: 1 }}>
             <Typography variant="h6" fontWeight={600} sx={{ color: grey[900] }}>
               Search
             </Typography>
@@ -491,7 +518,7 @@ const Navbar: React.FC = () => {
           <Box sx={{ flex: 1 }} />
         </Box>
         <Box sx={{ flex: 1, p: 4 }}>
-            <SearchBar/>
+          <SearchBar />
         </Box>
       </Drawer>
     </AppBar>

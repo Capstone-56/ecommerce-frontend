@@ -7,7 +7,6 @@ import {
   Button,
   useMediaQuery,
   IconButton,
-  Divider,
 } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
 import { useEffect, useState } from "react";
