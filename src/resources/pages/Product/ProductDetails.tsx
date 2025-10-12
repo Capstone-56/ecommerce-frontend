@@ -103,7 +103,7 @@ export default function ProductDetails() {
     // TODO: construct productItemId by configurations
     const productItems = await productItemService.getByProductId(productId, userLocation, userCurrency);
     const selectedProductItem = productItems[0];
-    
+
     if (authenticated) {
       const model: AddShoppingCartItemModel = {
         productItemId: selectedProductItem.id,
@@ -111,7 +111,7 @@ export default function ProductDetails() {
       }
 
       await shoppingCartService.addToCart(model);
-      
+
       // Dispatch custom event to notify Navigation to reload cart
       window.dispatchEvent(new CustomEvent(Constants.EVENT_CART_UPDATED));
     } else {
@@ -122,7 +122,7 @@ export default function ProductDetails() {
         quantity: qty,
         totalPrice: selectedProductItem.price * qty,
       };
-      
+
       addToCart(cartItem);
     }
   }
