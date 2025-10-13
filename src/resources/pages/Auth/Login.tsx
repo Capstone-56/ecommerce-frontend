@@ -42,7 +42,7 @@ const Login: React.FC = () => {
       if (response.status === 200) {
         authenticationState.setState({ authenticated: true });
         userState.setState({ role: response.data.role });
-        userState.setState({ userName: form.username });
+        userState.setState({ userName: response.data.username });
         userState.setState({ id: response.data.id });
       }
 
