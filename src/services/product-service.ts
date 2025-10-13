@@ -14,6 +14,9 @@ export class ProductService {
    * @param sort Sorting option (e.g., 'priceAsc', 'priceDesc').
    * @param colour Colour filter.
    * @param categories Comma-separated string of category UUIDs.
+   * @param search Search term filter.
+   * @param userLocation User's location for filtering products.
+   * @param currency Currency code for price conversion.
    * @returns A paged result of products.
    */
   async listProducts(
@@ -25,7 +28,8 @@ export class ProductService {
     colour?: string,
     categories?: string,
     search?: string,
-    userLocation?: string | null
+    userLocation?: string | null,
+    currency?: string | null
   ): Promise<PagedList<ProductModel>> {
     try {
       const params = new URLSearchParams();
@@ -38,7 +42,8 @@ export class ProductService {
       if (categories) params.append("categories", categories);
       if (search) params.append("search", search);
       if (userLocation) params.append("location", userLocation);
-
+      if (currency) params.append("currency", currency);
+      
       const baseUrl = `/api/product?${params.toString()}`;
 
       const products = await api.get(baseUrl);
@@ -51,11 +56,17 @@ export class ProductService {
   /**
    * An endpoint to retrieve a particular product based on an ID.
    * @param productId An ID of a product to be retrieved.
+   * @param userLocation User's location for filtering products.
+   * @param currency Currency code for price conversion.
    * @returns A product's related information.
    */
-  async getProduct(productId: string): Promise<ProductModel> {
+  async getProduct(productId: string, userLocation?: string | null, currency?: string | null): Promise<ProductModel> {
     try {
-      const baseUrl = `/api/product/${productId}`;
+      const params = new URLSearchParams();
+      if (userLocation) params.append("location", userLocation);
+      if (currency) params.append("currency", currency);
+      
+      const baseUrl = `/api/product/${productId}${params.toString() ? `?${params.toString()}` : ''}`;
       const products = await api.get(baseUrl);
 
       return products.data;
@@ -67,13 +78,15 @@ export class ProductService {
   /**
    * An endpoint to retrieve a set of featured products.
    * @param userLocation Optional location filter for products.
+   * @param currency Currency code for price conversion.
    * @returns A set of featured products.
    */
-  async getFeaturedProducts(userLocation?: string | null): Promise<ProductModel[]> {
+  async getFeaturedProducts(userLocation?: string | null, currency?: string | null): Promise<ProductModel[]> {
     try {
       const params = new URLSearchParams();
       if (userLocation) params.append("location", userLocation);
-
+      if (currency) params.append("currency", currency);
+      
       const baseUrl = `/api/product/featured${params.toString() ? `?${params.toString()}` : ''}`;
       const products = await api.get(baseUrl);
 
@@ -87,13 +100,15 @@ export class ProductService {
    * An endpoint to retrieve a set of related products.
    * @param productId The ID of the product to get related products for.
    * @param userLocation Optional location filter for products.
+   * @param currency Currency code for price conversion.
    * @returns A set of related products.
    */
-  async getRelatedProducts(productId?: string, userLocation?: string | null): Promise<ProductModel[]> {
+  async getRelatedProducts(productId?: string, userLocation?: string | null, currency?: string | null): Promise<ProductModel[]> {
     try {
       const params = new URLSearchParams();
       if (userLocation) params.append("location", userLocation);
-
+      if (currency) params.append("currency", currency);
+      
       const baseUrl = `/api/product/${productId}/related${params.toString() ? `?${params.toString()}` : ''}`;
       const relatedProducts = await api.get(baseUrl);
 
