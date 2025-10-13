@@ -33,6 +33,7 @@ import {
 import { useCallback, useEffect, useState } from "react";
 import CancelIcon from '@mui/icons-material/Cancel';
 import { FileWithPreview } from "./AddProduct";
+import { LocationPricing } from "@/domain/models/ProductModel";
 import { ProductService } from "@/services/product-service";
 import { StatusCodes } from "http-status-codes";
 import { useNavigate } from "react-router-dom";
@@ -47,7 +48,7 @@ interface StockInformationProps {
   category: string,
   productName: string,
   productDescription: string,
-  price: number,
+  locationPricing: LocationPricing[],
   images: FileWithPreview[],
   locations: string[],
   featured: string
@@ -252,10 +253,10 @@ export default function StockInformation(props: StockInformationProps) {
       props.category,
       props.featured,
       props.images,
-      props.price,
       props.locations,
       permutations,
-      allVariations
+      allVariations,
+      props.locationPricing
     );
 
     if (response.status == StatusCodes.CREATED) {

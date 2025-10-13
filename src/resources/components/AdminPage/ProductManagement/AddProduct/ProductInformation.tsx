@@ -21,6 +21,7 @@ import { useEffect, useState } from "react";
 import { CategoryModel } from "@/domain/models/CategoryModel";
 import { CategoryService } from "@/services/category-service";
 import { FileWithPreview } from "./AddProduct";
+import { LocationPricing } from "@/domain/models/ProductModel";
 import { LocationService } from "@/services/location-service";
 import { LocationModel } from "@/domain/models/LocationModel";
 import Checkbox from '@mui/material/Checkbox';
@@ -47,10 +48,10 @@ interface ProductInformationProps {
   setProductDescription: (v: string) => void,
   category: string,
   setCategory: (v: string) => void,
-  price: number,
-  setPrice: (v: number) => void,
   locations: string[],
   setLocations: (v: string[]) => void,
+  locationPricing: LocationPricing[],
+  setLocationPricing: (v: LocationPricing[]) => void,
   files: FileWithPreview[],
   setFiles: React.Dispatch<React.SetStateAction<FileWithPreview[]>>,
   featured: string,
@@ -125,6 +126,7 @@ export default function ProductInformation(props: ProductInformationProps) {
 
   /**
    * Helper function to append chosen locations to then be sent.
+   * Also updates location pricing when locations change.
    * @param event The checkbox selection.
    */
   const handleLocationSelection = (event: SelectChangeEvent<typeof props.locations>) => {
@@ -132,10 +134,27 @@ export default function ProductInformation(props: ProductInformationProps) {
       target: { value },
     } = event;
 
-    props.setLocations(
-      // On autofill we get a stringified value.
-      typeof value === 'string' ? value.split(',') : value,
+    const newLocations = typeof value === 'string' ? value.split(',') : value;
+    props.setLocations(newLocations);
+
+    // Update location pricing to match selected locations
+    const updatedPricing = newLocations.map(countryCode => {
+      // Keep existing price if location was already selected
+      const existingPricing = props.locationPricing.find(lp => lp.country_code === countryCode);
+      return existingPricing || { country_code: countryCode, price: 0 };
+    });
+    
+    props.setLocationPricing(updatedPricing);
+  };
+
+  /**
+   * Handle updating price for a specific location
+   */
+  const handleLocationPriceChange = (countryCode: string, price: number) => {
+    const updatedPricing = props.locationPricing.map(lp => 
+      lp.country_code === countryCode ? { ...lp, price } : lp
     );
+    props.setLocationPricing(updatedPricing);
   };
 
   return (
@@ -221,31 +240,79 @@ export default function ProductInformation(props: ProductInformationProps) {
               </CardContent>
             </Card>
           </Grid>
-          <Grid>
-            <Card>
-              <CardContent>
-                <Typography variant={"body1"} pb={2} fontSize={18} fontWeight={"bold"}>Pricing and Stock</Typography>
-                <Box sx={{ display: 'flex', gap: 2 }}>
-                  <Box sx={{ flex: 1 }}>
-                    <Typography variant={"body1"} pb={1}>Pricing</Typography>
-                    <TextField
-                      defaultValue={props.price == 0 ? null : props.price}
-                      fullWidth
-                      placeholder={"Enter price..."}
-                      onChange={(e) => props.setPrice(parseFloat(e.target.value.toString()))}
-                    />
-                  </Box>
-                  <Box sx={{ flex: 1 }}>
-                    <Typography variant={"body1"} pb={1}>Discount</Typography>
-                    <TextField
-                      fullWidth
-                      placeholder={"Enter discount..."}
-                    />
-                  </Box>
-                </Box>
-              </CardContent>
-            </Card>
-          </Grid>
+          {/* Location Pricing Section */}
+          {props.locations.length > 0 && (
+            <Grid>
+              <Card>
+                <CardContent>
+                  <Typography variant={"body1"} pb={2} fontSize={18} fontWeight={"bold"}>
+                    Location Pricing
+                  </Typography>
+                  <Typography variant={"body2"} pb={2} color="text.secondary">
+                    Set prices for each selected location
+                  </Typography>
+                  {props.locations.map((countryCode) => {
+                    const locationData = listOfLocations?.find(loc => loc.country_code === countryCode);
+                    const currentPrice = props.locationPricing.find(lp => lp.country_code === countryCode)?.price || 0;
+                    
+                    return (
+                      <Box key={countryCode} sx={{ mb: 2, p: 2, border: '1px solid #e0e0e0', borderRadius: 1 }}>
+                        <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
+                          <Box sx={{ flex: 1 }}>
+                            <Typography variant="body1" fontWeight="medium">
+                              {locationData?.country_name || countryCode}
+                            </Typography>
+                            <Typography variant="caption" color="text.secondary">
+                              {countryCode}
+                            </Typography>
+                          </Box>
+                          <Box sx={{ display: 'flex', gap: 2, flex: 1 }}>
+                            <Box sx={{ flex: 1 }}>
+                              <TextField
+                                type="number"
+                                label="Price"
+                                size="small"
+                                value={currentPrice === 0 ? '' : currentPrice}
+                                onChange={(e) => {
+                                  const price = parseFloat(e.target.value) || 0;
+                                  handleLocationPriceChange(countryCode, price);
+                                }}
+                                placeholder="0.00"
+                                slotProps={{ 
+                                  htmlInput: {
+                                    min: 0, 
+                                    step: 0.01,
+                                    'aria-label': `Price for ${locationData?.country_name || countryCode}`
+                                  }
+                                }}
+                                fullWidth
+                              />
+                            </Box>
+                            <Box sx={{ flex: 1 }}>
+                              <TextField
+                                type="number"
+                                label="Discount"
+                                size="small"
+                                placeholder="0.00"
+                                slotProps={{ 
+                                  htmlInput: {
+                                    min: 0, 
+                                    step: 0.01,
+                                    'aria-label': `Discount for ${locationData?.country_name || countryCode}`
+                                  }
+                                }}
+                                fullWidth
+                              />
+                            </Box>
+                          </Box>
+                        </Box>
+                      </Box>
+                    );
+                  })}
+                </CardContent>
+              </Card>
+            </Grid>
+          )}
         </Grid>
         <Grid container size={{ sm: 12, md: 4 }} direction={"column"}>
           <Grid>
