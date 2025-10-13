@@ -13,7 +13,7 @@ import DeleteForeverIcon from '@mui/icons-material/DeleteForever';
 import placeholderImage from "/src/assets/ProductCard/product_card_placeholder.svg";
 
 import { Constants } from "@/domain/constants";
-import { cartState, authenticationState } from "@/domain/state";
+import { cartState, authenticationState, locationState } from "@/domain/state";
 import { UpdateShoppingCartItemModel, ShoppingCartItemModel, LocalShoppingCartItemModel } from "@/domain/models/ShoppingCartItemModel";
 import { formatPrice } from "@/utilities/currency-utils";
 
@@ -33,6 +33,7 @@ const CartProductCard: React.FC<ProductCardProps> = ({ cartItem }) => {
   const { price, currency } = cartItem.productItem.product;
   
   const { authenticated } = authenticationState();
+  const { userLocation } = locationState();
 
   // Unified cart state management for both user types
   const updateCartItemState = cartState((state) => state.updateCartItem);
@@ -47,7 +48,12 @@ const CartProductCard: React.FC<ProductCardProps> = ({ cartItem }) => {
         quantity: newQuantity,
       }
 
-      await shoppingCartService.updateShoppingCartItem(cartItem.id, model);
+      if (userLocation)
+      {
+        await shoppingCartService.updateShoppingCartItem(cartItem.id, model, userLocation);
+      } else {
+        // do something else
+      }
       
       // Notify Navigation to reload cart
       window.dispatchEvent(new CustomEvent(Constants.EVENT_CART_UPDATED));
