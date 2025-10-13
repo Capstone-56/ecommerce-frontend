@@ -13,6 +13,7 @@ import { useCallback, useEffect, useState } from "react";
 import React from 'react';
 import { ProductService } from '@/services/product-service';
 import { useNavigate } from 'react-router-dom';
+import { formatPrice } from '@/utilities/currency-utils';
 
 /**
  * Product table props.
@@ -168,7 +169,7 @@ export default function ManagementTable(props: ProductTableProps) {
                 <TableCell component="th" scope="row">
                   {row.name}
                 </TableCell>
-                <TableCell align="left">{row.price}</TableCell>
+                <TableCell align="left">{formatPrice(row.price, row.currency)}</TableCell>
                 <TableCell align="center">{row.avgRating}</TableCell>
                 <TableCell align="left">{row.description}</TableCell>
                 <TableCell align="left">

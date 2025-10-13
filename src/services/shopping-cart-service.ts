@@ -8,10 +8,11 @@ export class ShoppingCartService {
    * GET /api/cart
    * @returns list of ShoppingCartItemModel of current user
    */
-  async getShoppingCart(): Promise<Array<ShoppingCartItemModel>> {
+  async getShoppingCart(location: string): Promise<Array<ShoppingCartItemModel>> {
     try {
-      const response = await api.get("/api/cart");
-
+      const response = await api.get("/api/cart", {
+        params: { location }
+      });
       return response.data;
     } catch (error) {
       console.error("Error getting shopping cart:", error);
@@ -24,10 +25,11 @@ export class ShoppingCartService {
    * @params model (AddShoppingCartItemModel)
    * @returns ShoppingCartItemModel
    */
-  async addToCart(model: AddShoppingCartItemModel): Promise<ShoppingCartItemModel> {
+  async addToCart(model: AddShoppingCartItemModel, location: string): Promise<ShoppingCartItemModel> {
     try {
-      const response = await api.post("/api/cart", model);
-
+      const response = await api.post("/api/cart", model, {
+        params: { location }
+      });
       return response.data;
     } catch (error) {
       console.error("Error adding to cart:", error);
@@ -40,10 +42,11 @@ export class ShoppingCartService {
    * @params model (UpdateShoppingCartItemModel)
    * @returns ShoppingCartItemModel
    */
-  async updateShoppingCartItem(id: string, model: UpdateShoppingCartItemModel): Promise<ShoppingCartItemModel> {
+  async updateShoppingCartItem(id: string, model: UpdateShoppingCartItemModel, location: string): Promise<ShoppingCartItemModel> {
     try {
-      const response = await api.put(`/api/cart/${id}`, model);
-
+      const response = await api.put(`/api/cart/${id}`, model, {
+        params: { location }
+      });
       return response.data;
     } catch (error) {
       console.error("Error updating shopping cart item:", error);

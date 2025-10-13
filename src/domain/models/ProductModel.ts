@@ -8,6 +8,7 @@ export interface ProductModel {
   featured: boolean,
   avgRating: number,
   price: number,
+  currency: string,
   variations: {
     [variationType: string]: string[];
   },
