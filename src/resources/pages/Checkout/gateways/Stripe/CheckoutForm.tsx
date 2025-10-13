@@ -22,6 +22,7 @@ import {
   import { UserService } from "@/services/user-service";
   import type { StripeAddressElementChangeEvent } from "@stripe/stripe-js";
   import { Constants } from "@/domain/constants";
+  import { Currency, COUNTRY_CURRENCY_MAP, CURRENCY_LOCALE_MAP } from "@/domain/enum/currency";
   import api from "@/api";
   
   interface CheckoutFormProps {
@@ -54,36 +55,15 @@ import {
       return clientSecret.split('_secret_')[0];
     };
   
-    // map for formatting prices
-    const countryToLocale: Record<string, string> = {
-      AU: "en-AU",
-      US: "en-US",
-      CA: "en-CA",
-      SG: "en-SG",
-      IT: "it-IT",
-      FR: "fr-FR",
-      DE: "de-DE",
-    };
-  
-    const countryToCurrency: Record<string, string> = {
-      AU: "AUD",
-      US: "USD",
-      CA: "CAD",
-      SG: "SGD",
-      IT: "EUR",
-      FR: "EUR",
-      DE: "EUR",
-    };
-  
     const currency = useMemo(() => {
       const code = (userLocation || "").toUpperCase();
-      return countryToCurrency[code] || "USD";
+      return COUNTRY_CURRENCY_MAP[code] || Currency.USD;
     }, [userLocation]);
   
     const locale = useMemo(() => {
-      const code = (userLocation || "").toUpperCase();
-      return countryToLocale[code] || "en-US";
-    }, [userLocation]);
+      const currencyCode = currency as Currency;
+      return CURRENCY_LOCALE_MAP[currencyCode] || "en-US";
+    }, [currency]);
   
     const calculateTotal = (): number =>
       cart.reduce((total, item) => total + item.productItem.price * item.quantity, 0);
@@ -93,8 +73,9 @@ import {
         style: "currency",
         currency,
       }).format(amount);
-      const ambiguous = ["USD", "AUD", "CAD", "SGD"];
-      return ambiguous.includes(currency)
+      // Currencies that use similar symbols and need clarification
+      const ambiguous = [Currency.USD, Currency.AUD, Currency.CAD, Currency.SGD];
+      return ambiguous.includes(currency as Currency)
         ? `${formatted} ${currency}`
         : formatted;
     };

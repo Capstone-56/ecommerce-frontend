@@ -1,7 +1,8 @@
-import React, { useEffect, useRef } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { locationState } from "@/domain/state";
 import { LocationService } from "@/services/location-service";
 import { Constants } from "@/domain/constants";
+import LocationModal from "@/resources/components/LocationModal/LocationModal";
 
 interface LocationProviderProps {
   children: React.ReactNode;
@@ -19,6 +20,7 @@ export const LocationProvider: React.FC<LocationProviderProps> = ({
   const setLocation = locationState((state) => state.setLocation);
   const locationService = useRef(new LocationService());
   const hasAttemptedLocation = useRef(false);
+  const [showLocationModal, setShowLocationModal] = useState(false);
   
 
   useEffect(() => {
@@ -42,16 +44,36 @@ export const LocationProvider: React.FC<LocationProviderProps> = ({
       const result = await locationService.current.getCurrentLocation();
       
       if (result.success && result.countryCode) {
-        setLocation(result.countryCode);
+        setLocation(result.countryCode.toUpperCase());
         // Store the detection timestamp
         localStorage.setItem(Constants.LOCAL_STORAGE_LOCATION_LAST_DETECTION, Date.now().toString());
+      } else if (result.error === 'Permission denied') {
+        // Show location modal when permission is denied
+        setShowLocationModal(true);
       }
     } catch (error) {
-      // Do not set any fallback location on error.
+      // Check if the error is due to permission denial
+      if (error instanceof GeolocationPositionError && error.code === GeolocationPositionError.PERMISSION_DENIED) {
+        setShowLocationModal(true);
+      }
+      // Do not set any fallback location on other errors.
     }
   };
-  // This provider doesn't render any UI, it just manages location detection
-  return <>{children}</>;
+
+  const handleCloseLocationModal = () => {
+    setShowLocationModal(false);
+  };
+
+  // This provider renders the location modal when needed
+  return (
+    <>
+      {children}
+      <LocationModal 
+        open={showLocationModal} 
+        onClose={handleCloseLocationModal} 
+      />
+    </>
+  );
 };
 
 export default LocationProvider;

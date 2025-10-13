@@ -26,7 +26,7 @@ import { CategoryModel } from "@/domain/models/CategoryModel";
 import { CategoryService } from "@/services/category-service";
 import CategoryMenu from "./CategoryMenu";
 import MobileDrawer from "./MobileDrawer";
-import { authenticationState, cartState, userState } from "@/domain/state";
+import { authenticationState, cartState, userState, locationState } from "@/domain/state";
 import { Role } from "@/domain/enum/role";
 
 import SearchBar from "@/resources/components/Search/SearchBar";
@@ -71,6 +71,7 @@ const Navbar: React.FC = () => {
   const setCartLoaded = cartState((state) => state.setCartLoaded);
   const clearCart = cartState((state) => state.clearCart);
   const cartCount = cart.length;
+  const userLocation = locationState((state) => state.userLocation);
 
   // Local UI state
   const [mobileDrawerOpen, setMobileDrawerOpen] = useState(false);
@@ -117,10 +118,10 @@ const Navbar: React.FC = () => {
 
   // Cart effects & helpers
   const loadCartData = useCallback(async () => {
-    if (isAuthenticated && !cartLoaded) {
+    if (isAuthenticated && !cartLoaded && userLocation) {
       // Authenticated users: Load cart from API into Zustand store only if not already loaded
       try {
-        const cartItems = await shoppingCartService.getShoppingCart();
+        const cartItems = await shoppingCartService.getShoppingCart(userLocation);
 
         // Convert API response to LocalShoppingCartItemModel format
         const localCartItems = cartItems.map(item => ({
@@ -135,7 +136,7 @@ const Navbar: React.FC = () => {
       }
     }
     // Unauthenticated users: cart data is already in Zustand store (persisted)
-  }, [isAuthenticated, cartLoaded, setCart, clearCart]);
+  }, [isAuthenticated, cartLoaded, userLocation, setCart, clearCart]);
 
   useEffect(() => {
     // Listen for cart updates from other components
@@ -227,14 +228,23 @@ const Navbar: React.FC = () => {
         <Toolbar
           sx={{
             backgroundColor: common.white,
-            justifyContent: {xs: "space-between" , sm: "space-between", md: "space-between", lg: "space-between", xl: "space-evenly"},
+            justifyContent: "center", // Center the content container
             px: 2,
             minHeight: { xs: 64, sm: 64, md: 64 }, // Force consistent height
           }}
         >
+          <Box
+            sx={{
+              display: "flex",
+              justifyContent: {xs: "space-between" , sm: "space-between", md: "space-between", lg: "space-between", xl: "space-between"},
+              alignItems: "center",
+              width: "100%",
+              maxWidth: "1680px",
+            }}
+          >
           {/* Nav Menu on < md (uses MUI Menu component) */}
           {/* Mobile Menu Button */}
-          <Box sx={{ display:"flex"}}>
+          <Box sx={{ display:"flex" }}>
             <Box sx={{ display: { xs: "flex", md: "flex", lg: "flex", xl: "none" } }}>
               <IconButton
                 size="large"
@@ -444,6 +454,7 @@ const Navbar: React.FC = () => {
                 </Button>
               </>
             )}
+          </Box>
           </Box>
         </Toolbar>
       </Paper>
