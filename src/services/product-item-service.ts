@@ -51,7 +51,7 @@ export class ProductItemService {
         variantIds: variantIds,
       };
 
-      const response = await api.post(`/api/productItem/${productId}/retrieveByConfigurations`, model);
+      const response = await api.post(`/api/productItem/${productId}/configurations`, model);
 
       return response.data;
     } catch (error) {
