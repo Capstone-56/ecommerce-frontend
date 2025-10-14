@@ -128,10 +128,9 @@ export class ProductService {
     category: string,
     featured: string,
     images: FileWithPreview[],
-    locations: string[],
     permutations: Record<string, string>[],
     variations: Record<string, string>[][],
-    locationPricing?: {country_code: string, price: number}[],
+    locationPricing: {country_code: string, price: number}[],
   ): Promise<{ errorMessage?: string, status: number }> {
     try {
       const baseUrl = "/api/product";
@@ -149,10 +148,6 @@ export class ProductService {
       formData.append("description", productDescription);
       formData.append("featured", String(featured));
       formData.append("category", category);
-
-      locations.forEach((location) => {
-        formData.append("locations", location);
-    })
 
       // Images (append each file separately).
       images.forEach((file) => {

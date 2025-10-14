@@ -50,7 +50,6 @@ interface StockInformationProps {
   productDescription: string,
   locationPricing: LocationPricing[],
   images: FileWithPreview[],
-  locations: string[],
   featured: string
 }
 
@@ -253,7 +252,6 @@ export default function StockInformation(props: StockInformationProps) {
       props.category,
       props.featured,
       props.images,
-      props.locations,
       permutations,
       allVariations,
       props.locationPricing
@@ -422,9 +420,9 @@ export default function StockInformation(props: StockInformationProps) {
                           <MenuItem key={"initial"} value={"initial"} disabled>
                             Choose listing location...
                           </MenuItem>
-                          {props.locations && props.locations.map((location) => (
-                            <MenuItem key={location} value={location}>
-                              {location}
+                          {props.locationPricing && props.locationPricing.map((locationPrice) => (
+                            <MenuItem key={locationPrice.country_code} value={locationPrice.country_code}>
+                              {locationPrice.country_code}
                             </MenuItem>
                           ))}
                         </TextField>

@@ -14,11 +14,10 @@ export interface ProductModel {
   featured: boolean,
   avgRating: number,
   price: number,
-  location_pricing?: LocationPricing[],
+  location_pricing: LocationPricing[],
   currency: string,
   variations: {
     [variationType: string]: string[];
   },
   category: string,
-  locations: Array<string>
 };

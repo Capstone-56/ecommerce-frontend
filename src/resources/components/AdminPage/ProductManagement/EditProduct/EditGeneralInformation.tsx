@@ -92,7 +92,6 @@ export default function EditGeneralInformation(props: EditGeneralInformationProp
       props.draft.price !== props.product.price ||
       props.draft.featured !== props.product.featured ||
       props.draft.category !== props.product.category ||
-      !isEqual(props.draft.locations, props.product.locations) ||
       !isEqual(props.draft.location_pricing, props.product.location_pricing)
     );
   };
@@ -201,7 +200,7 @@ export default function EditGeneralInformation(props: EditGeneralInformationProp
                   multiple
                   displayEmpty
                   fullWidth
-                  value={props.draft.locations ?? []}
+                  value={props.draft.location_pricing?.map(lp => lp.country_code) ?? []}
                   onChange={(event) => {
                     const {
                       target: { value },
@@ -218,7 +217,6 @@ export default function EditGeneralInformation(props: EditGeneralInformationProp
 
                       return {
                         ...prev,
-                        locations: newLocations,
                         location_pricing: updatedPricing,
                       };
                     });
@@ -248,7 +246,7 @@ export default function EditGeneralInformation(props: EditGeneralInformationProp
                 >
                   {(listOfLocations ?? []).map((location) => (
                     <MenuItem key={location.country_code} value={location.country_code}>
-                      <Checkbox checked={props.draft.locations?.includes(location.country_code) || false} />
+                      <Checkbox checked={props.draft.location_pricing?.some(lp => lp.country_code === location.country_code) || false} />
                       <ListItemText primary={location.country_name} />
                     </MenuItem>
                   ))}
@@ -256,7 +254,7 @@ export default function EditGeneralInformation(props: EditGeneralInformationProp
               </Grid>
 
               {/* Location Pricing Section */}
-              {(props.draft.locations && props.draft.locations.length > 0) && (
+              {(props.draft.location_pricing && props.draft.location_pricing.length > 0) && (
                 <Grid size={12}>
                   <Typography variant="h6" gutterBottom sx={{ mt: 2, mb: 2 }}>
                     Location Pricing
@@ -264,7 +262,8 @@ export default function EditGeneralInformation(props: EditGeneralInformationProp
                   <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
                     Set prices for each selected location
                   </Typography>
-                  {props.draft.locations.map((countryCode: string) => {
+                  {props.draft.location_pricing.map((locationPrice) => {
+                    const countryCode = locationPrice.country_code;
                     const locationData = listOfLocations?.find(loc => loc.country_code === countryCode);
                     const currentPricing = (props.draft.location_pricing || []).find(lp => lp.country_code === countryCode);
                     const currentPrice = currentPricing?.price || 0;

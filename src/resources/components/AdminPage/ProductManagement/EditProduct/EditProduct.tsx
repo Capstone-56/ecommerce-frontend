@@ -44,8 +44,7 @@ export default function EditProduct() {
         price: response.price,
         featured: response.featured,
         category: response.category,
-        locations: response.locations,
-        location_pricing: response.location_pricing || [],
+        location_pricing: response.location_pricing,
       });
     } catch (error) {
       toast.error("Failed to fetch products");

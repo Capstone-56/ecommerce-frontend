@@ -48,8 +48,6 @@ interface ProductInformationProps {
   setProductDescription: (v: string) => void,
   category: string,
   setCategory: (v: string) => void,
-  locations: string[],
-  setLocations: (v: string[]) => void,
   locationPricing: LocationPricing[],
   setLocationPricing: (v: LocationPricing[]) => void,
   files: FileWithPreview[],
@@ -126,16 +124,15 @@ export default function ProductInformation(props: ProductInformationProps) {
 
   /**
    * Helper function to append chosen locations to then be sent.
-   * Also updates location pricing when locations change.
+   * Updates location pricing when locations change.
    * @param event The checkbox selection.
    */
-  const handleLocationSelection = (event: SelectChangeEvent<typeof props.locations>) => {
+  const handleLocationSelection = (event: SelectChangeEvent<string[]>) => {
     const {
       target: { value },
     } = event;
 
     const newLocations = typeof value === 'string' ? value.split(',') : value;
-    props.setLocations(newLocations);
 
     // Update location pricing to match selected locations
     const updatedPricing = newLocations.map(countryCode => {
@@ -241,7 +238,7 @@ export default function ProductInformation(props: ProductInformationProps) {
             </Card>
           </Grid>
           {/* Location Pricing Section */}
-          {props.locations.length > 0 && (
+          {props.locationPricing.length > 0 && (
             <Grid>
               <Card>
                 <CardContent>
@@ -251,7 +248,8 @@ export default function ProductInformation(props: ProductInformationProps) {
                   <Typography variant={"body2"} pb={2} color="text.secondary">
                     Set prices for each selected location
                   </Typography>
-                  {props.locations.map((countryCode) => {
+                  {props.locationPricing.map((locationPrice) => {
+                    const countryCode = locationPrice.country_code;
                     const locationData = listOfLocations?.find(loc => loc.country_code === countryCode);
                     const currentPrice = props.locationPricing.find(lp => lp.country_code === countryCode)?.price || 0;
                     
@@ -494,7 +492,7 @@ export default function ProductInformation(props: ProductInformationProps) {
                 <Select
                   multiple
                   displayEmpty
-                  value={props.locations}
+                  value={props.locationPricing.map(lp => lp.country_code)}
                   fullWidth
                   onChange={handleLocationSelection}
                   renderValue={(selected) => {
@@ -516,7 +514,7 @@ export default function ProductInformation(props: ProductInformationProps) {
                 >
                   {listOfLocations && listOfLocations.map((location) => (
                     <MenuItem key={location.country_code} value={location.country_code}>
-                      <Checkbox checked={props.locations.includes(location.country_code)} />
+                      <Checkbox checked={props.locationPricing.some(lp => lp.country_code === location.country_code)} />
                       <ListItemText primary={location.country_name} />
                     </MenuItem>
                   ))}
