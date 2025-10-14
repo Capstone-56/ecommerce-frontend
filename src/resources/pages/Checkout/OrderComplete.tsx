@@ -16,6 +16,7 @@ import {
 } from "@mui/material";
 import CheckCircleOutlineIcon from "@mui/icons-material/CheckCircleOutline";
 import ErrorOutlineIcon from "@mui/icons-material/ErrorOutline";
+import { formatCurrency } from "@/utilities/currency-utils";
 import api from "@/api";
 import { OrderStatusModel } from "@/domain/models/OrderModel";
 import { cartState } from "@/domain/state";
@@ -140,7 +141,7 @@ export default function OrderComplete() {
                   </Grid>
                   <Grid size={{xs:"auto"}}>
                     <Typography variant="body1" fontWeight="medium">
-                      ${(item.price * item.quantity).toFixed(2)}
+                      {formatCurrency(item.price * item.quantity, data.currency || 'USD')}
                     </Typography>
                   </Grid>
                 </Grid>
@@ -178,7 +179,7 @@ export default function OrderComplete() {
             Total
           </Typography>
           <Typography variant="h6" fontWeight="bold">
-            ${order.totalPrice.toFixed(2)} {data.currency?.toUpperCase()}
+            {formatCurrency(order.totalPrice, data.currency || 'USD')}
           </Typography>
         </Box>
       </Box>

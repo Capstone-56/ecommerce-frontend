@@ -9,6 +9,7 @@ import {
 } from "@mui/material";
 import { useState, useEffect, useMemo } from "react";
 import { cartState, locationState } from "@/domain/state";
+import { Currency, COUNTRY_CURRENCY_MAP } from "@/domain/enum/currency";
 import CheckoutForm from "./CheckoutForm";
 import api from "@/api";
 
@@ -19,19 +20,9 @@ const StripeGateway = () => {
   const userLocation = locationState((s) => s.userLocation);
   const [shipping, setShipping] = useState<any | null>(null);
 
-  const countryToCurrency: Record<string, string> = {
-    AU: "AUD",
-    US: "USD",
-    CA: "CAD",
-    SG: "SGD",
-    IT: "EUR",
-    FR: "EUR",
-    DE: "EUR",
-  };
-
   const currency = useMemo(() => {
     const code = (userLocation || "").toUpperCase();
-    return countryToCurrency[code] || "USD"; // default to USD
+    return COUNTRY_CURRENCY_MAP[code] || Currency.USD;
   }, [userLocation]);
 
   const calculateTotal = (): number =>

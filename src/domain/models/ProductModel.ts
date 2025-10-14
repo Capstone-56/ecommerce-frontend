@@ -15,6 +15,7 @@ export interface ProductModel {
   avgRating: number,
   price: number,
   location_pricing?: LocationPricing[],
+  currency: string,
   variations: {
     [variationType: string]: string[];
   },

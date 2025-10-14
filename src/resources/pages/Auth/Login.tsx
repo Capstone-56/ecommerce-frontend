@@ -42,19 +42,19 @@ const Login: React.FC = () => {
       if (response.status === 200) {
         authenticationState.setState({ authenticated: true });
         userState.setState({ role: response.data.role });
-        userState.setState({ userName: form.username });
+        userState.setState({ userName: response.data.username });
         userState.setState({ id: response.data.id });
       }
 
 
       if (
-        userState.getState().role == Role.ADMIN || 
+        userState.getState().role == Role.ADMIN ||
         userState.getState().role == Role.MANAGER
       ) {
         navigate(Constants.ADMIN_DASHBOARD_ROUTE);
       } else {
         navigate("/");
-      }      
+      }
     } catch (err: any) {
       console.error("Login error:", err?.response?.data || err);
       setError("Login failed. Check your credentials.");
@@ -157,6 +157,9 @@ const Login: React.FC = () => {
       <Box mt={2}>
         <Link href="/signup" variant="body2">
           Create a new account
+        </Link>
+        <Link ml={3} href="/forgot" variant="body2">
+          Forgot password
         </Link>
       </Box>
     </Box>
