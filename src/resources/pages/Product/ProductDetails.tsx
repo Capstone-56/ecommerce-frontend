@@ -3,12 +3,14 @@ import { Link, useLocation, useParams } from "react-router-dom";
 import { Constants } from "@/domain/constants";
 import { ProductModel } from "@/domain/models/ProductModel";
 import { AddShoppingCartItemModel, LocalShoppingCartItemModel } from "@/domain/models/ShoppingCartItemModel";
+import { VariationModel } from "@/domain/models/VariationModel";
 
 import { useEffect, useState } from "react";
 
 import { ProductService } from "@/services/product-service";
 import { ShoppingCartService } from "@/services/shopping-cart-service";
 import { ProductItemService } from "@/services/product-item-service";
+import { VariationService } from "@/services/variation-service";
 
 import * as MathUtils from "@/utilities/math-utils";
 
@@ -41,6 +43,7 @@ const maxImageListLength = 4;
 const productService = new ProductService();
 const shoppingCartService = new ShoppingCartService();
 const productItemService = new ProductItemService();
+const variationService = new VariationService();
 
 export default function ProductDetails() {
   const [productDetails, setProductDetails] = useState<ProductModel>();
@@ -51,6 +54,7 @@ export default function ProductDetails() {
   const [colour, setColour] = useState<string>();
   const [itemSize, setItemSize] = useState<string>();
   const [qty, setQty] = useState<number>(1);
+  const [variantValueToIdMap, setVariantValueToIdMap] = useState<Map<string, string>>(new Map());
   const { id: productId = "null" } = useParams();
   const { name, description, images, price, currency, avgRating, featured } =
     productDetails || {};
@@ -97,13 +101,41 @@ export default function ProductDetails() {
     setImageOpen(false);
   }
 
-  // TODO: consider making some fields optional as they aren't all relevant to purchases
   async function handleAddToCart() {
     try {
-      // Get the actual ProductItemModel data for both authenticated and unauthenticated users
-      // TODO: construct productItemId by configurations
+      // Build array of selected variant IDs from the user's selections
+      const selectedVariantIds: string[] = [];
+      
+      if (colour) {
+        const colourId = variantValueToIdMap.get(colour);
+        if (colourId) {
+          selectedVariantIds.push(colourId);
+        }
+      }
+      
+      if (itemSize) {
+        const sizeId = variantValueToIdMap.get(itemSize);
+        if (sizeId) {
+          selectedVariantIds.push(sizeId);
+        }
+      }
+
+      // Get the product item ID that matches the selected configurations
+      const { id: productItemId } = await productItemService.retrieveByConfigurations(
+        productId,
+        selectedVariantIds
+      );
+
+      // Get the full product item details for the matched item
       const productItems = await productItemService.getByProductId(productId, userLocation, userCurrency);
-      const selectedProductItem = productItems[0];
+      const selectedProductItem = productItems.find(item => item.id === productItemId);
+      
+      // TODO: Handle case where no matching product item is found. (e.g., when blue m is not available, it should likely be grayed out similar to stock = 0)
+      // for now just yell at user
+      if (!selectedProductItem) {
+        console.error("Could not find product item matching the selected configuration");
+        return;
+      }
 
       if (authenticated) {
         // Check if location is available
@@ -138,7 +170,6 @@ export default function ProductDetails() {
       }
     } catch (error) {
       console.error("Error adding to cart:", error);
-      alert("Failed to add item to cart. Please try again.");
     }
   }
 
@@ -157,14 +188,34 @@ export default function ProductDetails() {
     const result = await productService.getProduct(id, userLocation, userCurrency);
     if (result) {
       setProductDetails(result);
-      // updated to use variants api
+      
+      // Fetch variations for the product's category to build value-to-ID mapping
+      if (result.category) {
+        try {
+          const variations = await variationService.listVariations(result.category);
+          const valueToIdMap = new Map<string, string>();
+          
+          // Build map from variant value to variant ID
+          variations.forEach(variation => {
+            variation.variant_values.forEach(variantValue => {
+              valueToIdMap.set(variantValue.value, variantValue.id);
+            });
+          });
+          
+          setVariantValueToIdMap(valueToIdMap);
+        } catch (error) {
+          console.error("Error fetching variations:", error);
+        }
+      }
+      
+      // Set default selections
       if (result.variations?.Size?.length) {
         setItemSize(result.variations.Size[0]);
       }
       if (result.variations?.Color?.length) {
         setColour(result.variations.Color[0]);
       }
-    } else console.error(`Nothing found for ${id}`); // frontend API error handling required?
+    } else console.error(`Nothing found for ${id}`);
   };
 
   // Loading state - might look into this as a component in the future when APIs take longer to call
