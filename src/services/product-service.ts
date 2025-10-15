@@ -128,10 +128,9 @@ export class ProductService {
     category: string,
     featured: string,
     images: FileWithPreview[],
-    price: number,
-    locations: string[],
     permutations: Record<string, string>[],
-    variations: Record<string, string>[][]
+    variations: Record<string, string>[][],
+    locationPricing: {country_code: string, price: number}[],
   ): Promise<{ errorMessage?: string, status: number }> {
     try {
       const baseUrl = "/api/product";
@@ -139,7 +138,6 @@ export class ProductService {
         location: permutation.location,
         sku: permutation.sku,
         stock: permutation.stock,
-        price: price,
         variations: variations[idx]
       }))
 
@@ -151,10 +149,6 @@ export class ProductService {
       formData.append("featured", String(featured));
       formData.append("category", category);
 
-      locations.forEach((location) => {
-        formData.append("locations", location)
-      })
-
       // Images (append each file separately).
       images.forEach((file) => {
         formData.append("images", file.file);
@@ -162,6 +156,9 @@ export class ProductService {
 
       // Nested objects.
       formData.append("product_items", JSON.stringify(formattedPermutations));
+    
+    // Append location_pricing
+    formData.append("location_pricing", JSON.stringify(locationPricing));
 
       const response = await api.post(baseUrl, formData, {
         headers: {
