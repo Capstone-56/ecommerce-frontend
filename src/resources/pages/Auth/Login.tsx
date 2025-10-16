@@ -40,7 +40,6 @@ const Login: React.FC = () => {
     try {
       const response = await api.post("/auth/login", form);
       if (response.status === 200) {
-        console.log("Response for login: ", response);
         authenticationState.setState({ authenticated: true });
         userState.setState({ role: response.data.role });
         userState.setState({ userName: response.data.username });

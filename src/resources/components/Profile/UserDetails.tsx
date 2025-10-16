@@ -85,8 +85,6 @@ const UserDetails: React.FC = () => {
       setInitialUser(user);
       toast.success("Details saved successfully");
     }
-    console.log("DEBUG - Saved user:", user);
-    console.log("DEBUG - Initial user: ", initialUser);
   };
 
   if (loading || !user) {
