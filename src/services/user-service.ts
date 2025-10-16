@@ -39,7 +39,7 @@ export class UserService {
    * Calls /api/user/{id} to update a user's basic details
    * @param id userId string
    */
-  async updateUser(details, id: string) {
+  async updateUser(details: UserModel, id: string) {
     try {
       const response = await api.put(`api/user/${id}`, details);
       return response.status;
