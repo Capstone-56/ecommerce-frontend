@@ -33,6 +33,7 @@ import type {
   AddressModelData,
   AddressModel,
 } from "@/domain/models/AddressModel";
+import { toast } from "react-toastify";
 
 const addressService = new AddressService();
 
@@ -52,23 +53,28 @@ const ShippingAddress: React.FC = () => {
   const [loading, setLoading] = useState(true);
   const [loadError, setLoadError] = useState<string | null>(null);
 
+  // used in both initial load and refetch after CRUD
+  const refreshAddresses = async () => {
+    setLoading(true);
+    setLoadError(null);
+    try {
+      const data = await addressService.listAddresses();
+      setAddresses(data || []);
+    } catch (err: any) {
+      console.error("Failed to load addresses", err);
+      setLoadError(err?.message || "Failed to load addresses");
+    } finally {
+      setLoading(false);
+    }
+  };
+
   useEffect(() => {
     let mounted = true;
-    const fetchAddresses = async () => {
-      setLoading(true);
-      setLoadError(null);
-      try {
-        const data = await addressService.listAddresses();
-        if (!mounted) return;
-        setAddresses(data || []);
-      } catch (err: any) {
-        console.error("Failed to load addresses", err);
-        if (mounted) setLoadError(err?.message || "Failed to load addresses");
-      } finally {
-        if (mounted) setLoading(false);
-      }
+    const init = async () => {
+      if (!mounted) return;
+      await refreshAddresses();
     };
-    fetchAddresses();
+    init();
     return () => {
       mounted = false;
     };
@@ -82,7 +88,7 @@ const ShippingAddress: React.FC = () => {
       state: "",
       country: "",
     };
-    // id left empty — create API should return canonical id
+
     setEditing({ id: "", address: empty, isDefault: false });
     setDialogOpen(true);
   };
@@ -120,25 +126,49 @@ const ShippingAddress: React.FC = () => {
 
     setSaving(true);
     try {
-      // TODO: use real api
+      const payload = {
+        addressLine: editing.address.addressLine,
+        city: editing.address.city,
+        state: editing.address.state,
+        postcode: editing.address.postcode,
+        country: editing.address.country,
+        makeDefault: !!editing.isDefault,
+      };
 
-      setAddresses((prev) => {
-        const exists = prev.find(
-          (p) => p.id === editing.id && editing.id !== ""
+      // If id present -> update (PUT /api/address/{id})
+      if (editing.id) {
+        const res = await addressService.updateAddress(
+          editing.id,
+          payload as any
         );
-        if (exists) {
-          return prev.map((p) => (p.id === editing.id ? editing : p));
+
+        const returned: AddressModelData = (res &&
+          (res.data ?? res)) as AddressModelData;
+
+        if (returned && returned.id) {
+          setAddresses((prev) =>
+            prev.map((p) => (p.id === returned.id ? returned : p))
+          );
+        } else {
+          await refreshAddresses();
         }
-        // temporary behaviour: push the new entry (server should return real id)
-        return [
-          ...prev,
-          { ...editing, id: editing.id || `temp-${Date.now()}` },
-        ];
-      });
+      } else {
+        // create address instead - no id present
+        const res = await addressService.addAddress(payload as any);
+        const returned: AddressModelData = (res &&
+          (res.data ?? res)) as AddressModelData;
+        if (returned && returned.id) {
+          setAddresses((prev) => [...prev, returned]);
+        } else {
+          // fallback: refresh
+          await refreshAddresses();
+        }
+      }
 
       closeDialog();
     } catch (err) {
       console.error("Failed to save address", err);
+      // optionally show toast / set error state
     } finally {
       setSaving(false);
     }
@@ -156,7 +186,16 @@ const ShippingAddress: React.FC = () => {
     if (!deleteTarget) return;
     setDeleting(true);
     try {
-      setAddresses((prev) => prev.filter((p) => p.id !== deleteTarget.id));
+      const res = await addressService.deleteAddress(deleteTarget.id);
+      // backend returns 204 on success; service may return status or truthy value
+      const ok =
+        (typeof res === "number" && res >= 200 && res < 300) ||
+        (res && (res.status ?? 0) >= 200 && (res.status ?? 0) < 300) ||
+        res === true;
+      if (!ok) throw new Error("Delete failed");
+
+      toast.success("Successfully deleted address");
+      await refreshAddresses();
       setDeleteTarget(null);
     } catch (err) {
       console.error("Failed to delete address", err);

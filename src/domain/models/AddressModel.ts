@@ -6,8 +6,14 @@ export interface AddressModel {
   country: string;
 }
 
+// typedefs for api
 export interface AddressModelData {
   id: string;
   address: AddressModel;
   isDefault: boolean;
 }
+
+export type MutateAddressData = {
+  address: AddressModel;
+  makeDefault?: boolean;
+};
