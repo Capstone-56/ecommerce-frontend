@@ -101,7 +101,7 @@ const orders: Order[] = [
   },
 ];
 
-// Probably need to bring this up
+// FYI this is just temporary - this page will be reworked to incorporate apis
 const formatCurrency = (amount: number) =>
   amount.toLocaleString("en-AU", { style: "currency", currency: "AUD" });
 

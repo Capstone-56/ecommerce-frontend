@@ -5,7 +5,6 @@ import { UserModel } from "@/domain/models/UserModel";
 import { Constants } from "@/domain/constants";
 import { userState } from "@/domain/state";
 import { toast } from "react-toastify";
-import { STATUS_CODES } from "http";
 import { StatusCodes } from "http-status-codes";
 
 /**

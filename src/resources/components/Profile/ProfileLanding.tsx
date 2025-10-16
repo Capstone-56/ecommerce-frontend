@@ -45,7 +45,7 @@ const ProfileLanding: React.FC = () => {
                 justifyContent: "center",
                 cursor: "pointer",
                 borderRadius: 3,
-                transition: "box-shadow 0.2s, transform 0.2s", // cool elevation illusion thing
+                transition: "box-shadow 0.2s, transform 0.2s",
                 "&:hover": {
                   boxShadow: 6,
                   transform: "translateY(-4px)",
