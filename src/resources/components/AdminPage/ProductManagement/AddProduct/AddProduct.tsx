@@ -2,6 +2,7 @@ import { Box, Button, Tab, Tabs, Typography } from "@mui/material";
 import { useEffect, useState } from "react";
 import ProductInformation from "./ProductInformation";
 import StockInformation from "./StockInformation";
+import { LocationPricing } from "@/domain/models/ProductModel";
 
 export interface FileWithPreview {
   file: File,
@@ -15,9 +16,8 @@ export default function AddProduct() {
   const [productName, setProductName] = useState("");
   const [productDescription, setProductDescription] = useState("");
   const [category, setCategory] = useState("initial");
-  const [locations, setLocations] = useState<string[]>([]);
   const [files, setFiles] = useState<FileWithPreview[]>([]);
-  const [price, setPrice] = useState(0);
+  const [locationPricing, setLocationPricing] = useState<LocationPricing[]>([]);
   const [featured, setFeatured] = useState<string>("");
   const [tabNumber, setTabNumber] = useState<number>(0);
 
@@ -44,8 +44,8 @@ export default function AddProduct() {
         <Tab label="Stock Information" disabled={category === "initial" ||
           productName === "" ||
           productDescription === "" ||
-          locations.length === 0 ||
-          price === 0} />
+          locationPricing.length === 0 ||
+          locationPricing.some(lp => lp.price === 0)} />
       </Tabs>
       {tabNumber == 0 && (
         <Box>
@@ -56,10 +56,8 @@ export default function AddProduct() {
             setProductDescription={setProductDescription}
             category={category}
             setCategory={setCategory}
-            price={price}
-            setPrice={setPrice}
-            locations={locations}
-            setLocations={setLocations}
+            locationPricing={locationPricing}
+            setLocationPricing={setLocationPricing}
             files={files}
             setFiles={setFiles}
             featured={featured}
@@ -73,8 +71,8 @@ export default function AddProduct() {
                 category === "initial" ||
                 productName === "" ||
                 productDescription === "" ||
-                locations.length === 0 ||
-                price === 0 ||
+                locationPricing.length === 0 ||
+                locationPricing.some(lp => lp.price === 0) ||
                 featured === ""
               }
             >
@@ -89,8 +87,7 @@ export default function AddProduct() {
             category={category}
             productName={productName}
             productDescription={productDescription}
-            price={price}
-            locations={locations}
+            locationPricing={locationPricing}
             images={files}
             featured={featured}
           />
