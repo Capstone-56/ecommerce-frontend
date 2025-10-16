@@ -46,7 +46,6 @@ const Login: React.FC = () => {
         userState.setState({ id: response.data.id });
       }
 
-
       if (
         userState.getState().role == Role.ADMIN ||
         userState.getState().role == Role.MANAGER

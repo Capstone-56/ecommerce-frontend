@@ -2,7 +2,10 @@ import { Link, useLocation, useParams } from "react-router-dom";
 
 import { Constants } from "@/domain/constants";
 import { ProductModel } from "@/domain/models/ProductModel";
-import { AddShoppingCartItemModel, LocalShoppingCartItemModel } from "@/domain/models/ShoppingCartItemModel";
+import {
+  AddShoppingCartItemModel,
+  LocalShoppingCartItemModel,
+} from "@/domain/models/ShoppingCartItemModel";
 
 import { useEffect, useState } from "react";
 
@@ -97,12 +100,15 @@ export default function ProductDetails() {
     setImageOpen(false);
   }
 
-  // TODO: consider making some fields optional as they aren't all relevant to purchases
   async function handleAddToCart() {
     try {
       // Get the actual ProductItemModel data for both authenticated and unauthenticated users
       // TODO: construct productItemId by configurations
-      const productItems = await productItemService.getByProductId(productId, userLocation, userCurrency);
+      const productItems = await productItemService.getByProductId(
+        productId,
+        userLocation,
+        userCurrency
+      );
       const selectedProductItem = productItems[0];
 
       if (authenticated) {
@@ -116,17 +122,15 @@ export default function ProductDetails() {
         const model: AddShoppingCartItemModel = {
           productItemId: selectedProductItem.id,
           quantity: qty,
-        }
+        };
 
         // Pass userLocation as second parameter
         await shoppingCartService.addToCart(model, userLocation);
 
         // Dispatch custom event to notify Navigation to reload cart
         window.dispatchEvent(new CustomEvent(Constants.EVENT_CART_UPDATED));
-        
-        console.log("Item added to cart successfully!");
       } else {
-        // For unauthenticated users, manually create a local cart item 
+        // For unauthenticated users, manually create a local cart item
         const cartItem: LocalShoppingCartItemModel = {
           id: MathUtils.generateGUID(),
           productItem: selectedProductItem,
@@ -154,7 +158,11 @@ export default function ProductDetails() {
   }, [images]);
 
   const fetchProductDetails = async (id: string) => {
-    const result = await productService.getProduct(id, userLocation, userCurrency);
+    const result = await productService.getProduct(
+      id,
+      userLocation,
+      userCurrency
+    );
     if (result) {
       setProductDetails(result);
       // updated to use variants api

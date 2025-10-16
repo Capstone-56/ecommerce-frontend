@@ -20,13 +20,13 @@ export class UserService {
   }
 
   /**
-   * Calls /api/user/id
-   * @params id (userId)
+   * Calls /api/user/{username}
+   * @params username: string
    * @returns a UserModel
    */
-  async getUser(id: string) {
+  async getUser(username: string) {
     try {
-      const response = await api.get(`/api/user/${id}`);
+      const response = await api.get(`/api/user/${username}`);
 
       return response.data;
     } catch (error) {
@@ -34,4 +34,18 @@ export class UserService {
       throw error;
     }
   }
-};
+
+  /**
+   * Calls /api/user/{id} to update a user's basic details
+   * @param id userId string
+   */
+  async updateUser(details, id: string) {
+    try {
+      const response = await api.put(`api/user/${id}`, details);
+      return response.status;
+    } catch (error) {
+      console.error("Error updating user details: ", error);
+      throw error;
+    }
+  }
+}

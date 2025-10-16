@@ -23,6 +23,10 @@ import Payment from "@/resources/pages/Checkout/Payment";
 import { Constants } from "@/domain/constants";
 import AddProduct from "@/resources/components/AdminPage/ProductManagement/AddProduct/AddProduct";
 import OrderComplete from "@/resources/pages/Checkout/OrderComplete";
+import OrderDetails from "@/resources/components/Profile/OrderHistory";
+import UserDetails from "@/resources/components/Profile/UserDetails";
+import ProfileLanding from "@/resources/components/Profile/ProfileLanding";
+import ShippingAddress from "@/resources/components/Profile/ShippingAddress";
 import OrderHistory from "@/resources/components/AdminPage/OrderHistory/OrderHistory";
 import EditProduct from "@/resources/components/AdminPage/ProductManagement/EditProduct/EditProduct";
 import CategoryManagement from "@/resources/components/AdminPage/CategoryManagement/CategoryManagement";
@@ -32,7 +36,7 @@ import ResetPassword from "@/resources/pages/Auth/ResetPassword";
 export const router = createBrowserRouter([
   {
     path: "/",
-    element: <UserLayout />,  // User layout for default routes
+    element: <UserLayout />, // User layout for default routes
     children: [
       {
         index: true,
@@ -43,8 +47,26 @@ export const router = createBrowserRouter([
         element: <About />,
       },
       {
-        path: "profile",
+        path: "/profile",
         element: <Profile />,
+        children: [
+          {
+            index: true,
+            element: <ProfileLanding />,
+          },
+          {
+            path: "orders",
+            element: <OrderDetails />,
+          },
+          {
+            path: "account",
+            element: <UserDetails />,
+          },
+          {
+            path: "shipping",
+            element: <ShippingAddress />,
+          },
+        ],
       },
       {
         path: "products",
@@ -60,11 +82,11 @@ export const router = createBrowserRouter([
       },
       {
         path: "cart",
-        element: <Cart />
+        element: <Cart />,
       },
       {
         path: "login",
-        element: <Login />
+        element: <Login />,
       },
       {
         path: "forgot",
@@ -76,17 +98,16 @@ export const router = createBrowserRouter([
       },
       {
         path: "signup",
-        element: <SignUp />
+        element: <SignUp />,
       },
       {
         path: "checkout",
-        element: <Payment />
+        element: <Payment />,
       },
       {
         path: "order-complete",
         element: <OrderComplete />,
-      }
-
+      },
     ],
   },
   {
@@ -95,49 +116,49 @@ export const router = createBrowserRouter([
     children: [
       {
         index: true,
-        element: <AdminDashboard />
+        element: <AdminDashboard />,
       },
       {
         path: "analytics",
-        element: <Analytics />
+        element: <Analytics />,
       },
       {
         path: "product/management",
-        element: <ProductManagement />
+        element: <ProductManagement />,
       },
       {
         path: "product/management/add",
-        element: <AddProduct />
+        element: <AddProduct />,
       },
       {
         path: "product/management/:id",
-        element: <EditProduct />
+        element: <EditProduct />,
       },
       {
         path: "category",
-        element: <CategoryManagement />
+        element: <CategoryManagement />,
       },
       {
         path: "category/management/add",
-        element: <div>Add Category (Coming Soon)</div>
+        element: <div>Add Category (Coming Soon)</div>,
       },
       {
         path: "category/management/:internalName",
-        element: <div>Edit Category (Coming Soon)</div>
+        element: <div>Edit Category (Coming Soon)</div>,
       },
       {
         path: "orders",
-        element: <OrderHistory />
+        element: <OrderHistory />,
       },
       {
         path: "settings",
-        element: <AdminSettings />
+        element: <AdminSettings />,
       },
       {
         path: "settings/create-admin",
-        element: <CreateAdminAccount />
+        element: <CreateAdminAccount />,
       },
-    ]
+    ],
   },
   {
     path: "*",
