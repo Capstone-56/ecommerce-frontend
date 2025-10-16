@@ -34,9 +34,10 @@ import { grey } from "@mui/material/colors";
 import { Close } from "@mui/icons-material";
 import { ZoomIn } from "@mui/icons-material";
 
-import { cartState, authenticationState } from "@/domain/state";
+import { cartState, authenticationState, locationState } from "@/domain/state";
 
 import RelatedProducts from "@/resources/components/RelatedProducts/RelatedProducts";
+import { formatPrice } from "@/utilities/currency-utils";
 
 const maxImageListLength = 4;
 
@@ -54,10 +55,12 @@ export default function ProductDetails() {
   const [itemSize, setItemSize] = useState<string>();
   const [qty, setQty] = useState<number>(1);
   const { id: productId = "null" } = useParams();
-  const { name, description, images, price, avgRating, featured } =
+  const { name, description, images, price, currency, avgRating, featured } =
     productDetails || {};
   const { addToCart } = cartState();
   const { authenticated } = authenticationState();
+  const userLocation = locationState((state) => state.userLocation);
+  const userCurrency = locationState((state) => state.getUserCurrency());
 
   // Event handlers for number input
   function handleChange(
@@ -98,38 +101,56 @@ export default function ProductDetails() {
   }
 
   async function handleAddToCart() {
-    // Get the actual ProductItemModel data for both authenticated and unauthenticated users
-    // TODO: construct productItemId by configurations
-    const productItems = await productItemService.getByProductId(productId);
-    const selectedProductItem = productItems[0];
+    try {
+      // Get the actual ProductItemModel data for both authenticated and unauthenticated users
+      // TODO: construct productItemId by configurations
+      const productItems = await productItemService.getByProductId(
+        productId,
+        userLocation,
+        userCurrency
+      );
+      const selectedProductItem = productItems[0];
 
-    if (authenticated) {
-      const model: AddShoppingCartItemModel = {
-        productItemId: selectedProductItem.id,
-        quantity: qty,
-      };
-      console.log("Cart item added:", model);
+      if (authenticated) {
+        // Check if location is available
+        if (!userLocation) {
+          console.error("User location is required to add items to cart");
+          alert("Please set your location to add items to cart");
+          return;
+        }
 
-      await shoppingCartService.addToCart(model);
+        const model: AddShoppingCartItemModel = {
+          productItemId: selectedProductItem.id,
+          quantity: qty,
+        };
 
-      // Dispatch custom event to notify Navigation to reload cart
-      window.dispatchEvent(new CustomEvent(Constants.EVENT_CART_UPDATED));
-    } else {
-      // For unauthenticated users, manually create a local cart item
-      const cartItem: LocalShoppingCartItemModel = {
-        id: MathUtils.generateGUID(),
-        productItem: selectedProductItem,
-        quantity: qty,
-        totalPrice: selectedProductItem.price * qty,
-      };
+        // Pass userLocation as second parameter
+        await shoppingCartService.addToCart(model, userLocation);
 
-      addToCart(cartItem);
+        // Dispatch custom event to notify Navigation to reload cart
+        window.dispatchEvent(new CustomEvent(Constants.EVENT_CART_UPDATED));
+
+        console.log("Item added to cart successfully!");
+      } else {
+        // For unauthenticated users, manually create a local cart item
+        const cartItem: LocalShoppingCartItemModel = {
+          id: MathUtils.generateGUID(),
+          productItem: selectedProductItem,
+          quantity: qty,
+          totalPrice: selectedProductItem.price * qty,
+        };
+
+        addToCart(cartItem);
+      }
+    } catch (error) {
+      console.error("Error adding to cart:", error);
+      alert("Failed to add item to cart. Please try again.");
     }
   }
 
   useEffect(() => {
     fetchProductDetails(productId);
-  }, [productId]);
+  }, [productId, userLocation, userCurrency]);
 
   // If surpassing 4 image links, the 4th image in list will be a collection
   useEffect(() => {
@@ -139,7 +160,11 @@ export default function ProductDetails() {
   }, [images]);
 
   const fetchProductDetails = async (id: string) => {
-    const result = await productService.getProduct(id);
+    const result = await productService.getProduct(
+      id,
+      userLocation,
+      userCurrency
+    );
     if (result) {
       setProductDetails(result);
       // updated to use variants api
@@ -347,7 +372,7 @@ export default function ProductDetails() {
             </Typography>
 
             {/* retrieving price from backend now */}
-            {typeof price === "number" && (
+            {price && currency && (
               <Typography
                 variant="caption"
                 sx={{
@@ -355,7 +380,7 @@ export default function ProductDetails() {
                   fontSize: "1.5rem",
                 }}
               >
-                ${price.toFixed(2)}
+                {formatPrice(price, currency)}
               </Typography>
             )}
 

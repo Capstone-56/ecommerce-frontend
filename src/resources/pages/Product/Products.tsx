@@ -46,6 +46,7 @@ export default function Products() {
     : undefined;
   const searchFilter = searchParams.get("search") || undefined;
   const userLocation = locationState((state) => state.userLocation);
+  const userCurrency = locationState((state) => state.getUserCurrency());
 
   /**
    * A useEffect required to get product data upon mount and when URL changes.
@@ -54,7 +55,7 @@ export default function Products() {
   useEffect(() => {
     document.title = "eCommerce | Products";
     fetchProducts();
-  }, [searchParams, userLocation]);
+  }, [searchParams, userLocation, userCurrency]);
 
   // Fetch products based on current search params
   const fetchProducts = async () => {
@@ -70,7 +71,8 @@ export default function Products() {
         colourFilter,
         categoriesFilter,
         searchFilter,
-        userLocation
+        userLocation,
+        userCurrency
       );
       setProducts(result);
     } catch (error) {

@@ -6,11 +6,24 @@ export class ProductItemService {
   /**
    * Retrieves all product items for a given product ID.
    * @param productId The ID of the product to retrieve items for.
+   * @param userLocation User's location for filtering product items.
+   * @param currency User's preferred currency for pricing.
    * @returns An array of ProductItemModel objects.
    */
-  async getByProductId(productId: string): Promise<Array<ProductItemModel>> {
+  async getByProductId(
+    productId: string, 
+    userLocation?: string | null, 
+    currency?: string | null
+  ): Promise<Array<ProductItemModel>> {
     try {
-      const response = await api.get(`/api/productItem/${productId}/byProduct`);
+      const params = new URLSearchParams();
+      if (userLocation) params.append("location", userLocation);
+      if (currency) params.append("currency", currency);
+
+      const queryString = params.toString();
+      const url = `/api/productItem/${productId}/byProduct${queryString ? `?${queryString}` : ''}`;
+      
+      const response = await api.get(url);
 
       return response.data;
     } catch (error) {
@@ -23,9 +36,16 @@ export class ProductItemService {
    * Retrieves the product item id that matches the given configurations.
    * @param productId The ID of the product to retrieve items for.
    * @param variantIds An array of variant IDs to match.
+   * @param userLocation User's location for filtering product items.
+   * @param currency User's preferred currency for pricing.
    * @returns The matching product item id.
    */
-  async retrieveByConfigurations(productId: string, variantIds: Array<string>): Promise<number> {
+  async retrieveByConfigurations(
+    productId: string, 
+    variantIds: Array<string>,
+    userLocation?: string | null,
+    currency?: string | null
+  ): Promise<number> {
     try {
       const model = {
         variantIds: variantIds,
@@ -43,12 +63,24 @@ export class ProductItemService {
   /**
    * An endpoint to retrieve a set of related product items.
    * @param productId The ID of the product to get related product items for.
+   * @param userLocation User's location for filtering product items.
+   * @param currency User's preferred currency for pricing.
    * @returns A set of product items.
    */
-  async getProductItems(productId: string): Promise<ProductItemModel[]> {
+  async getProductItems(
+    productId: string,
+    userLocation?: string | null,
+    currency?: string | null
+  ): Promise<ProductItemModel[]> {
     try {
-      const baseUrl = `/api/productItem/${productId}/byProduct`;
-      const productItems = await api.get(baseUrl);
+      const params = new URLSearchParams();
+      if (userLocation) params.append("location", userLocation);
+      if (currency) params.append("currency", currency);
+
+      const queryString = params.toString();
+      const url = `/api/productItem/${productId}/byProduct${queryString ? `?${queryString}` : ''}`;
+      
+      const productItems = await api.get(url);
 
       return productItems.data;
     } catch (error) {

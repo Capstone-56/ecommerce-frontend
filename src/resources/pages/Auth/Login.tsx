@@ -43,7 +43,7 @@ const Login: React.FC = () => {
         console.log("Response for login: ", response);
         authenticationState.setState({ authenticated: true });
         userState.setState({ role: response.data.role });
-        userState.setState({ userName: form.username });
+        userState.setState({ userName: response.data.username });
         userState.setState({ id: response.data.id });
       }
 
@@ -157,6 +157,9 @@ const Login: React.FC = () => {
       <Box mt={2}>
         <Link href="/signup" variant="body2">
           Create a new account
+        </Link>
+        <Link ml={3} href="/forgot" variant="body2">
+          Forgot password
         </Link>
       </Box>
     </Box>

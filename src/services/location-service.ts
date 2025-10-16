@@ -50,6 +50,15 @@ export class LocationService {
       };
     } catch (error) {
       console.error("Failed to get current location:", error);
+      
+      // Handle specific geolocation errors
+      if (error instanceof Error && error.message === "Location access denied by user") {
+        return {
+          success: false,
+          error: "Permission denied",
+        };
+      }
+      
       return {
         success: false,
         error:

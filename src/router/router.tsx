@@ -30,6 +30,8 @@ import ShippingAddress from "@/resources/components/Profile/ShippingAddress";
 import OrderHistory from "@/resources/components/AdminPage/OrderHistory/OrderHistory";
 import EditProduct from "@/resources/components/AdminPage/ProductManagement/EditProduct/EditProduct";
 import CategoryManagement from "@/resources/components/AdminPage/CategoryManagement/CategoryManagement";
+import ForgotPassword from "@/resources/pages/Auth/ForgotPassword";
+import ResetPassword from "@/resources/pages/Auth/ResetPassword";
 
 export const router = createBrowserRouter([
   {
@@ -85,6 +87,14 @@ export const router = createBrowserRouter([
       {
         path: "login",
         element: <Login />,
+      },
+      {
+        path: "forgot",
+        element: <ForgotPassword />
+      },
+      {
+        path: "reset/:email/:token",
+        element: <ResetPassword />
       },
       {
         path: "signup",

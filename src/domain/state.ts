@@ -4,6 +4,7 @@ import { Constants } from "./constants";
 import { LocalShoppingCartItemModel } from "./models/ShoppingCartItemModel";
 import { UserModel } from "./models/UserModel";
 import { Role } from "./enum/role";
+import { COUNTRY_CURRENCY_MAP } from "./enum/currency";
 
 type cartStore = {
   /**
@@ -120,10 +121,27 @@ type LocationStore = {
    */
   userLocation: string | null;
   /**
-   * Sets the users location.
+   * User's currency based on their location.
+   */
+  userCurrency: string | null;
+  /**
+   * User's selected currency for display (can be different from location-based currency).
+   */
+  selectedCurrency: string | null;
+  /**
+   * Sets the users location and automatically updates currency.
    * @param location The location of user to be set.
    */
   setLocation: (location: string) => void;
+  /**
+   * Sets the user's selected currency for price display.
+   * @param currency The currency code to be set.
+   */
+  setSelectedCurrency: (currency: string) => void;
+  /**
+   * Gets the effective currency to use (selected currency or user currency).
+   */
+  getUserCurrency: () => string | null;
 };
 
 /**
@@ -261,14 +279,25 @@ export const userState = create<UserStore>()(
 );
 
 /**
- * Location state to store the user's active location. Will be used to get
- * products that are available in the user's country.
+ * Location state to store the user's active location and currency. Will be used to get
+ * products that are available in the user's country and display prices in their currency.
  */
 export const locationState = create<LocationStore>()(
   persist(
-    (set) => ({
+    (set, get) => ({
       userLocation: null,
-      setLocation: (userLocation: string) => set({ userLocation }),
+      userCurrency: null,
+      selectedCurrency: null,
+      setLocation: (userLocation: string) => {
+        const userCurrency = COUNTRY_CURRENCY_MAP[userLocation] || null;
+        set({ userLocation, userCurrency });
+      },
+      setSelectedCurrency: (selectedCurrency: string) => {
+        set({ selectedCurrency });
+      },
+      getUserCurrency: () => {
+        return get().selectedCurrency || get().userCurrency;
+      },
     }),
     {
       name: Constants.LOCAL_STORAGE_LOCATION_STORAGE,
