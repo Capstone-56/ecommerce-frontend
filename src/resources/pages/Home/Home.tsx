@@ -26,7 +26,7 @@ export default function Home() {
    * A useEffect required to get product data upon mount.
    */
   useEffect(() => {
-    document.title = "eCommerce | Home";
+    document.title = `${Constants.BASE_BROWSER_TAB_TITLE} | Home`;
 
     // The ProductService required to get product data.
     const productService = new ProductService();

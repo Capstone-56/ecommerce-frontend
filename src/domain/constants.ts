@@ -33,4 +33,7 @@ export class Constants {
 
   // events
   public static readonly EVENT_CART_UPDATED: string = "event-cart-updated";
+
+  // misc
+  public static readonly BASE_BROWSER_TAB_TITLE: string = "BDNX";
 }
