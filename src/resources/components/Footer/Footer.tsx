@@ -175,7 +175,7 @@ export default function Footer() {
             color="text.secondary"
             sx={{ mt: { xs: 2, sm: 0 } }}
           >
-            &copy; {new Date().getFullYear()} eCommerce. All rights reserved.
+            &copy; {new Date().getFullYear()} BDNX. All rights reserved.
           </Typography>
 
           {/* Social icons */}

@@ -23,7 +23,9 @@ import Paginator from "@/resources/components/Pagination/Paginator";
 import ProductCard from "@/resources/components/ProductCard/ProductCard";
 import Filter from "@/resources/components/Filter/Filter";
 import DynamicBreadcrumbs from '@/resources/components/Navigation/DynamicBreadcrumbs';
+
 import { locationState } from "@/domain/state";
+import { Constants } from "@/domain/constants";
 
 export default function Products() {
   const [products, setProducts] = useState<PagedList<ProductModel>>();
@@ -53,7 +55,7 @@ export default function Products() {
    */
   // Fetch products when search params change
   useEffect(() => {
-    document.title = "eCommerce | Products";
+    document.title = `${Constants.BASE_BROWSER_TAB_TITLE} | Products`;
     fetchProducts();
   }, [searchParams, userLocation, userCurrency]);
 
