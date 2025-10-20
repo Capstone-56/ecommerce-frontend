@@ -21,12 +21,16 @@ import {
   Divider,
   CircularProgress,
   Grid,
+  Checkbox,
+  FormControlLabel,
 } from "@mui/material";
 import AddIcon from "@mui/icons-material/Add";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
 import SaveIcon from "@mui/icons-material/Save";
 import CloseIcon from "@mui/icons-material/Close";
+import StarIcon from "@mui/icons-material/Star";
+import StarBorderIcon from "@mui/icons-material/StarBorder";
 
 import { AddressService } from "@/services/address-service";
 import type {
@@ -111,6 +115,14 @@ const ShippingAddress: React.FC = () => {
         ...editing.address,
         [key]: value,
       },
+    });
+  };
+
+  const handleDefaultChange = (checked: boolean) => {
+    if (!editing) return;
+    setEditing({
+      ...editing,
+      isDefault: checked,
     });
   };
 
@@ -204,6 +216,30 @@ const ShippingAddress: React.FC = () => {
     }
   };
 
+  // Set an address as default (PUT /api/address/{id} with makeDefault: true)
+  const handleSetDefault = async (addr: AddressModelData) => {
+    if (addr.isDefault) return;
+    setSaving(true);
+    try {
+      const payload = {
+        addressLine: addr.address.addressLine,
+        city: addr.address.city,
+        state: addr.address.state,
+        postcode: addr.address.postcode,
+        country: addr.address.country,
+        makeDefault: true,
+      };
+      await addressService.updateAddress(addr.id, payload as any);
+      await refreshAddresses();
+      toast.success("Default address updated");
+    } catch (err) {
+      console.error("Failed to set default address", err);
+      toast.error("Failed to set default address");
+    } finally {
+      setSaving(false);
+    }
+  };
+
   const renderedRows = useMemo(() => addresses, [addresses]);
 
   return (
@@ -264,7 +300,23 @@ const ShippingAddress: React.FC = () => {
                 ) : (
                   renderedRows.map((addr) => (
                     <TableRow key={addr.id} hover>
-                      <TableCell>{addr.isDefault ? "True" : "—"}</TableCell>
+                      <TableCell>
+                        {addr.isDefault ? (
+                          <Tooltip title="Default address">
+                            <StarIcon color="primary" fontSize="small" />
+                          </Tooltip>
+                        ) : (
+                          <Tooltip title="Set as default">
+                            <IconButton
+                              size="small"
+                              onClick={() => handleSetDefault(addr)}
+                              disabled={saving}
+                            >
+                              <StarBorderIcon fontSize="small" />
+                            </IconButton>
+                          </Tooltip>
+                        )}
+                      </TableCell>
                       <TableCell
                         sx={{
                           maxWidth: 320,
@@ -296,6 +348,7 @@ const ShippingAddress: React.FC = () => {
                             <IconButton
                               size="small"
                               onClick={() => confirmDelete(addr)}
+                              disabled={addr.isDefault}
                             >
                               <DeleteIcon />
                             </IconButton>
@@ -381,6 +434,18 @@ const ShippingAddress: React.FC = () => {
                 value={editing?.address.country ?? ""}
                 onChange={(e) => handleChange("country", e.target.value)}
                 fullWidth
+              />
+            </Grid>
+
+            <Grid size={{ xs: 12 }}>
+              <FormControlLabel
+                control={
+                  <Checkbox
+                    checked={!!editing?.isDefault}
+                    onChange={(e) => handleDefaultChange(e.target.checked)}
+                  />
+                }
+                label="Set as default address"
               />
             </Grid>
           </Grid>
