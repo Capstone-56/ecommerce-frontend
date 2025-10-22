@@ -21,7 +21,7 @@ export class AddressService {
   }
 
   /**
-   * Calls DELETE /api/address/:id
+   * Calls DELETE /api/address/{id}
    * @param id id of the address
    * @returns a status code
    */

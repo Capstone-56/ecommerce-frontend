@@ -311,6 +311,7 @@ const ShippingAddress: React.FC = () => {
                               size="small"
                               onClick={() => handleSetDefault(addr)}
                               disabled={saving}
+                              sx={{ p: 0 }}
                             >
                               <StarBorderIcon fontSize="small" />
                             </IconButton>

@@ -7,6 +7,10 @@ import {
   Button,
   useMediaQuery,
   IconButton,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogActions,
 } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
 import { useEffect, useState } from "react";
@@ -45,6 +49,7 @@ const profileUrl = "https://randomuser.me/api/portraits/men/32.jpg"; // Example 
 const Profile: React.FC = () => {
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [user, setUser] = useState<UserModel | null>(null);
+  const [showAddressPrompt, setShowAddressPrompt] = useState(false);
   const navigate = useNavigate();
   const theme = useTheme();
   const isSmall = useMediaQuery(theme.breakpoints.down("md"));
@@ -52,16 +57,14 @@ const Profile: React.FC = () => {
 
   useEffect(() => {
     document.title = "Profile Page";
-    // Fetch user details
     const fetchUser = async () => {
       if (!username) return;
       try {
-        // Replace "me" with the actual username if needed
         const userService = new UserService();
         const userData = await userService.getUser(username);
+        setShowAddressPrompt(!!userData.addresses);
         setUser(userData);
       } catch (err) {
-        // Optionally handle error
         setUser(null);
       }
     };
@@ -223,6 +226,35 @@ const Profile: React.FC = () => {
             </Box>
           </Drawer>
         </>
+      )}
+
+      {/* Prompt to add address if none exist */}
+      {showAddressPrompt && (
+        <Dialog
+          open={showAddressPrompt}
+          onClose={() => setShowAddressPrompt(false)}
+        >
+          <DialogTitle>Add a shipping address</DialogTitle>
+          <DialogContent>
+            <Typography>
+              To complete your profile, please add a shipping address.
+            </Typography>
+          </DialogContent>
+          <DialogActions>
+            <Button
+              variant="contained"
+              onClick={() => {
+                setShowAddressPrompt(false);
+                navigate("/profile/shipping");
+              }}
+            >
+              Add Address
+            </Button>
+            <Button onClick={() => setShowAddressPrompt(false)}>
+              Maybe Later
+            </Button>
+          </DialogActions>
+        </Dialog>
       )}
     </Box>
   );

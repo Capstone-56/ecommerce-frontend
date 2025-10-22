@@ -52,7 +52,7 @@ const Login: React.FC = () => {
       ) {
         navigate(Constants.ADMIN_DASHBOARD_ROUTE);
       } else {
-        navigate("/");
+        navigate("/profile");
       }
     } catch (err: any) {
       console.error("Login error:", err?.response?.data || err);

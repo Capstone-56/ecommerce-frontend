@@ -302,7 +302,7 @@ const Navbar: React.FC = () => {
                 >
                   <Box
                     component="img"
-                    src="src/assets/logo_bdnx.png" // <-- replace with your logo path
+                    src="/logo_bdnx.png"
                     alt="BDNX"
                     sx={{
                       height: { xs: 32, md: 40 },
