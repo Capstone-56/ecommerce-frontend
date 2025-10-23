@@ -62,7 +62,7 @@ const Profile: React.FC = () => {
       try {
         const userService = new UserService();
         const userData = await userService.getUser(username);
-        setShowAddressPrompt(!!userData.addresses);
+        setShowAddressPrompt(userData.addresses.length === 0);
         setUser(userData);
       } catch (err) {
         setUser(null);

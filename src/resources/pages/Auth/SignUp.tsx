@@ -62,7 +62,7 @@ const SignUp: React.FC = () => {
         userState.setState({ id: response.data.id });
         toast.success("Account created successfully");
 
-        navigate("/");
+        navigate("/profile");
       }
     } catch (err: any) {
       toast.error(err?.response?.data?.detail || "Signup failed");
