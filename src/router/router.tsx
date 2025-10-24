@@ -28,6 +28,7 @@ import OrderHistory from "@/resources/components/AdminPage/Orders";
 import CategoryManagement from "@/resources/components/AdminPage/CategoryManagement/CategoryManagement";
 import EditCategory from "@/resources/components/AdminPage/CategoryManagement/EditCategory/EditCategory";
 import AddCategory from "@/resources/components/AdminPage/CategoryManagement/AddCategory/AddCategory";
+import VariantManagement from "@/resources/components/AdminPage/VariantManagement/VariantManagement";
 
 export const router = createBrowserRouter([
   {
@@ -116,6 +117,10 @@ export const router = createBrowserRouter([
       {
         path: "category/management/:internalName",
         element: <EditCategory />
+      },
+      {
+        path: "variant",
+        element: <VariantManagement />
       },
       {
         path: "orders",

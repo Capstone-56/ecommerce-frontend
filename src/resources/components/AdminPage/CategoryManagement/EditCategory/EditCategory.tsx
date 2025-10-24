@@ -32,21 +32,12 @@ export default function EditCategory() {
    */
   async function fetchRequiredInformation() {
     try {
-      // TODO: Implement getCategoryById method in CategoryService
-      // const response = await categoryService.getCategoryById(categoryId);
-      const mockCategory: CategoryModel = {
-        internalName: categoryInternalName || "sample-category",
-        name: "Sample Category",
-        description: "This is a sample category description",
-        parentCategory: null,
-      };
-      
-      setCategory(mockCategory);
+      const response = await categoryService.getCategory(categoryInternalName);
+      setCategory(response);
       setDraft({
-        internalName: mockCategory.internalName,
-        name: mockCategory.name,
-        description: mockCategory.description,
-        parentCategory: mockCategory.parentCategory,
+        name: response.name,
+        description: response.description,
+        parentCategory: response.parentCategory,
       });
     } catch (error) {
       toast.error("Failed to fetch category");
@@ -54,13 +45,6 @@ export default function EditCategory() {
     }
   }
 
-  /**
-   * Callback function to handle image updates.
-   */
-  const handleImagesUpdated = () => {
-    // TODO: Implement image update logic
-    toast.success("Category image updated successfully");
-  };
 
   return (
     <Box >
@@ -73,7 +57,6 @@ export default function EditCategory() {
           category={category}
           draft={draft}
           setDraft={setDraft}
-          onImagesUpdated={handleImagesUpdated}
         />
       )}
     </Box>

@@ -1,6 +1,5 @@
 import {
   Card,
-  CardMedia,
   Grid,
   MenuItem,
   TextField,
@@ -12,16 +11,12 @@ import { CategoryModel } from "@/domain/models/CategoryModel";
 import { toast } from "react-toastify";
 
 export interface CategoryInformationProps {
-  categoryId: string;
-  setCategoryId: Dispatch<SetStateAction<string>>;
   categoryName: string;
   setCategoryName: Dispatch<SetStateAction<string>>;
   categoryDescription: string;
   setCategoryDescription: Dispatch<SetStateAction<string>>;
   parentCategory: string;
   setParentCategory: Dispatch<SetStateAction<string>>;
-  files: any[];
-  setFiles: Dispatch<SetStateAction<any[]>>;
 }
 
 const categoryService = new CategoryService();
@@ -31,15 +26,12 @@ const categoryService = new CategoryService();
  */
 export default function CategoryInformation(props: CategoryInformationProps) {
   const [listOfCategories, setListOfCategories] = useState<CategoryModel[]>([]);
-  const [categoryImage, setCategoryImage] = useState<string>("");
 
   /**
    * A useEffect required to get required information.
    */
   useEffect(() => {
     fetchRequiredInformation();
-    // Set a placeholder image for template purposes
-    setCategoryImage("https://v0-ecommerce-website-creation-bice.vercel.app/placeholder.svg?height=300&width=300");
   }, []);
 
   /**
@@ -47,7 +39,7 @@ export default function CategoryInformation(props: CategoryInformationProps) {
    */
   const fetchRequiredInformation = async () => {
     try {
-      const categories = await categoryService.listCategories();
+      const categories = await categoryService.getFlatCategoryList();
       setListOfCategories(categories);
     } catch (error) {
       console.error("Error fetching categories:", error);
@@ -60,7 +52,7 @@ export default function CategoryInformation(props: CategoryInformationProps) {
   return (
     <Grid container spacing={3}>
       {/* Category Information Form */}
-      <Grid size={{ xs: 12, lg: 8 }}>
+      <Grid size={{ xs: 12 }}>
         <Card sx={{ padding: 3 }}>
           <Typography variant="h6" sx={{ marginBottom: 2 }}>
             Category Information
@@ -79,23 +71,16 @@ export default function CategoryInformation(props: CategoryInformationProps) {
             </Grid>
 
             <Grid size={12}>
-              <Typography>Category Id</Typography>
-              <TextField
-                fullWidth
-                value={props.categoryId}
-                onChange={(e) => props.setCategoryId(e.target.value.toLowerCase())}
-                placeholder="Enter category id..."
-                required
-              />
-            </Grid>
-
-            <Grid size={12}>
               <Typography>Parent Category</Typography>
               <TextField
                 select
-                fullWidth
                 value={props.parentCategory}
                 onChange={(e) => props.setParentCategory(e.target.value)}
+                slotProps={{
+                  select: {
+                    displayEmpty: true
+                  }
+                }}
               >
                 <MenuItem value="">
                   <em>No Parent Category</em>
@@ -118,35 +103,14 @@ export default function CategoryInformation(props: CategoryInformationProps) {
                 onChange={(e) => props.setCategoryDescription(e.target.value)}
                 placeholder="Description of the category..."
                 required
+                slotProps={{
+                  htmlInput: { maxLength: 255 }
+                }}
+                helperText={`${props.categoryDescription.length}/255 characters`}
+                error={props.categoryDescription.length > 255}
               />
             </Grid>
           </Grid>
-        </Card>
-      </Grid>
-
-      {/* Category Image */}
-      <Grid size={{ xs: 12, lg: 4 }} height={"100%"}>
-        <Card>
-          <CardMedia
-            component="img"
-            image={categoryImage}
-            alt="Category Image"
-            sx={{
-              width: "100%",
-              height: "auto",
-              objectFit: "cover",
-              aspectRatio: 1 / 1,
-            }}
-          />
-          {/* TODO: Implement category-specific image upload component */}
-          <div style={{ padding: 16 }}>
-            <Typography variant="body2" color="text.secondary">
-              Category Image Management
-            </Typography>
-            <Typography variant="caption" display="block">
-              Image upload functionality will be implemented later
-            </Typography>
-          </div>
         </Card>
       </Grid>
     </Grid>

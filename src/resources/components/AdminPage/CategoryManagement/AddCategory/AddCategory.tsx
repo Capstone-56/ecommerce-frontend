@@ -8,30 +8,24 @@ import { useNavigate } from "react-router-dom";
 
 const categoryService = new CategoryService();
 
-export interface FileWithPreview {
-  file: File;
-  previewImage: string;
-}
 
 /**
  * Add category page that presents a form to create a new category.
  */
 export default function AddCategory() {
   const navigate = useNavigate();
-  const [categoryId, setCategoryId] = useState("");
   const [categoryName, setCategoryName] = useState("");
   const [categoryDescription, setCategoryDescription] = useState("");
   const [parentCategory, setParentCategory] = useState("");
-  const [files, setFiles] = useState<FileWithPreview[]>([]);
 
   /**
    * Validates if all required fields are filled
    */
   const isFormValid = (): boolean => {
     return (
-      categoryId.trim() !== "" &&
       categoryName.trim() !== "" &&
-      categoryDescription.trim() !== ""
+      categoryDescription.trim() !== "" &&
+      categoryDescription.length <= 255
     );
   };
 
@@ -45,18 +39,13 @@ export default function AddCategory() {
     }
 
     try {
-      const newCategory: Partial<CategoryModel> = {
-        internalName: categoryId.toLowerCase().replace(/\s+/g, '-'),
+      const newCategory = {
         name: categoryName,
         description: categoryDescription,
-        parentCategory: parentCategory || null,
+        parentCategory: parentCategory === "" ? undefined : parentCategory,
       };
 
-      // TODO: Implement createCategory method in CategoryService
-      // const response = await categoryService.createCategory(newCategory);
-      
-      // Mock response
-      console.log("Category to be created:", newCategory);
+      const response = await categoryService.createCategory(newCategory);
       toast.success("Category created successfully!");
       
       // Navigate back to category management
@@ -81,16 +70,12 @@ export default function AddCategory() {
       </Typography>
       
       <CategoryInformation
-        categoryId={categoryId}
-        setCategoryId={setCategoryId}
         categoryName={categoryName}
         setCategoryName={setCategoryName}
         categoryDescription={categoryDescription}
         setCategoryDescription={setCategoryDescription}
         parentCategory={parentCategory}
         setParentCategory={setParentCategory}
-        files={files}
-        setFiles={setFiles}
       />
       
       <Box display="flex" justifyContent="flex-end" gap={2} sx={{ marginTop: 3 }}>

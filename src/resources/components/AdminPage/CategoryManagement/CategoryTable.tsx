@@ -9,6 +9,7 @@ import { CategoryModel } from '@/domain/models/CategoryModel';
 import CancelIcon from '@mui/icons-material/Cancel';
 import EditIcon from '@mui/icons-material/Edit';
 import { Button, IconButton, Popover, TablePagination, Tooltip, Typography } from '@mui/material';
+import { toast } from 'react-toastify';
 import { useCallback, useEffect, useState } from "react";
 import React from 'react';
 import { CategoryService } from '@/services/category-service';
@@ -111,43 +112,32 @@ export default function CategoryTable(props: CategoryTableProps) {
    */
   const fetchCategories = async () => {
     try {
-      const response = await categoryService.listCategories();
-      // Flatten the category tree for display in the table
-      const flatCategories = flattenCategories(response);
-      setCategories(flatCategories);
+      const response = await categoryService.getFlatCategoryList();
+      // Add level information for display (all categories are at level 0 in flat list)
+      const categoriesWithLevel = response.map(category => ({ ...category, level: 0 }));
+      setCategories(categoriesWithLevel);
     } catch (error) {
       console.error("Failed to fetch categories", error);
     }
   };
 
-  /**
-   * Flatten nested categories for table display
-   * @param categories The nested category array
-   * @param level The nesting level for indentation
-   * @returns Flattened array of categories with level information
-   */
-  const flattenCategories = (categories: CategoryModel[], level: number = 0): CategoryWithLevel[] => {
-    let result: CategoryWithLevel[] = [];
-    
-    categories.forEach(category => {
-      result.push({ ...category, level });
-      if (category.children && category.children.length > 0) {
-        result = result.concat(flattenCategories(category.children, level + 1));
-      }
-    });
-    
-    return result;
-  };
 
   /**
-   * Soft delete's a category from the database.
+   * Delete a category from the database.
    * @param category The selected category to remove.
    */
-  // TODO: Implement the soft deleting API. 
-  function deleteCategory(category: CategoryModel) {
-    console.log("Deleting category:", category.name);
-    // Placeholder for future backend integration
-  }
+  const deleteCategory = async (category: CategoryModel) => {
+    try {
+      await categoryService.deleteCategory(category.internalName);
+      toast.success(`Category "${category.name}" deleted successfully`);
+      // Refresh the category list
+      fetchCategories();
+      handleClose();
+    } catch (error) {
+      console.error("Error deleting category:", error);
+      toast.error("Failed to delete category");
+    }
+  };
 
   // TODO: update internalName field to be parentCategory or show both.
 
@@ -188,7 +178,7 @@ export default function CategoryTable(props: CategoryTableProps) {
                   width: "35%",
                   fontWeight: "bold"
                 }}>
-                Description (not supported yet)
+                Description
               </TableCell>
               <TableCell
                 sx={{

@@ -1,10 +1,7 @@
 import {
   Box,
   Button,
-  FormControl,
   InputAdornment,
-  InputLabel,
-  Select,
   TextField,
   Typography
 } from "@mui/material";
@@ -76,33 +73,17 @@ export default function CategoryManagement() {
                 color: 'grey.500',
                 opacity: 1,
               },
-              maxWidth: "70%"
+              maxWidth: "100%"
             }}
           />
-          <FormControl sx={{
-            minWidth: "30%",
-            '& .MuiInputBase-root': {
-              marginTop: '10px',
-            }
-          }}>
-            <InputLabel id="category-select" sx={{ marginBottom: "5px" }}>Filter by Category</InputLabel>
-            <Select
-              labelId="category-select"
-              id="category-simple-select"
-              //value={category}
-              //onChange={handleChange}
-              variant="standard"
-              disableUnderline
-            >
-            </Select>
-          </FormControl>
         </Box>
         <Button variant="contained" onClick={handleSearch}>Search</Button>
       </Box>
       <Box>
         <CategoryTable searchTerm={searchTerm} />
       </Box>
-      <Box sx={{ paddingTop: "15px", paddingBottom: "15px", display: "flex", justifyContent: "right" }}>
+      <Box sx={{ paddingTop: "15px", paddingBottom: "15px", display: "flex", justifyContent: "right", gap: 2 }}>
+        <Button variant="outlined" onClick={() => navigate("/admin/variant")}>Manage Variants</Button>
         <Button variant="contained" onClick={() => navigate("/admin/category/management/add")}>+ Add Category</Button>
       </Box>
     </Box>
