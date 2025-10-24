@@ -59,12 +59,12 @@ export default function VariantTable(props: VariantTableProps) {
   }, [variants, props.searchTerm]);
 
   /**
-   * Gets variant data from the API for the "men" category.
+   * Gets variant data from the API for all categories.
    */
   const fetchVariants = useCallback(async () => {
     try {
-      // Always fetch variants for "men" category
-      const variantList = await variationService.listVariations("men");
+      // Fetch all variants regardless of category
+      const variantList = await variationService.listVariations();
       setVariants(variantList);
     } catch (error) {
       console.error("Error fetching variants:", error);
@@ -109,16 +109,12 @@ export default function VariantTable(props: VariantTableProps) {
   const handleDeleteVariant = async () => {
     if (selectedVariant) {
       try {
-        // TODO: Implement delete endpoint in VariationService
-        // await variationService.deleteVariation(selectedVariant.id);
-        console.log("Delete variant:", selectedVariant.id);
-        
-        // For now, just show a message and refresh
-        alert("Delete functionality will be implemented soon!");
+        await variationService.deleteVariation(selectedVariant.id);
         await fetchVariants(); // Refresh the list
         handleClose();
       } catch (error) {
         console.error("Error deleting variant:", error);
+        alert("Failed to delete variant. Please try again.");
       }
     }
   };
@@ -166,14 +162,23 @@ export default function VariantTable(props: VariantTableProps) {
                   </TableCell>
                   <TableCell>
                     <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5, maxWidth: 400 }}>
-                      {variant.variant_values.map((value) => (
-                        <Chip
-                          key={value.id}
-                          label={value.value}
-                          size="small"
-                          variant="outlined"
-                        />
-                      ))}
+                      {(() => {
+                        const values = variant.variations || variant.variant_values || [];
+                        return values.length > 0 ? (
+                          values.map((value) => (
+                            <Chip
+                              key={value.id}
+                              label={value.value}
+                              size="small"
+                              variant="outlined"
+                            />
+                          ))
+                        ) : (
+                          <Typography variant="caption" color="text.secondary">
+                            No values defined
+                          </Typography>
+                        );
+                      })()}
                     </Box>
                   </TableCell>
                   <TableCell align="center">

@@ -10,6 +10,9 @@ import VariantTable from "./VariantTable";
 import AddVariantModal from "./AddVariantModal";
 import { useNavigate } from "react-router";
 import { useCallback, useState } from "react";
+import { VariationService } from "@/services/variation-service";
+
+const variationService = new VariationService();
 
 /**
  * Variant Management page that will help admins manage
@@ -46,14 +49,17 @@ export default function VariantManagement() {
   /**
    * Handle saving a new variant
    */
-  const handleSaveVariant = async (variantData: { name: string; values: string[] }) => {
+  const handleSaveVariant = async (variantData: { name: string; values: string[]; categories: string[] }) => {
     try {
-      console.log('Saving variant:', variantData);
-      // TODO: Implement API call to save variant
-      // await variationService.createVariation("men", variantData.name, variantData.values);
+      await variationService.createVariation({
+        name: variantData.name,
+        categories: variantData.categories,
+        variations: variantData.values.map(value => ({ value }))
+      });
       
       // Trigger refresh of the table
       setRefreshTrigger(prev => prev + 1);
+      setIsAddModalOpen(false);
     } catch (error) {
       console.error('Error saving variant:', error);
       alert('Error saving variant. Please try again.');

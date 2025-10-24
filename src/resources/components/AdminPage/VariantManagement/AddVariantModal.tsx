@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   Dialog,
   DialogTitle,
@@ -10,11 +10,14 @@ import {
   Typography,
   IconButton,
   Chip,
-  Paper
+  Paper,
+  Autocomplete
 } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
 import DeleteIcon from '@mui/icons-material/Delete';
 import AddIcon from '@mui/icons-material/Add';
+import { CategoryService } from '@/services/category-service';
+import { CategoryModel } from '@/domain/models/CategoryModel';
 
 interface VariantValue {
   id: string;
@@ -24,8 +27,10 @@ interface VariantValue {
 interface AddVariantModalProps {
   open: boolean;
   onClose: () => void;
-  onSave: (variantData: { name: string; values: string[] }) => void;
+  onSave: (variantData: { name: string; values: string[]; categories: string[] }) => void;
 }
+
+const categoryService = new CategoryService();
 
 export default function AddVariantModal({ open, onClose, onSave }: AddVariantModalProps) {
   const [variantName, setVariantName] = useState('');
@@ -35,6 +40,26 @@ export default function AddVariantModal({ open, onClose, onSave }: AddVariantMod
     { id: '3', value: '' }
   ]);
   const [nameError, setNameError] = useState('');
+  const [categories, setCategories] = useState<CategoryModel[]>([]);
+  const [selectedCategories, setSelectedCategories] = useState<CategoryModel[]>([]);
+
+  /**
+   * Fetch categories on component mount
+   */
+  useEffect(() => {
+    const fetchCategories = async () => {
+      try {
+        const categoryList = await categoryService.getFlatCategoryList();
+        setCategories(categoryList);
+      } catch (error) {
+        console.error('Error fetching categories:', error);
+      }
+    };
+
+    if (open) {
+      fetchCategories();
+    }
+  }, [open]);
 
   const handleClose = () => {
     // Reset form
@@ -45,6 +70,7 @@ export default function AddVariantModal({ open, onClose, onSave }: AddVariantMod
       { id: '3', value: '' }
     ]);
     setNameError('');
+    setSelectedCategories([]);
     onClose();
   };
 
@@ -84,7 +110,8 @@ export default function AddVariantModal({ open, onClose, onSave }: AddVariantMod
     // Call the onSave callback with the data
     onSave({
       name: variantName.trim(),
-      values: filledValues
+      values: filledValues,
+      categories: selectedCategories.map(cat => cat.internalName)
     });
 
     handleClose();
@@ -135,6 +162,33 @@ export default function AddVariantModal({ open, onClose, onSave }: AddVariantMod
             }}
             error={!!nameError}
             helperText={nameError || "The name of the variation type (e.g., Size, Color, Material)"}
+            sx={{
+              '& .MuiOutlinedInput-root': {
+                borderRadius: '8px',
+              }
+            }}
+          />
+        </Box>
+
+        <Box sx={{ mb: 4 }}>
+          <Typography variant="body2" sx={{ mb: 1, fontWeight: 500 }}>
+            Assign to Categories
+          </Typography>
+          <Autocomplete
+            multiple
+            options={categories}
+            getOptionLabel={(option) => option.name}
+            value={selectedCategories}
+            onChange={(event, newValue) => {
+              setSelectedCategories(newValue);
+            }}
+            renderInput={(params) => (
+              <TextField
+                {...params}
+                placeholder="Select categories (optional)"
+                helperText="Choose which categories this variation type applies to. Leave empty to make it available for all categories."
+              />
+            )}
             sx={{
               '& .MuiOutlinedInput-root': {
                 borderRadius: '8px',
