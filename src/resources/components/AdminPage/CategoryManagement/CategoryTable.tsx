@@ -8,12 +8,13 @@ import Paper from '@mui/material/Paper';
 import { CategoryModel } from '@/domain/models/CategoryModel';
 import CancelIcon from '@mui/icons-material/Cancel';
 import EditIcon from '@mui/icons-material/Edit';
-import { Button, IconButton, Popover, TablePagination, Tooltip, Typography } from '@mui/material';
+import { Badge, Button, Chip, IconButton, Popover, TablePagination, Tooltip, Typography } from '@mui/material';
 import { toast } from 'react-toastify';
 import { useCallback, useEffect, useState } from "react";
 import React from 'react';
 import { CategoryService } from '@/services/category-service';
 import { useNavigate } from 'react-router-dom';
+import { NoEncryption } from '@mui/icons-material';
 
 /**
  * Category table props.
@@ -157,7 +158,7 @@ export default function CategoryTable(props: CategoryTableProps) {
                 sx={{
                   backgroundColor: "#212E4A",
                   color: "#8EB5C0", 
-                  width: "30%",
+                  width: "25%",
                   fontWeight: "bold"
                 }}>
                 Category Name
@@ -166,7 +167,16 @@ export default function CategoryTable(props: CategoryTableProps) {
                 sx={{
                   backgroundColor: "#212E4A",
                   color: "#8EB5C0", 
-                  width: "20%",
+                  width: "15%",
+                  fontWeight: "bold"
+                }}>
+                Parent Category
+              </TableCell>
+              <TableCell
+                sx={{
+                  backgroundColor: "#212E4A",
+                  color: "#8EB5C0", 
+                  width: "15%",
                   fontWeight: "bold"
                 }}>
                 Internal Name (ID)
@@ -175,7 +185,7 @@ export default function CategoryTable(props: CategoryTableProps) {
                 sx={{
                   backgroundColor: "#212E4A",
                   color: "#8EB5C0",
-                  width: "35%",
+                  width: "30%",
                   fontWeight: "bold"
                 }}>
                 Description
@@ -206,7 +216,25 @@ export default function CategoryTable(props: CategoryTableProps) {
                   </Typography>
                 </TableCell>
                 <TableCell align="left">
-                  <Typography sx={{ fontSize: '1rem' }}>
+                  <Chip
+                    label={category.parentCategory || "Root Parent"}
+                    size="small"
+                    variant="outlined"
+                  />
+                </TableCell>
+                <TableCell align="left">
+                  <Typography 
+                    component="code"
+                    sx={{ 
+                      fontSize: '0.875rem',
+                      fontFamily: 'monospace',
+                      backgroundColor: '#f5f5f5',
+                      padding: '4px 8px',
+                      borderRadius: '4px',
+                      border: '1px solid #e0e0e0',
+                      display: 'inline-block'
+                    }}
+                  >
                     {category.internalName}
                   </Typography>
                 </TableCell>

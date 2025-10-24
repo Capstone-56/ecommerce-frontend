@@ -84,7 +84,7 @@ export default function EditCategoryInformation(props: EditCategoryInformationPr
     const updates: {
       name?: string;
       description?: string;
-      parentCategory?: string;
+      parentCategory?: string | null;
     } = {};
     
     if (props.draft.name !== props.category.name) {
@@ -94,7 +94,7 @@ export default function EditCategoryInformation(props: EditCategoryInformationPr
       updates.description = props.draft.description;
     }
     if (props.draft.parentCategory !== props.category.parentCategory) {
-      updates.parentCategory = props.draft.parentCategory === "" || props.draft.parentCategory === null ? undefined : props.draft.parentCategory;
+      updates.parentCategory = props.draft.parentCategory === "" || props.draft.parentCategory === null ? null : props.draft.parentCategory;
     }
 
     try {

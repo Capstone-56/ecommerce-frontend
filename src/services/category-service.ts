@@ -61,7 +61,7 @@ export class CategoryService {
     categoryData: {
       name?: string;
       description?: string;
-      parentCategory?: string;
+      parentCategory?: string | null;
     }
   ): Promise<CategoryModel> {
     try {
