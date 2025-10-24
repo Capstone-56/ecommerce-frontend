@@ -50,9 +50,19 @@ export class LocationService {
       };
     } catch (error) {
       console.error("Failed to get current location:", error);
+      
+      // Handle specific geolocation errors
+      if (error instanceof Error && error.message === "Location access denied by user") {
+        return {
+          success: false,
+          error: "Permission denied",
+        };
+      }
+      
       return {
         success: false,
-        error: error instanceof Error ? error.message : "Unknown error occurred",
+        error:
+          error instanceof Error ? error.message : "Unknown error occurred",
       };
     }
   }
@@ -95,16 +105,15 @@ export class LocationService {
    * @param position The latitude/longitude coordinates
    * @returns Promise resolving to country code string
    */
-  private async coordinatesToCountry(position: GeolocationPosition): Promise<string> {
+  private async coordinatesToCountry(
+    position: GeolocationPosition
+  ): Promise<string> {
     try {
       // Use relative path, let api handle baseURL
-      const response = await api.post(
-        "/api/location/coordinates-to-country",
-        {
-          latitude: position.latitude,
-          longitude: position.longitude,
-        }
-      );
+      const response = await api.post("/api/location/coordinates-to-country", {
+        latitude: position.latitude,
+        longitude: position.longitude,
+      });
       return response.data.country_code;
     } catch (error) {
       console.error("Failed to convert coordinates to country:", error);
@@ -119,9 +128,11 @@ export class LocationService {
    */
   public isValidCountryCode(countryCode: string): boolean {
     // Basic validation - country codes are typically 2 characters
-    return typeof countryCode === "string" &&
+    return (
+      typeof countryCode === "string" &&
       countryCode.length === 2 &&
-      /^[a-zA-Z]{2}$/.test(countryCode);
+      /^[a-zA-Z]{2}$/.test(countryCode)
+    );
   }
 
   /**
@@ -129,7 +140,7 @@ export class LocationService {
    */
   async getLocations(): Promise<LocationModel[]> {
     try {
-      const response = await api.get("/api/location")
+      const response = await api.get("/api/location");
       return response.data;
     } catch (error) {
       throw new Error("Failed to get product locations.");

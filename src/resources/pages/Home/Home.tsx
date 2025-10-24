@@ -20,24 +20,25 @@ import { Constants } from "@/domain/constants";
 export default function Home() {
   const [products, setProducts] = useState<Array<ProductModel>>([]);
   const location = locationState((state) => state.userLocation);
+  const userCurrency = locationState((state) => state.getUserCurrency());
 
   /**
    * A useEffect required to get product data upon mount.
    */
   useEffect(() => {
-    document.title = "eCommerce | Home";
+    document.title = `${Constants.BASE_BROWSER_TAB_TITLE} | Home`;
 
     // The ProductService required to get product data.
     const productService = new ProductService();
 
     // Function to retrieve featured products via the API.
     const getProducts = async () => {
-      const products = await productService.getFeaturedProducts(location);
+      const products = await productService.getFeaturedProducts(location, userCurrency);
       setProducts(products);
     };
 
     getProducts();
-  }, [location]); // Added location dependency for filtering
+  }, [location, userCurrency]);
 
   return (
     <>

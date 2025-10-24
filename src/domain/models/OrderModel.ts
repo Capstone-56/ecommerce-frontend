@@ -1,9 +1,8 @@
 import { OrderItemModel } from "./OrderItemModel";
 import { AddressModel } from "./AddressModel";
-import { ShippingVendorModel } from "./ShippingVendorModel";
 import { GuestUserModel } from "./GuestUserModel";
 import { UserModel } from "./UserModel";
-import { UUID } from "crypto";
+
 import { OrderStatus } from "../enum/orderStatus";
 import { PaymentStatus } from "../type/paymentStatus";
 
@@ -15,31 +14,31 @@ export interface TotalOrderModel {
 
 // Product model of a particular order.
 export interface OrderProductModel {
-  id: string,
-  name: string,
-  description: string,
-  images: Array<string>,
-  featured: boolean,
-  avgRating: number,
-  price: number,
-  category: string,
-  locations: [],
-  variations: JSON,
-  total_quantity_purchased: number,
-  total_items_sold: number
+  id: string;
+  name: string;
+  description: string;
+  images: Array<string>;
+  featured: boolean;
+  avgRating: number;
+  price: number;
+  category: string;
+  locations: [];
+  variations: JSON;
+  total_quantity_purchased: number;
+  total_items_sold: number;
 }
 
 // Singular order model.
 export interface OrderModel {
   id: string;
   createdAt: string;
-  user: string | null;
-  guestUser: JSON;
-  address: UUID;
-  shippingVendor: number;
+  user: UserModel | null;
+  guestUser: GuestUserModel;
+  address: AddressModel;
   totalPrice: number;
   status: OrderStatus;
-  items: [];
+  items: Array<OrderItemModel>;
+  paymentIntentId: string;
 }
 
 export interface OrderStatusModel {
@@ -58,7 +57,6 @@ export interface OrderStatusModel {
     guestUser?: GuestUserModel;
   };
   address?: AddressModel;
-  shippingVendor?: ShippingVendorModel;
 }
 
 // Weekly order model.

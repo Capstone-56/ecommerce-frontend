@@ -1,9 +1,11 @@
 import { useEffect } from "react";
 import { Typography } from "@mui/material";
 
+import { Constants } from "@/domain/constants";
+
 const Categories: React.FC = () => {
   useEffect(() => {
-    document.title = "eCommerce | Categories";
+    document.title = `${Constants.BASE_BROWSER_TAB_TITLE} | Categories`;
   });
 
   return (

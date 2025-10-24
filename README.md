@@ -1,8 +1,5 @@
 # frontend
-This repo is responsible for the UI of the eCommerce site.
-test
-
-Website URL (Staging Environment): https://capstone56-frontend.netlify.app/
+This repo is responsible for the UI of the BDNX site.
 
 # React + TypeScript + Vite
 

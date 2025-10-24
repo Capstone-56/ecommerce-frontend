@@ -44,7 +44,7 @@ export default function EditProduct() {
         price: response.price,
         featured: response.featured,
         category: response.category,
-        locations: response.locations,
+        location_pricing: response.location_pricing,
       });
     } catch (error) {
       toast.error("Failed to fetch products");
@@ -92,6 +92,7 @@ export default function EditProduct() {
       {tabNumber == 1 && (
         <Box>
           <EditStockInformation
+            product={product!}
             productId={productId}
             categoryId={product?.category}
             draft={draft}

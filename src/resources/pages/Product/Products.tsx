@@ -23,7 +23,9 @@ import Paginator from "@/resources/components/Pagination/Paginator";
 import ProductCard from "@/resources/components/ProductCard/ProductCard";
 import Filter from "@/resources/components/Filter/Filter";
 import DynamicBreadcrumbs from '@/resources/components/Navigation/DynamicBreadcrumbs';
+
 import { locationState } from "@/domain/state";
+import { Constants } from "@/domain/constants";
 
 export default function Products() {
   const [products, setProducts] = useState<PagedList<ProductModel>>();
@@ -46,15 +48,16 @@ export default function Products() {
     : undefined;
   const searchFilter = searchParams.get("search") || undefined;
   const userLocation = locationState((state) => state.userLocation);
+  const userCurrency = locationState((state) => state.getUserCurrency());
 
   /**
    * A useEffect required to get product data upon mount and when URL changes.
    */
   // Fetch products when search params change
   useEffect(() => {
-    document.title = "eCommerce | Products";
+    document.title = `${Constants.BASE_BROWSER_TAB_TITLE} | Products`;
     fetchProducts();
-  }, [searchParams, userLocation]);
+  }, [searchParams, userLocation, userCurrency]);
 
   // Fetch products based on current search params
   const fetchProducts = async () => {
@@ -70,7 +73,8 @@ export default function Products() {
         colourFilter,
         categoriesFilter,
         searchFilter,
-        userLocation
+        userLocation,
+        userCurrency
       );
       setProducts(result);
     } catch (error) {

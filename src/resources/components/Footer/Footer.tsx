@@ -21,7 +21,6 @@ export default function Footer() {
         backgroundColor: "#f9f9f9",
         borderTop: "1px solid #e0e0e0",
         pt: 6,
-        mt: 8,
       }}
     >
       <Container maxWidth="xl">
@@ -176,7 +175,7 @@ export default function Footer() {
             color="text.secondary"
             sx={{ mt: { xs: 2, sm: 0 } }}
           >
-            &copy; {new Date().getFullYear()} eCommerce. All rights reserved.
+            &copy; {new Date().getFullYear()} BDNX. All rights reserved.
           </Typography>
 
           {/* Social icons */}

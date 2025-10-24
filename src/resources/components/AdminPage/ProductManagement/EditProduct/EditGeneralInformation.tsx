@@ -1,12 +1,17 @@
 import {
+  Box,
   Button,
   Card,
   CardMedia,
+  Checkbox,
   FormControlLabel,
   Grid,
+  ListItemText,
   MenuItem,
+  OutlinedInput,
   Radio,
   RadioGroup,
+  Select,
   TextField,
   Typography,
 } from "@mui/material";
@@ -20,6 +25,7 @@ import { LocationModel } from "@/domain/models/LocationModel";
 import { StatusCodes } from "http-status-codes";
 import { toast } from "react-toastify";
 import ModifyImages from "@/resources/components/ModifyImages/ModifyImages";
+import { isEqual } from "lodash";
 
 export interface EditGeneralInformationProps {
   product: ProductModel
@@ -60,6 +66,18 @@ export default function EditGeneralInformation(props: EditGeneralInformationProp
   };
 
   /**
+   * Handle updating price for a specific location
+   */
+  const handleLocationPriceChange = (countryCode: string, price: number) => {
+    props.setDraft((prev) => ({
+      ...prev,
+      location_pricing: (prev.location_pricing || []).map(lp => 
+        lp.country_code === countryCode ? { ...lp, price } : lp
+      )
+    }));
+  };
+
+  /**
    * Helper function to determine whether an admin has altered a field to
    * be updated.
    * @returns A True or False depending on whether there have been changes.
@@ -74,7 +92,7 @@ export default function EditGeneralInformation(props: EditGeneralInformationProp
       props.draft.price !== props.product.price ||
       props.draft.featured !== props.product.featured ||
       props.draft.category !== props.product.category ||
-      props.draft.locations?.[0] !== props.product.locations?.[0]
+      !isEqual(props.draft.location_pricing, props.product.location_pricing)
     );
   };
 
@@ -129,17 +147,6 @@ export default function EditGeneralInformation(props: EditGeneralInformationProp
               </Grid>
 
               <Grid size={{ xs: 12, sm: 6 }}>
-                <Typography>Price</Typography>
-                <TextField
-                  fullWidth
-                  type="number"
-                  value={props.draft.price ?? ""}
-                  disabled={isDisabled}
-                  onChange={(e) => props.setDraft((prev) => ({ ...prev, price: Number(e.target.value) }))}
-                />
-              </Grid>
-
-              <Grid size={{ xs: 12, sm: 6 }}>
                 <Typography>Featured</Typography>
                 <RadioGroup row value={props.value} onChange={handleChange} sx={{ mt: 1 }}>
                   <FormControlLabel
@@ -187,23 +194,138 @@ export default function EditGeneralInformation(props: EditGeneralInformationProp
               </Grid>
 
               <Grid size={{ xs: 12, sm: 6 }}>
-                <Typography>Location</Typography>
-                <TextField
-                  select
-                  value={props.draft.locations && listOfLocations ? props.draft.locations[0] : ""}
-                  onChange={(e) =>
-                    props.setDraft((prev) => ({ ...prev, locations: [e.target.value] }))
-                  }
+                <Typography>Location Availability</Typography>
+                <Select
                   disabled={isDisabled}
+                  multiple
+                  displayEmpty
                   fullWidth
+                  value={props.draft.location_pricing?.map(lp => lp.country_code) ?? []}
+                  onChange={(event) => {
+                    const {
+                      target: { value },
+                    } = event;
+
+                    const newLocations = typeof value === 'string' ? value.split(',') : value;
+
+                    props.setDraft((prev) => {
+                      // Create pricing entries for new locations, preserve existing ones
+                      const updatedPricing = newLocations.map((countryCode: string) => {
+                        const existingPricing = (prev.location_pricing || []).find(lp => lp.country_code === countryCode);
+                        return existingPricing || { country_code: countryCode, price: 0};
+                      });
+
+                      return {
+                        ...prev,
+                        location_pricing: updatedPricing,
+                      };
+                    });
+                  }}
+                  renderValue={(selected) => {
+                    if (selected.length === 0) {
+                      return (
+                        <Typography fontStyle="italic" color="textDisabled">
+                          Choose a location
+                        </Typography>
+                      );
+                    }
+
+                    return (
+                      <Typography
+                        sx={{
+                          overflow: 'hidden',
+                          textOverflow: 'ellipsis',
+                          whiteSpace: 'nowrap',
+                        }}
+                      >
+                        {selected.join(', ')}
+                      </Typography>
+                    );
+                  }}
+                  input={<OutlinedInput label="Tag" />}
                 >
-                  {(listOfLocations ?? []).map((option) => (
-                    <MenuItem key={option.country_code} value={option.country_code}>
-                      {option.country_name}
+                  {(listOfLocations ?? []).map((location) => (
+                    <MenuItem key={location.country_code} value={location.country_code}>
+                      <Checkbox checked={props.draft.location_pricing?.some(lp => lp.country_code === location.country_code) || false} />
+                      <ListItemText primary={location.country_name} />
                     </MenuItem>
                   ))}
-                </TextField>
+                </Select>
               </Grid>
+
+              {/* Location Pricing Section */}
+              {(props.draft.location_pricing && props.draft.location_pricing.length > 0) && (
+                <Grid size={12}>
+                  <Typography variant="h6" gutterBottom sx={{ mt: 2, mb: 2 }}>
+                    Location Pricing
+                  </Typography>
+                  <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
+                    Set prices for each selected location
+                  </Typography>
+                  {props.draft.location_pricing.map((locationPrice) => {
+                    const countryCode = locationPrice.country_code;
+                    const locationData = listOfLocations?.find(loc => loc.country_code === countryCode);
+                    const currentPricing = (props.draft.location_pricing || []).find(lp => lp.country_code === countryCode);
+                    const currentPrice = currentPricing?.price || 0;
+                    const currentDiscount = currentPricing?.discount || 0;
+                    
+                    return (
+                      <Box key={countryCode} sx={{ mb: 2, p: 2, border: '1px solid #e0e0e0', borderRadius: 1, backgroundColor: isDisabled ? '#f5f5f5' : 'white' }}>
+                        <Grid container spacing={2} alignItems="center">
+                          <Grid size={{ xs: 12, sm: 4 }}>
+                            <Typography variant="body1" fontWeight="medium">
+                              {locationData?.country_name || countryCode}
+                            </Typography>
+                            <Typography variant="caption" color="text.secondary">
+                              {countryCode}
+                            </Typography>
+                          </Grid>
+                          <Grid size={{ xs: 12, sm: 4 }}>
+                            <TextField
+                              type="number"
+                              label="Price"
+                              size="small"
+                              value={currentPrice === 0 ? '' : currentPrice}
+                              disabled={isDisabled}
+                              onChange={(e) => {
+                                const price = parseFloat(e.target.value) || 0;
+                                handleLocationPriceChange(countryCode, price);
+                              }}
+                              placeholder="0.00"
+                              slotProps={{ 
+                                htmlInput: {
+                                  min: 0, 
+                                  step: 0.01,
+                                  'aria-label': `Price for ${locationData?.country_name || countryCode}`
+                                }
+                              }}
+                              fullWidth
+                            />
+                          </Grid>
+                          <Grid size={{ xs: 12, sm: 4 }}>
+                            <TextField
+                              type="number"
+                              label="Discount (Coming Soon)"
+                              size="small"
+                              value={currentDiscount === 0 ? '' : currentDiscount}
+                              disabled={true}
+                              placeholder="0.00"
+                              slotProps={{ 
+                                htmlInput: {
+                                  min: 0, 
+                                  step: 0.01,
+                                  'aria-label': `Discount for ${locationData?.country_name || countryCode}`
+                                }
+                              }}
+                              fullWidth
+                            />
+                          </Grid>
+                        </Grid>
+                      </Box>
+                    );
+                  })}
+                </Grid>
+              )}
 
               <Grid size={12} display="flex" justifyContent="flex-end">
                 <Button
