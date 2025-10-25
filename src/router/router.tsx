@@ -35,6 +35,7 @@ import AddCategory from "@/resources/components/AdminPage/CategoryManagement/Add
 import VariantManagement from "@/resources/components/AdminPage/VariantManagement/VariantManagement";
 import ForgotPassword from "@/resources/pages/Auth/ForgotPassword";
 import ResetPassword from "@/resources/pages/Auth/ResetPassword";
+import MFA from "@/resources/pages/Auth/MFA";
 
 export const router = createBrowserRouter([
   {
@@ -102,6 +103,10 @@ export const router = createBrowserRouter([
       {
         path: "signup",
         element: <SignUp />,
+      },
+      {
+        path: "mfa/:type",
+        element: <MFA />,
       },
       {
         path: "checkout",

@@ -9,6 +9,7 @@ export interface UserModel {
   lastName: string;
   phone: string;
   role: Role;
+  mfaEnabled: boolean;
 }
 
 export interface GuestUserModel {
@@ -19,7 +20,13 @@ export interface GuestUserModel {
   phone: string;
 }
 
-export interface UserSignUpModel extends Omit<UserModel, "id"> {
-  id?: string;
+export interface UserSignUpModel extends Omit<UserModel, "id" | "role" | "mfaEnabled"> {
   password: string;
 }
+
+export type AuthenticationResponseModel = {
+  readonly id: string;
+  readonly username: string;
+  readonly role: Role;
+  readonly mfaEnabled: boolean;
+};

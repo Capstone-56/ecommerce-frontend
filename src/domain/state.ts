@@ -91,7 +91,7 @@ type UserStore = {
   /**
    * User's ID
    */
-  id: number | null;
+  id: string | null;
   /**
    * The user's detailed information.
    */
@@ -108,7 +108,7 @@ type UserStore = {
   /**
    * Function to set current user's id, should only be used upon login/signup
    */
-  setId: (id: number) => void;
+  setId: (id: string) => void;
   /**
    * A function to set the user's detailed information.
    */
@@ -268,7 +268,7 @@ export const userState = create<UserStore>()(
       userInformation: null,
       setRole: (role: Role) => set({ role }),
       setUserName: (userName: string) => set({ userName }),
-      setId: (id: number) => set({ id }),
+      setId: (id: string) => set({ id }),
       setUserInformation: (userInformation: any) => set({ userInformation }),
     }),
     {
