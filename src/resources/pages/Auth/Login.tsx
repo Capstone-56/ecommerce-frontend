@@ -12,7 +12,10 @@ import { Visibility, VisibilityOff } from "@mui/icons-material";
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import api from "@/api";
+
 import { authenticationState, userState } from "@/domain/state";
+import { Constants } from "@/domain/constants";
+import { Role } from "@/domain/enum/role";
 
 const Login: React.FC = () => {
   const [form, setForm] = useState({
@@ -39,11 +42,18 @@ const Login: React.FC = () => {
       if (response.status === 200) {
         authenticationState.setState({ authenticated: true });
         userState.setState({ role: response.data.role });
-        userState.setState({ userName: form.username });
+        userState.setState({ userName: response.data.username });
+        userState.setState({ id: response.data.id });
       }
 
-      // navigate to dashboard TODO: PA-164
-      navigate("/");
+      if (
+        userState.getState().role == Role.ADMIN ||
+        userState.getState().role == Role.MANAGER
+      ) {
+        navigate(Constants.ADMIN_DASHBOARD_ROUTE);
+      } else {
+        navigate("/");
+      }
     } catch (err: any) {
       console.error("Login error:", err?.response?.data || err);
       setError("Login failed. Check your credentials.");
@@ -146,6 +156,9 @@ const Login: React.FC = () => {
       <Box mt={2}>
         <Link href="/signup" variant="body2">
           Create a new account
+        </Link>
+        <Link ml={3} href="/forgot" variant="body2">
+          Forgot password
         </Link>
       </Box>
     </Box>

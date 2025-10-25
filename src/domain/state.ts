@@ -2,13 +2,20 @@ import { create } from "zustand";
 import { persist, createJSONStorage } from "zustand/middleware";
 import { Constants } from "./constants";
 import { LocalShoppingCartItemModel } from "./models/ShoppingCartItemModel";
+import { UserModel } from "./models/UserModel";
 import { Role } from "./enum/role";
+import { COUNTRY_CURRENCY_MAP } from "./enum/currency";
 
 type cartStore = {
   /**
    * An array of selected products to be bought (for both authenticated and unauthenticated users).
    */
   cart: Array<LocalShoppingCartItemModel>;
+
+  /**
+   * Flag to track if cart has been loaded from API for authenticated users.
+   */
+  cartLoaded: boolean;
 
   /**
    * A function to insert a selected cart item into the cart state.
@@ -30,7 +37,10 @@ type cartStore = {
    * @param updates Partial updates to apply to the cart item.
    * @returns A cart with the updated item.
    */
-  updateCartItem: (cartItemId: string, updates: Partial<LocalShoppingCartItemModel>) => void;
+  updateCartItem: (
+    cartItemId: string,
+    updates: Partial<LocalShoppingCartItemModel>
+  ) => void;
 
   /**
    * A function to set the entire cart (for authenticated users loading from API).
@@ -42,13 +52,18 @@ type cartStore = {
    * A function to clear all cart items.
    */
   clearCart: () => void;
-  
+
   /**
    * A function to get a cart item by ID.
    * @param cartItemId The cart item ID to find.
    * @returns The cart item if found.
    */
   getCartItem: (cartItemId: string) => LocalShoppingCartItemModel | undefined;
+
+  /**
+   * A function to mark cart as loaded from API.
+   */
+  setCartLoaded: (loaded: boolean) => void;
 };
 
 type AuthenticationStore = {
@@ -74,6 +89,14 @@ type UserStore = {
    */
   userName: string | null;
   /**
+   * User's ID
+   */
+  id: number | null;
+  /**
+   * The user's detailed information.
+   */
+  userInformation: UserModel | null;
+  /**
    * A function to set the user's role.
    * @param role The role to be set.
    */
@@ -82,7 +105,15 @@ type UserStore = {
    * A function to set the user's username.
    */
   setUserName: (userName: string) => void;
-}
+  /**
+   * Function to set current user's id, should only be used upon login/signup
+   */
+  setId: (id: number) => void;
+  /**
+   * A function to set the user's detailed information.
+   */
+  setUserInformation: (userInformation: UserModel) => void;
+};
 
 type LocationStore = {
   /**
@@ -90,11 +121,28 @@ type LocationStore = {
    */
   userLocation: string | null;
   /**
-   * Sets the users location.
+   * User's currency based on their location.
+   */
+  userCurrency: string | null;
+  /**
+   * User's selected currency for display (can be different from location-based currency).
+   */
+  selectedCurrency: string | null;
+  /**
+   * Sets the users location and automatically updates currency.
    * @param location The location of user to be set.
    */
   setLocation: (location: string) => void;
-}
+  /**
+   * Sets the user's selected currency for price display.
+   * @param currency The currency code to be set.
+   */
+  setSelectedCurrency: (currency: string) => void;
+  /**
+   * Gets the effective currency to use (selected currency or user currency).
+   */
+  getUserCurrency: () => string | null;
+};
 
 /**
  * Cart global state to be used for non-registered users. Since non-registered
@@ -106,30 +154,33 @@ export const cartState = create<cartStore>()(
   persist(
     (set, get) => ({
       cart: [],
+      cartLoaded: false,
 
       addToCart: (cartItem: LocalShoppingCartItemModel) => {
         // Check if product already exists in cart by product item ID
-        const existingItem = get().cart.find(item => 
-          item.productItem.id === cartItem.productItem.id
+        const existingItem = get().cart.find(
+          (item) => item.productItem.id === cartItem.productItem.id
         );
 
         if (existingItem) {
           // Update quantity of existing item
           set((state) => ({
-            cart: state.cart.map(item => 
-              item.productItem.id === cartItem.productItem.id 
+            cart: state.cart.map((item) =>
+              item.productItem.id === cartItem.productItem.id
                 ? {
                     ...existingItem, // Keep existing item's ID
                     quantity: item.quantity + cartItem.quantity,
-                    totalPrice: item.productItem.price * (item.quantity + cartItem.quantity)
+                    totalPrice:
+                      item.productItem.price *
+                      (item.quantity + cartItem.quantity),
                   }
                 : item
-            )
+            ),
           }));
         } else {
           // Add new item with the provided ID
           set((state) => ({
-            cart: [...state.cart, cartItem]
+            cart: [...state.cart, cartItem],
           }));
         }
       },
@@ -139,7 +190,10 @@ export const cartState = create<cartStore>()(
           cart: state.cart.filter((item) => item.id !== cartItemId),
         })),
 
-      updateCartItem: (cartItemId: string, updates: Partial<LocalShoppingCartItemModel>) =>
+      updateCartItem: (
+        cartItemId: string,
+        updates: Partial<LocalShoppingCartItemModel>
+      ) =>
         set((state) => ({
           cart: state.cart.map((item) =>
             item.id === cartItemId
@@ -147,33 +201,36 @@ export const cartState = create<cartStore>()(
                   ...item,
                   ...updates,
                   // Recalculate totalPrice if quantity is updated
-                  totalPrice: updates.quantity !== undefined
-                    ? item.productItem.price * updates.quantity
-                    : item.totalPrice
+                  totalPrice:
+                    updates.quantity !== undefined
+                      ? item.productItem.price * updates.quantity
+                      : item.totalPrice,
                 }
               : item
           ),
         })),
 
       setCart: (cartItems: Array<LocalShoppingCartItemModel>) =>
-        set({ cart: cartItems }),
+        set({ cart: cartItems, cartLoaded: true }),
 
-      clearCart: () => set({ cart: [] }),
-      
+      clearCart: () => set({ cart: [], cartLoaded: false }),
+
       getCartItem: (cartItemId: string) => {
         return get().cart.find((item) => item.id === cartItemId);
       },
+
+      setCartLoaded: (loaded: boolean) => set({ cartLoaded: loaded }),
     }),
     {
       name: Constants.LOCAL_STORAGE_CART_STORAGE,
-      storage: createJSONStorage(() => localStorage)
+      storage: createJSONStorage(() => localStorage),
     }
   )
 );
 
 // Add cross-tab synchronisation
 if (typeof window !== "undefined") {
-  window.addEventListener("storage", e => {
+  window.addEventListener("storage", (e) => {
     // Only react to cart storage changes
     if (e.key === Constants.LOCAL_STORAGE_CART_STORAGE) {
       // Force rehydration of the store
@@ -207,8 +264,12 @@ export const userState = create<UserStore>()(
     (set) => ({
       role: Role.CUSTOMER,
       userName: null,
+      id: null,
+      userInformation: null,
       setRole: (role: Role) => set({ role }),
-      setUserName: (userName: string) => set({ userName })
+      setUserName: (userName: string) => set({ userName }),
+      setId: (id: number) => set({ id }),
+      setUserInformation: (userInformation: any) => set({ userInformation }),
     }),
     {
       name: Constants.LOCAL_STORAGE_USER_STORAGE,
@@ -218,14 +279,25 @@ export const userState = create<UserStore>()(
 );
 
 /**
- * Location state to store the user's active location. Will be used to get
- * products that are available in the user's country.
+ * Location state to store the user's active location and currency. Will be used to get
+ * products that are available in the user's country and display prices in their currency.
  */
 export const locationState = create<LocationStore>()(
   persist(
-    (set) => ({
+    (set, get) => ({
       userLocation: null,
-      setLocation: (userLocation: string) => set({ userLocation }),
+      userCurrency: null,
+      selectedCurrency: null,
+      setLocation: (userLocation: string) => {
+        const userCurrency = COUNTRY_CURRENCY_MAP[userLocation] || null;
+        set({ userLocation, userCurrency });
+      },
+      setSelectedCurrency: (selectedCurrency: string) => {
+        set({ selectedCurrency });
+      },
+      getUserCurrency: () => {
+        return get().selectedCurrency || get().userCurrency;
+      },
     }),
     {
       name: Constants.LOCAL_STORAGE_LOCATION_STORAGE,

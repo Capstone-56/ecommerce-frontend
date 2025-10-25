@@ -1,0 +1,529 @@
+import {
+  Box,
+  Button,
+  Card,
+  CardContent,
+  FormControlLabel,
+  Grid,
+  ListItemText,
+  MenuItem,
+  OutlinedInput,
+  Radio,
+  RadioGroup,
+  Select,
+  SelectChangeEvent,
+  styled,
+  TextField,
+  Typography
+} from "@mui/material";
+import AddCircleIcon from '@mui/icons-material/AddCircle';
+import { useEffect, useState } from "react";
+import { CategoryModel } from "@/domain/models/CategoryModel";
+import { CategoryService } from "@/services/category-service";
+import { FileWithPreview } from "./AddProduct";
+import { LocationPricing } from "@/domain/models/ProductModel";
+import { LocationService } from "@/services/location-service";
+import { LocationModel } from "@/domain/models/LocationModel";
+import Checkbox from '@mui/material/Checkbox';
+
+const categoryService = new CategoryService();
+const locationService = new LocationService();
+
+export const VisuallyHiddenInput = styled('input')({
+  clip: 'rect(0 0 0 0)',
+  clipPath: 'inset(50%)',
+  height: 1,
+  overflow: 'hidden',
+  position: 'absolute',
+  bottom: 0,
+  left: 0,
+  whiteSpace: 'nowrap',
+  width: 1,
+});
+
+interface ProductInformationProps {
+  productName: string,
+  setProductName: (v: string) => void,
+  productDescription: string,
+  setProductDescription: (v: string) => void,
+  category: string,
+  setCategory: (v: string) => void,
+  locationPricing: LocationPricing[],
+  setLocationPricing: (v: LocationPricing[]) => void,
+  files: FileWithPreview[],
+  setFiles: React.Dispatch<React.SetStateAction<FileWithPreview[]>>,
+  featured: string,
+  setFeatured: (v: string) => void,
+}
+
+/**
+ * Component to be shown on the AddProduct page. Has input fields for generic
+ * information about a product.
+ */
+export default function ProductInformation(props: ProductInformationProps) {
+  const [listOfCategories, setListOfCategories] = useState<CategoryModel[]>();
+  const [listOfLocations, setListOfLocations] = useState<LocationModel[]>();
+  const [selectedIndex, setSelectedIndex] = useState<number>(0);
+  const [preview, setPreview] = useState<string>("");
+
+  /**
+   * A useEffect required to get product categories.
+   */
+  useEffect(() => {
+    fetchRequiredInformation();
+  }, []);
+
+  /**
+   * Sets the list of categories to be displayed to the user. Retrieves all
+   * current categories in the database.
+   */
+  const fetchRequiredInformation = async () => {
+    setListOfCategories(await categoryService.listCategories());
+    setListOfLocations(await locationService.getLocations());
+  }
+
+  /**
+   * Handles uploading of files (images) for an admin to display an image
+   * for the product they wish to add.
+   * @param event The uploading HTML event.
+   * @param index The index at which the file will be uploaded at.
+   */
+  const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>, index: number) => {
+    // If there are no files early return.
+    if (!event.target.files) return;
+
+    const file = event.target.files[0];
+    // Check to see if the file uploaded already exists within our files.
+    const exists = props.files.some(
+      (f) => f.file.name === file.name && f.file.size === file.size
+    );
+
+    // If it doesn't exist add it to the list of files. Otherwise, don't do anything
+    // and keep the files the way it is.
+    if (!exists) {
+      // Create an object URL to be used for the display image when selected.
+      const image = URL.createObjectURL(file);
+      props.setFiles((prev) => [...prev, { file, previewImage: image }]);
+      // Set the preview and index to show a border around the newly added image and
+      // its picture to be in the preview slot.
+      setPreview(image);
+      setSelectedIndex(index);
+    }
+  };
+
+  /**
+   * Handler for deleting a file. Utilises the selected index and preview image
+   * to delete a specific image. Filters the current files for where the index is
+   * not that of the selected one. Also sets the preview to an empty string 
+   * to reset the preview image and avoid null pointer exceptions.
+   */
+  function handleFileDeletion() {
+    props.setFiles(props.files.filter((_, i) => i !== selectedIndex));
+    setPreview("");
+  }
+
+  /**
+   * Helper function to append chosen locations to then be sent.
+   * Updates location pricing when locations change.
+   * @param event The checkbox selection.
+   */
+  const handleLocationSelection = (event: SelectChangeEvent<string[]>) => {
+    const {
+      target: { value },
+    } = event;
+
+    const newLocations = typeof value === 'string' ? value.split(',') : value;
+
+    // Update location pricing to match selected locations
+    const updatedPricing = newLocations.map(countryCode => {
+      // Keep existing price if location was already selected
+      const existingPricing = props.locationPricing.find(lp => lp.country_code === countryCode);
+      return existingPricing || { country_code: countryCode, price: 0 };
+    });
+    
+    props.setLocationPricing(updatedPricing);
+  };
+
+  /**
+   * Handle updating price for a specific location
+   */
+  const handleLocationPriceChange = (countryCode: string, price: number) => {
+    const updatedPricing = props.locationPricing.map(lp => 
+      lp.country_code === countryCode ? { ...lp, price } : lp
+    );
+    props.setLocationPricing(updatedPricing);
+  };
+
+  return (
+    <Box>
+      <Grid container columnSpacing={2} rowSpacing={1} alignItems="flex-start">
+        <Grid container direction="column" size={{ sm: 12, md: 8 }}>
+          <Grid>
+            <Card>
+              <CardContent>
+                <Typography variant={"body1"} pb={2} fontSize={18} fontWeight={"bold"}>General Information</Typography>
+                <Typography variant={"body1"} pb={1}>Name of Product</Typography>
+                <TextField
+                  defaultValue={props.productName}
+                  fullWidth
+                  placeholder="Enter product name..."
+                  sx={{ pb: 2 }}
+                  onChange={(e) => props.setProductName(e.target.value)}
+                />
+                <Typography variant={"body1"} pb={1}>Description of Product</Typography>
+                <TextField
+                  defaultValue={props.productDescription}
+                  fullWidth
+                  placeholder="Enter product description..."
+                  multiline
+                  minRows={4}
+                  maxRows={4}
+                  sx={{ pb: 2 }}
+                  slotProps={{ htmlInput: { maxLength: 255 } }}
+                  onChange={(e) => props.setProductDescription(e.target.value)}
+                />
+                <Box sx={{ display: 'flex', gap: 2 }}>
+                  <Box sx={{ flex: 1 }}>
+                    <Typography variant={"body1"} pb={1}>Category of Product</Typography>
+                    <TextField
+                      select
+                      value={props.category}
+                      onChange={(e) => props.setCategory(e.target.value)}
+                      sx={{ pb: 2, minWidth: "60%", mr: "10px" }}
+                    >
+                      <MenuItem key={"initial"} value={"initial"} disabled>
+                        Choose category...
+                      </MenuItem>
+                      {listOfCategories?.map((option) => [
+                        // Map the Top parent level.
+                        <MenuItem key={option.internalName} value={option.internalName}>
+                          {option.name}
+                        </MenuItem>,
+                        // Map children as actual MenuItems.
+                        option.children?.map((child) => (
+                          <MenuItem key={child.internalName} value={child.internalName}>
+                            {`${option.name} - ${child.name}`}
+                          </MenuItem>
+                        ))
+                      ])}
+                    </TextField>
+                    <div>
+                      <Button variant={"contained"}>Add Category</Button>
+                    </div>
+                  </Box>
+                  <Box sx={{ flex: 1 }}>
+                    <Typography variant={"body1"} pb={1}>Featured</Typography>
+                    <RadioGroup
+                      row
+                      aria-labelledby="demo-row-radio-buttons-group-label"
+                      name="row-radio-buttons-group"
+                      value={props.featured}
+                      onChange={(event) => props.setFeatured((event.target as HTMLInputElement).value)}
+                      sx={{ marginTop: "5px" }}
+                    >
+                      <FormControlLabel
+                        value="true"
+                        control={<Radio />}
+                        label="True"
+                      />
+                      <FormControlLabel
+                        value="false"
+                        control={<Radio />}
+                        label="False"
+                      />
+                    </RadioGroup>
+                  </Box>
+                </Box>
+              </CardContent>
+            </Card>
+          </Grid>
+          {/* Location Pricing Section */}
+          {props.locationPricing.length > 0 && (
+            <Grid>
+              <Card>
+                <CardContent>
+                  <Typography variant={"body1"} pb={2} fontSize={18} fontWeight={"bold"}>
+                    Location Pricing
+                  </Typography>
+                  <Typography variant={"body2"} pb={2} color="text.secondary">
+                    Set prices for each selected location
+                  </Typography>
+                  {props.locationPricing.map((locationPrice) => {
+                    const countryCode = locationPrice.country_code;
+                    const locationData = listOfLocations?.find(loc => loc.country_code === countryCode);
+                    const currentPrice = props.locationPricing.find(lp => lp.country_code === countryCode)?.price || 0;
+                    
+                    return (
+                      <Box key={countryCode} sx={{ mb: 2, p: 2, border: '1px solid #e0e0e0', borderRadius: 1 }}>
+                        <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
+                          <Box sx={{ flex: 1 }}>
+                            <Typography variant="body1" fontWeight="medium">
+                              {locationData?.country_name || countryCode}
+                            </Typography>
+                            <Typography variant="caption" color="text.secondary">
+                              {countryCode}
+                            </Typography>
+                          </Box>
+                          <Box sx={{ display: 'flex', gap: 2, flex: 1 }}>
+                            <Box sx={{ flex: 1 }}>
+                              <TextField
+                                type="number"
+                                label="Price"
+                                size="small"
+                                value={currentPrice === 0 ? '' : currentPrice}
+                                onChange={(e) => {
+                                  const price = parseFloat(e.target.value) || 0;
+                                  handleLocationPriceChange(countryCode, price);
+                                }}
+                                placeholder="0.00"
+                                slotProps={{ 
+                                  htmlInput: {
+                                    min: 0, 
+                                    step: 0.01,
+                                    'aria-label': `Price for ${locationData?.country_name || countryCode}`
+                                  }
+                                }}
+                                fullWidth
+                              />
+                            </Box>
+                            <Box sx={{ flex: 1 }}>
+                              <TextField
+                                type="number"
+                                label="Discount"
+                                size="small"
+                                placeholder="0.00"
+                                slotProps={{ 
+                                  htmlInput: {
+                                    min: 0, 
+                                    step: 0.01,
+                                    'aria-label': `Discount for ${locationData?.country_name || countryCode}`
+                                  }
+                                }}
+                                fullWidth
+                              />
+                            </Box>
+                          </Box>
+                        </Box>
+                      </Box>
+                    );
+                  })}
+                </CardContent>
+              </Card>
+            </Grid>
+          )}
+        </Grid>
+        <Grid container size={{ sm: 12, md: 4 }} direction={"column"}>
+          <Grid>
+            <Card>
+              <CardContent>
+                <Typography variant={"body1"} pb={2} fontSize={18} fontWeight={"bold"}>Upload Image</Typography>
+                <Box
+                  sx={{
+                    minHeight: "30vh",
+                    border: preview ? "none" : "3px dashed lightgrey",
+                    color: "lightgrey",
+                    backgroundColor: "white",
+                    backgroundImage: `url(${preview})`,
+                    backgroundSize: "cover",
+                    backgroundPosition: "center",
+                    padding: 0,
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                  }}
+                >
+                </Box>
+                <Button
+                  variant={"contained"}
+                  sx={{ mt: 1 }}
+                  fullWidth
+                  disabled={!preview}
+                  color={"error"}
+                  onClick={handleFileDeletion}
+                >
+                  Remove Preview Image
+                </Button>
+                <Box display={"flex"} gap={3} pt={2} height={"10vh"}>
+                  <Button
+                    component="label"
+                    role={undefined}
+                    variant="text"
+                    tabIndex={-1}
+                    sx={{
+                      border: "3px",
+                      borderStyle: props.files[0] ? selectedIndex == 0 ? "solid" : "" : "dashed",
+                      color: "lightgrey",
+                      backgroundColor: "white",
+                      width: "25%",
+                      backgroundImage: props.files[0] ? `url(${props.files[0].previewImage})` : "none",
+                      aspectRatio: "1 / 1",
+                      backgroundSize: "cover",
+                      backgroundPosition: "center",
+                    }}
+                    onClick={() => {
+                      if (props.files[0]) {
+                        setPreview(props.files[0].previewImage);
+                        setSelectedIndex(0);
+                      }
+                    }}
+                  >
+                    {!props.files[0] && <AddCircleIcon fontSize="medium" color="info" />}
+                    <VisuallyHiddenInput
+                      type="file"
+                      onChange={(e) => {
+                        handleFileChange(e, 0);
+                        e.target.value = "";
+                      }}
+                      multiple
+                      disabled={props.files[0] ? true : false}
+                    />
+                  </Button>
+                  <Button
+                    component="label"
+                    role={undefined}
+                    variant="text"
+                    tabIndex={-1}
+                    sx={{
+                      border: "3px",
+                      borderStyle: props.files[1] ? selectedIndex == 1 ? "solid" : "" : "dashed",
+                      color: "lightgrey",
+                      backgroundColor: "white",
+                      width: "25%",
+                      backgroundImage: props.files[1] ? `url(${props.files[1].previewImage})` : "none",
+                      aspectRatio: "1 / 1",
+                      backgroundSize: "cover",
+                      backgroundPosition: "center",
+                    }}
+                    onClick={() => {
+                      if (props.files[1]) {
+                        setPreview(props.files[1].previewImage);
+                        setSelectedIndex(1);
+                      }
+                    }}
+                  >
+                    {!props.files[1] && <AddCircleIcon fontSize="medium" color="info" />}
+                    <VisuallyHiddenInput
+                      type="file"
+                      onChange={(e) => {
+                        handleFileChange(e, 1);
+                        e.target.value = "";
+                      }}
+                      multiple
+                      disabled={props.files[1] ? true : false}
+                    />
+                  </Button>
+                  <Button
+                    component="label"
+                    role={undefined}
+                    variant="text"
+                    tabIndex={-1}
+                    sx={{
+                      border: "3px",
+                      borderStyle: props.files[2] ? selectedIndex == 2 ? "solid" : "" : "dashed",
+                      color: "lightgrey",
+                      backgroundColor: "white",
+                      width: "25%",
+                      backgroundImage: props.files[2] ? `url(${props.files[2].previewImage})` : "none",
+                      aspectRatio: "1 / 1",
+                      backgroundSize: "cover",
+                      backgroundPosition: "center",
+                    }}
+                    onClick={() => {
+                      if (props.files[2]) {
+                        setPreview(props.files[2].previewImage);
+                        setSelectedIndex(2);
+                      }
+                    }}
+                  >
+                    {!props.files[2] && <AddCircleIcon fontSize="medium" color="info" />}
+                    <VisuallyHiddenInput
+                      type="file"
+                      onChange={(e) => {
+                        handleFileChange(e, 2);
+                        e.target.value = "";
+                      }}
+                      multiple
+                      disabled={props.files[2] ? true : false}
+                    />
+                  </Button>
+                  <Button
+                    component="label"
+                    role={undefined}
+                    variant="text"
+                    tabIndex={-1}
+                    sx={{
+                      border: "3px",
+                      borderStyle: props.files[3] ? selectedIndex == 3 ? "solid" : "" : "dashed",
+                      color: "lightgrey",
+                      backgroundColor: "white",
+                      width: "25%",
+                      backgroundImage: props.files[3] ? `url(${props.files[3].previewImage})` : "none",
+                      aspectRatio: "1 / 1",
+                      backgroundSize: "cover",
+                      backgroundPosition: "center",
+                    }}
+                    onClick={() => {
+                      if (props.files[3]) {
+                        setPreview(props.files[3].previewImage);
+                        setSelectedIndex(3);
+                      }
+                    }}
+                  >
+                    {!props.files[3] && <AddCircleIcon fontSize="medium" color="info" />}
+                    <VisuallyHiddenInput
+                      type="file"
+                      onChange={(e) => {
+                        handleFileChange(e, 3);
+                        e.target.value = "";
+                      }}
+                      multiple
+                      disabled={props.files[3] ? true : false}
+                    />
+                  </Button>
+                </Box>
+              </CardContent>
+            </Card>
+          </Grid>
+          <Grid>
+            <Card>
+              <CardContent>
+                <Typography variant={"body1"} pb={2} fontSize={18} fontWeight={"bold"}>Location</Typography>
+                <Typography variant={"body1"} pb={1}>Location of Product</Typography>
+                <Select
+                  multiple
+                  displayEmpty
+                  value={props.locationPricing.map(lp => lp.country_code)}
+                  fullWidth
+                  onChange={handleLocationSelection}
+                  renderValue={(selected) => {
+                    if (selected.length === 0) {
+                      return <Typography fontStyle={"italic"} color={"textDisabled"}>Choose a location</Typography>;
+                    }
+
+                    return (
+                      <Typography sx={{
+                        overflow: 'hidden',
+                        textOverflow: 'ellipsis',
+                        whiteSpace: 'nowrap',
+                      }}>
+                        {selected.join(', ')}
+                      </Typography>
+                    )
+                  }}
+                  input={<OutlinedInput label="Tag" />}
+                >
+                  {listOfLocations && listOfLocations.map((location) => (
+                    <MenuItem key={location.country_code} value={location.country_code}>
+                      <Checkbox checked={props.locationPricing.some(lp => lp.country_code === location.country_code)} />
+                      <ListItemText primary={location.country_name} />
+                    </MenuItem>
+                  ))}
+                </Select>
+              </CardContent>
+            </Card>
+          </Grid>
+        </Grid>
+      </Grid>
+    </Box >
+  );
+};

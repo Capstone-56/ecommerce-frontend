@@ -22,6 +22,9 @@ import { ProductModel } from "@/domain/models/ProductModel";
 import Paginator from "@/resources/components/Pagination/Paginator";
 import ProductCard from "@/resources/components/ProductCard/ProductCard";
 import Filter from "@/resources/components/Filter/Filter";
+import DynamicBreadcrumbs from '@/resources/components/Navigation/DynamicBreadcrumbs';
+
+import { locationState } from "@/domain/state";
 import { Constants } from "@/domain/constants";
 
 export default function Products() {
@@ -44,15 +47,17 @@ export default function Products() {
     ? parseFloat(searchParams.get("priceMax")!)
     : undefined;
   const searchFilter = searchParams.get("search") || undefined;
+  const userLocation = locationState((state) => state.userLocation);
+  const userCurrency = locationState((state) => state.getUserCurrency());
 
   /**
    * A useEffect required to get product data upon mount and when URL changes.
    */
   // Fetch products when search params change
   useEffect(() => {
-    document.title = "eCommerce | Products";
+    document.title = `${Constants.BASE_BROWSER_TAB_TITLE} | Products`;
     fetchProducts();
-  }, [searchParams]);
+  }, [searchParams, userLocation, userCurrency]);
 
   // Fetch products based on current search params
   const fetchProducts = async () => {
@@ -67,7 +72,9 @@ export default function Products() {
         sortOption,
         colourFilter,
         categoriesFilter,
-        searchFilter
+        searchFilter,
+        userLocation,
+        userCurrency
       );
       setProducts(result);
     } catch (error) {
@@ -124,12 +131,9 @@ export default function Products() {
         }}
       >
         <Box component="main" sx={{ flexGrow: 1 }}>
-          <Container maxWidth="xl" sx={{ mt: 4, mb: 8 }}>
-            {/* REPLACE: breadcrumb currently hardcoded. needs to be dynamic */}
-            <Breadcrumbs>
-              <Link to={Constants.HOME_ROUTE}>Home</Link>
-              <Link to={Constants.PRODUCTS_ROUTE}>Products</Link>
-            </Breadcrumbs>
+          <Container maxWidth={false} sx={{ mt: 4, mb: 8, maxWidth: 1680, mx: "auto" }}>
+            {/* Dynamic breadcrumbs */}
+            <DynamicBreadcrumbs />
 
             {/* Responsive Flex Container */}
             <Box

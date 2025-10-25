@@ -1,6 +1,8 @@
 import { useEffect } from "react";
 import { Box, Grid, Typography } from "@mui/material";
 import { cartState } from "@/domain/state";
+import { Constants } from "@/domain/constants";
+
 import OrderSummary from "@/resources/components/OrderSummary/OrderSummary";
 import CartProductCard from "@/resources/components/ProductCard/CartProductCard";
 import { common } from "@mui/material/colors";
@@ -10,7 +12,7 @@ export default function Cart() {
   const cart = cartState((state) => state.cart);
 
   useEffect(() => {
-    document.title = "eCommerce | Cart";
+    document.title = `${Constants.BASE_BROWSER_TAB_TITLE} | Cart`;
   }, []);
 
   return (

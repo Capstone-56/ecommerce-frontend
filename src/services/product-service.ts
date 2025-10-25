@@ -2,6 +2,7 @@ import api from "@/api";
 
 import { PagedList } from "@/domain/abstract-models/PagedList";
 import { ProductModel } from "@/domain/models/ProductModel";
+import { FileWithPreview } from "@/resources/components/AdminPage/ProductManagement/AddProduct/AddProduct";
 
 export class ProductService {
   /**
@@ -13,6 +14,9 @@ export class ProductService {
    * @param sort Sorting option (e.g., 'priceAsc', 'priceDesc').
    * @param colour Colour filter.
    * @param categories Comma-separated string of category UUIDs.
+   * @param search Search term filter.
+   * @param userLocation User's location for filtering products.
+   * @param currency Currency code for price conversion.
    * @returns A paged result of products.
    */
   async listProducts(
@@ -23,8 +27,10 @@ export class ProductService {
     sort?: string,
     colour?: string,
     categories?: string,
-    search?: string
-  ) : Promise<PagedList<ProductModel>> {
+    search?: string,
+    userLocation?: string | null,
+    currency?: string | null
+  ): Promise<PagedList<ProductModel>> {
     try {
       const params = new URLSearchParams();
       if (page) params.append("page", page.toString());
@@ -35,7 +41,9 @@ export class ProductService {
       if (colour) params.append("colour", colour);
       if (categories) params.append("categories", categories);
       if (search) params.append("search", search);
-    
+      if (userLocation) params.append("location", userLocation);
+      if (currency) params.append("currency", currency);
+      
       const baseUrl = `/api/product?${params.toString()}`;
 
       const products = await api.get(baseUrl);
@@ -48,13 +56,19 @@ export class ProductService {
   /**
    * An endpoint to retrieve a particular product based on an ID.
    * @param productId An ID of a product to be retrieved.
+   * @param userLocation User's location for filtering products.
+   * @param currency Currency code for price conversion.
    * @returns A product's related information.
    */
-  async getProduct(productId: string): Promise<ProductModel> {
+  async getProduct(productId: string, userLocation?: string | null, currency?: string | null): Promise<ProductModel> {
     try {
-      const baseUrl = `/api/product/${productId}`;
-      const products = await api.get(baseUrl);
+      const params = new URLSearchParams();
+      if (userLocation) params.append("location", userLocation);
+      if (currency) params.append("currency", currency);
       
+      const baseUrl = `/api/product/${productId}${params.toString() ? `?${params.toString()}` : ''}`;
+      const products = await api.get(baseUrl);
+
       return products.data;
     } catch (error) {
       return Promise.reject(error);
@@ -63,13 +77,19 @@ export class ProductService {
 
   /**
    * An endpoint to retrieve a set of featured products.
+   * @param userLocation Optional location filter for products.
+   * @param currency Currency code for price conversion.
    * @returns A set of featured products.
    */
-  async getFeaturedProducts(): Promise<ProductModel[]> {
+  async getFeaturedProducts(userLocation?: string | null, currency?: string | null): Promise<ProductModel[]> {
     try {
-      const baseUrl = `/api/product/featured`;
-      const products = await api.get(baseUrl);
+      const params = new URLSearchParams();
+      if (userLocation) params.append("location", userLocation);
+      if (currency) params.append("currency", currency);
       
+      const baseUrl = `/api/product/featured${params.toString() ? `?${params.toString()}` : ''}`;
+      const products = await api.get(baseUrl);
+
       return products.data;
     } catch (error) {
       return Promise.reject(error);
@@ -78,14 +98,123 @@ export class ProductService {
 
   /**
    * An endpoint to retrieve a set of related products.
+   * @param productId The ID of the product to get related products for.
+   * @param userLocation Optional location filter for products.
+   * @param currency Currency code for price conversion.
    * @returns A set of related products.
    */
-  async getRelatedProducts(productId?: string): Promise<ProductModel[]> {
+  async getRelatedProducts(productId?: string, userLocation?: string | null, currency?: string | null): Promise<ProductModel[]> {
     try {
-      const baseUrl = `/api/product/${productId}/related`;
-      const relatedProducts = await api.get(baseUrl);
+      const params = new URLSearchParams();
+      if (userLocation) params.append("location", userLocation);
+      if (currency) params.append("currency", currency);
       
+      const baseUrl = `/api/product/${productId}/related${params.toString() ? `?${params.toString()}` : ''}`;
+      const relatedProducts = await api.get(baseUrl);
+
       return relatedProducts.data;
+    } catch (error) {
+      return Promise.reject(error);
+    }
+  }
+
+  /**
+   * An endpoint to create a product with a set of variations.
+   * @returns A status code.
+   */
+  async addProduct(
+    productName: string,
+    productDescription: string,
+    category: string,
+    featured: string,
+    images: FileWithPreview[],
+    permutations: Record<string, string>[],
+    variations: Record<string, string>[][],
+    locationPricing: {country_code: string, price: number}[],
+  ): Promise<{ errorMessage?: string, status: number }> {
+    try {
+      const baseUrl = "/api/product";
+      const formattedPermutations = permutations.map((permutation, idx) => ({
+        location: permutation.location,
+        sku: permutation.sku,
+        stock: permutation.stock,
+        variations: variations[idx]
+      }))
+
+      const formData = new FormData();
+
+      // Normal fields.
+      formData.append("name", productName);
+      formData.append("description", productDescription);
+      formData.append("featured", String(featured));
+      formData.append("category", category);
+
+      // Images (append each file separately).
+      images.forEach((file) => {
+        formData.append("images", file.file);
+      });
+
+      // Nested objects.
+      formData.append("product_items", JSON.stringify(formattedPermutations));
+    
+    // Append location_pricing
+    formData.append("location_pricing", JSON.stringify(locationPricing));
+
+      const response = await api.post(baseUrl, formData, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      });
+
+      return { status: response.status };
+
+    } catch (error: any) {
+      const status = error.response?.status ?? 500; // fallback to 500 if undefined
+      const message = error.response?.data?.message ?? "Failed to create product";
+
+      return { status, errorMessage: message };
+    }
+  }
+
+  /**
+   * An endpoint to partially update a particular product.
+   * @param productId   The ID of the product to be updated.
+   * @param requestBody A JSON object containing the appropriate fields to create
+  *                     a new product item.
+   * @returns A HTTP status.
+   */
+  async updateProductPartial(productId: string, requestBody: object): Promise<number> {
+    try {
+      const baseUrl = `/api/product/${productId}`;
+
+      const productItems = await api.patch(baseUrl, requestBody);
+
+      return productItems.status;
+    } catch (error) {
+      return Promise.reject(error);
+    }
+  }
+
+  /**
+   * An endpoint to upload an for a product.
+   * @param image     The Image to be uploaded.   
+   * @param productId The ID of the product for which the image is intended for.
+   * @returns An image URL along with a HTTP status.
+   */
+  async uploadImage(image: File, productId: string): Promise<{ imageURL: string, status: number }> {
+    try {
+      const baseUrl = `/api/product/${productId}/upload/image`;
+      const formData = new FormData();
+
+      formData.append("images", image);
+
+      const response = await api.post(baseUrl, formData, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      });
+
+      return { imageURL: response.data, status: response.status };
     } catch (error) {
       return Promise.reject(error);
     }

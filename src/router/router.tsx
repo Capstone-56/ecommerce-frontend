@@ -16,16 +16,30 @@ import SignUp from "@/resources/pages/Auth/SignUp";
 import AdminProfile from "@/resources/pages/Profile/AdminProfile";
 import Analytics from "@/resources/components/AdminPage/Analytics";
 import AdminDashboard from "@/resources/components/AdminPage/AdminDashboard/AdminDashboard";
-import ProductManagement from "@/resources/components/AdminPage/ProductManagement";
-import VendorManagement from "@/resources/components/AdminPage/VendorManagement";
-import CustomerSupport from "@/resources/components/AdminPage/CustomerSupport";
-import AdminSettings from "@/resources/components/AdminPage/AdminSettings";
+import ProductManagement from "@/resources/components/AdminPage/ProductManagement/ProductManagement";
+import AdminSettings from "@/resources/components/AdminPage/Settings/AdminSettings";
+import CreateAdminAccount from "@/resources/components/AdminPage/Settings/CreateAdminAccount";
+import Payment from "@/resources/pages/Checkout/Payment";
 import { Constants } from "@/domain/constants";
+import AddProduct from "@/resources/components/AdminPage/ProductManagement/AddProduct/AddProduct";
+import OrderComplete from "@/resources/pages/Checkout/OrderComplete";
+import OrderDetails from "@/resources/components/Profile/OrderHistory";
+import UserDetails from "@/resources/components/Profile/UserDetails";
+import ProfileLanding from "@/resources/components/Profile/ProfileLanding";
+import ShippingAddress from "@/resources/components/Profile/ShippingAddress";
+import OrderHistory from "@/resources/components/AdminPage/OrderHistory/OrderHistory";
+import EditProduct from "@/resources/components/AdminPage/ProductManagement/EditProduct/EditProduct";
+import CategoryManagement from "@/resources/components/AdminPage/CategoryManagement/CategoryManagement";
+import EditCategory from "@/resources/components/AdminPage/CategoryManagement/EditCategory/EditCategory";
+import AddCategory from "@/resources/components/AdminPage/CategoryManagement/AddCategory/AddCategory";
+import VariantManagement from "@/resources/components/AdminPage/VariantManagement/VariantManagement";
+import ForgotPassword from "@/resources/pages/Auth/ForgotPassword";
+import ResetPassword from "@/resources/pages/Auth/ResetPassword";
 
 export const router = createBrowserRouter([
   {
     path: "/",
-    element: <UserLayout />,  // User layout for default routes
+    element: <UserLayout />, // User layout for default routes
     children: [
       {
         index: true,
@@ -36,8 +50,26 @@ export const router = createBrowserRouter([
         element: <About />,
       },
       {
-        path: "profile",
+        path: "/profile",
         element: <Profile />,
+        children: [
+          {
+            index: true,
+            element: <ProfileLanding />,
+          },
+          {
+            path: "orders",
+            element: <OrderDetails />,
+          },
+          {
+            path: "account",
+            element: <UserDetails />,
+          },
+          {
+            path: "shipping",
+            element: <ShippingAddress />,
+          },
+        ],
       },
       {
         path: "products",
@@ -53,17 +85,32 @@ export const router = createBrowserRouter([
       },
       {
         path: "cart",
-        element: <Cart />
+        element: <Cart />,
       },
       {
         path: "login",
-        element: <Login />
+        element: <Login />,
+      },
+      {
+        path: "forgot",
+        element: <ForgotPassword />
+      },
+      {
+        path: "reset/:email/:token",
+        element: <ResetPassword />
       },
       {
         path: "signup",
-        element: <SignUp />
-      }
-
+        element: <SignUp />,
+      },
+      {
+        path: "checkout",
+        element: <Payment />,
+      },
+      {
+        path: "order-complete",
+        element: <OrderComplete />,
+      },
     ],
   },
   {
@@ -72,29 +119,53 @@ export const router = createBrowserRouter([
     children: [
       {
         index: true,
-        element: <AdminDashboard />
+        element: <AdminDashboard />,
       },
       {
         path: "analytics",
-        element: <Analytics />
+        element: <Analytics />,
       },
       {
         path: "product/management",
-        element: <ProductManagement />
+        element: <ProductManagement />,
       },
       {
-        path: "vendor/management",
-        element: <VendorManagement />
+        path: "product/management/add",
+        element: <AddProduct />,
       },
       {
-        path: "support",
-        element: <CustomerSupport />
+        path: "product/management/:id",
+        element: <EditProduct />,
+      },
+      {
+        path: "category",
+        element: <CategoryManagement />,
+      },
+      {
+        path: "category/management/add",
+        element: <AddCategory />
+      },
+      {
+        path: "category/management/:internalName",
+        element: <EditCategory />
+      },
+      {
+        path: "variant",
+        element: <VariantManagement />
+      },
+      {
+        path: "orders",
+        element: <OrderHistory />,
       },
       {
         path: "settings",
-        element: <AdminSettings />
+        element: <AdminSettings />,
       },
-    ]
+      {
+        path: "settings/create-admin",
+        element: <CreateAdminAccount />,
+      },
+    ],
   },
   {
     path: "*",

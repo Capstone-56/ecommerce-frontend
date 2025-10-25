@@ -3,6 +3,7 @@ import { Card, CardMedia, CardContent, Typography, Box } from "@mui/material";
 import { ProductModel } from "domain/models/ProductModel";
 import placeholderImage from "/src/assets/ProductCard/product_card_placeholder.svg";
 import { useNavigate } from "react-router-dom";
+import { formatPrice } from "@/utilities/currency-utils";
 
 interface ProductCardProps {
   /* Details relating to a particular product. */
@@ -11,6 +12,7 @@ interface ProductCardProps {
   width: string;
   /* The height to set the product card. */
   height: string;
+  onClickCallback?: () => void;
 }
 
 /**
@@ -21,15 +23,16 @@ const ProductCard: React.FC<ProductCardProps> = ({
   product,
   width,
   height,
+  onClickCallback
 }) => {
-  const { id, name, description, images, price } = product;
+  const { id, name, description, images, price, currency } = product;
   const navigate = useNavigate();
   /**
    * When clicked direct the user to the product's detail page.
    */
   const handleClick = () => {
-    // window.location.href = `/products/${id}/details`;
     navigate(`/products/${id}/details`);
+    window.scrollTo(0, 0);
   };
 
   // Currently choose the first image, otherwise if no image specified display a placeholder image.
@@ -48,8 +51,9 @@ const ProductCard: React.FC<ProductCardProps> = ({
         "&:hover": { transform: "scale(1.009)" },
         cursor: "pointer",
         overflow: "hidden",
+        boxShadow: "none",
       }}
-      onClick={handleClick}
+      onClick={onClickCallback ? onClickCallback : handleClick}
     >
       {/* product image */}
       <Box sx={{ flexGrow: 1 }}>
@@ -61,6 +65,7 @@ const ProductCard: React.FC<ProductCardProps> = ({
             width: "100%",
             height: "100%",
             objectFit: "cover",
+            borderRadius: "10px",
           }}
         />
       </Box>
@@ -71,13 +76,12 @@ const ProductCard: React.FC<ProductCardProps> = ({
           gutterBottom
           variant="h6"
           component="div"
-          noWrap
-          sx={{ mb: 0 }}
+          sx={{ mb: 0, whiteSpace: 'normal', overflowWrap: 'anywhere' }}
         >
           {name}
         </Typography>
 
-        <Typography variant="body2" color="text.secondary" noWrap>
+        <Typography variant="body2" color="text.secondary" sx={{ whiteSpace: 'normal', overflowWrap: 'anywhere' }}>
           {description}
         </Typography>
         {product.variations?.Color && (
@@ -90,15 +94,15 @@ const ProductCard: React.FC<ProductCardProps> = ({
             {product.variations.Color.length > 1 ? "s" : ""}
           </Typography>
         )}
-        <Typography 
-          variant="subtitle1" 
-          sx={{ 
+        <Typography
+          variant="subtitle1"
+          sx={{
             fontWeight: 'bold',
-            mt: 1, 
+            mt: 1,
             color: '#000',
           }}
         >
-          {price}
+          {formatPrice(price, currency)}
         </Typography>
       </CardContent>
     </Card>
