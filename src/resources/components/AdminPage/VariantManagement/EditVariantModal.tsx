@@ -18,32 +18,36 @@ import DeleteIcon from '@mui/icons-material/Delete';
 import AddIcon from '@mui/icons-material/Add';
 import { CategoryService } from '@/services/category-service';
 import { CategoryModel } from '@/domain/models/CategoryModel';
+import { VariationModel } from '@/domain/models/VariationModel';
 
 interface VariantValue {
-  id: string;
+  id?: string;
   value: string;
 }
 
-interface AddVariantModalProps {
+interface EditVariantModalProps {
   open: boolean;
+  variant: VariationModel | null;
   onClose: () => void;
-  onSave: (variantData: { name: string; values: string[]; categories: string[] }) => void;
+  onSave: (variantId: string, variantData: { name: string; variations: VariantValue[]; categories: string[] }) => void;
 }
 
 const categoryService = new CategoryService();
 
-export default function AddVariantModal({ open, onClose, onSave }: AddVariantModalProps) {
+export default function EditVariantModal({ open, variant, onClose, onSave }: EditVariantModalProps) {
   const [variantName, setVariantName] = useState('');
-  const [variantValues, setVariantValues] = useState<VariantValue[]>([
-    { id: '1', value: '' },
-    { id: '2', value: '' }
-  ]);
+  const [variantValues, setVariantValues] = useState<VariantValue[]>([]);
   const [nameError, setNameError] = useState('');
   const [categories, setCategories] = useState<CategoryModel[]>([]);
   const [selectedCategories, setSelectedCategories] = useState<CategoryModel[]>([]);
+  
+  // Store original values for change detection
+  const [originalName, setOriginalName] = useState('');
+  const [originalValues, setOriginalValues] = useState<VariantValue[]>([]);
+  const [originalCategories, setOriginalCategories] = useState<CategoryModel[]>([]);
 
   /**
-   * Fetch categories on component mount
+   * Fetch categories when modal opens
    */
   useEffect(() => {
     const fetchCategories = async () => {
@@ -60,32 +64,81 @@ export default function AddVariantModal({ open, onClose, onSave }: AddVariantMod
     }
   }, [open]);
 
+  /**
+   * Pre-populate form when variant or categories change
+   */
+  useEffect(() => {
+    if (open && variant && categories.length > 0) {
+      const variantVals = variant.variations.map(v => ({ id: v.id, value: v.value }));
+      const selected = variant.categories && variant.categories.length > 0
+        ? categories.filter(cat => variant.categories.includes(cat.internalName))
+        : [];
+      
+      setVariantName(variant.name);
+      setVariantValues(variantVals);
+      setSelectedCategories(selected);
+      
+      // Store original values for comparison
+      setOriginalName(variant.name);
+      setOriginalValues(variantVals);
+      setOriginalCategories(selected);
+    }
+  }, [open, variant, categories]);
+
   const handleClose = () => {
     // Reset form
     setVariantName('');
-    setVariantValues([
-      { id: '1', value: '' },
-      { id: '2', value: '' }
-    ]);
+    setVariantValues([]);
     setNameError('');
     setSelectedCategories([]);
+    setOriginalName('');
+    setOriginalValues([]);
+    setOriginalCategories([]);
     onClose();
   };
 
-  const handleAddValue = () => {
-    const newId = (variantValues.length + 1).toString();
-    setVariantValues([...variantValues, { id: newId, value: '' }]);
+  /**
+   * Check if any changes have been made to the form
+   */
+  const hasChanges = () => {
+    // Check if name changed
+    if (variantName !== originalName) return true;
+
+    // Check if categories changed (compare by internalName)
+    const currentCategoryNames = selectedCategories.map(c => c.internalName).sort();
+    const originalCategoryNames = originalCategories.map(c => c.internalName).sort();
+    if (JSON.stringify(currentCategoryNames) !== JSON.stringify(originalCategoryNames)) {
+      return true;
+    }
+
+    // Check if values changed (compare both id and value)
+    if (variantValues.length !== originalValues.length) return true;
+    
+    for (let i = 0; i < variantValues.length; i++) {
+      const current = variantValues[i];
+      const original = originalValues[i];
+      
+      if (current.id !== original.id || current.value !== original.value) {
+        return true;
+      }
+    }
+
+    return false;
   };
 
-  const handleRemoveValue = (id: string) => {
+  const handleAddValue = () => {
+    setVariantValues([...variantValues, { value: '' }]);
+  };
+
+  const handleRemoveValue = (index: number) => {
     if (variantValues.length > 1) {
-      setVariantValues(variantValues.filter(value => value.id !== id));
+      setVariantValues(variantValues.filter((_, idx) => idx !== index));
     }
   };
 
-  const handleValueChange = (id: string, newValue: string) => {
-    setVariantValues(variantValues.map(value => 
-      value.id === id ? { ...value, value: newValue } : value
+  const handleValueChange = (index: number, newValue: string) => {
+    setVariantValues(variantValues.map((value, idx) => 
+      idx === index ? { ...value, value: newValue } : value
     ));
   };
 
@@ -98,17 +151,25 @@ export default function AddVariantModal({ open, onClose, onSave }: AddVariantMod
 
     const filledValues = variantValues
       .filter(value => value.value.trim() !== '')
-      .map(value => value.value.trim());
+      .map(value => ({
+        ...(value.id && { id: value.id }), // Include id if it exists (existing values)
+        value: value.value.trim()
+      }));
 
     if (filledValues.length === 0) {
       alert('Please add at least one variant value');
       return;
     }
 
+    if (!variant) {
+      alert('No variant selected for editing');
+      return;
+    }
+
     // Call the onSave callback with the data
-    onSave({
+    onSave(variant.id, {
       name: variantName.trim(),
-      values: filledValues,
+      variations: filledValues,
       categories: selectedCategories.map(cat => cat.internalName)
     });
 
@@ -138,7 +199,7 @@ export default function AddVariantModal({ open, onClose, onSave }: AddVariantMod
         borderBottom: '1px solid #e0e0e0'
       }}>
         <Typography variant="h6" component="div">
-          Add Variation Type
+          Edit Variation Type
         </Typography>
         <IconButton onClick={handleClose} size="small">
           <CloseIcon />
@@ -209,12 +270,12 @@ export default function AddVariantModal({ open, onClose, onSave }: AddVariantMod
 
           <Paper sx={{ p: 2, backgroundColor: '#fafafa', border: '1px dashed #ddd', boxShadow: 'none', elevation: 0 }}>
             {variantValues.map((value, index) => (
-              <Box key={value.id} sx={{ display: 'flex', alignItems: 'center', mb: 1 }}>
+              <Box key={value.id || index} sx={{ display: 'flex', alignItems: 'center', mb: 1 }}>
                 <TextField
                   fullWidth
-                  placeholder={index === 0 ? "Cotton" : index === 1 ? "Polyester" : index === 2 ? "Wool" : "Enter value"}
+                  placeholder="Enter value"
                   value={value.value}
-                  onChange={(e) => handleValueChange(value.id, e.target.value)}
+                  onChange={(e) => handleValueChange(index, e.target.value)}
                   size="small"
                   sx={{
                     '& .MuiOutlinedInput-root': {
@@ -224,7 +285,7 @@ export default function AddVariantModal({ open, onClose, onSave }: AddVariantMod
                   }}
                 />
                 <IconButton
-                  onClick={() => handleRemoveValue(value.id)}
+                  onClick={() => handleRemoveValue(index)}
                   disabled={variantValues.length === 1}
                   size="small"
                   sx={{ ml: 1, color: '#999' }}
@@ -266,11 +327,12 @@ export default function AddVariantModal({ open, onClose, onSave }: AddVariantMod
         <Button 
           onClick={handleSave}
           variant="contained"
-          disabled={!variantName.trim() || filledValuesCount === 0}
+          disabled={!variantName.trim() || filledValuesCount === 0 || !hasChanges()}
         >
-          Create Variation Type
+          Update Variation Type
         </Button>
       </DialogActions>
     </Dialog>
   );
 }
+
