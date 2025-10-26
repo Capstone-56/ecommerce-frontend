@@ -51,8 +51,7 @@ export default function ProductDetails() {
   const [dialogOpen, setDialogOpen] = useState<boolean>(false);
   const [imageOpen, setImageOpen] = useState<boolean>(false);
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
-  const [colour, setColour] = useState<string>();
-  const [itemSize, setItemSize] = useState<string>();
+  const [selectedVariants, setSelectedVariants] = useState<Map<string, string>>(new Map()); // Map of variant type to selected value
   const [qty, setQty] = useState<number>(1);
   const [variantValueToIdMap, setVariantValueToIdMap] = useState<Map<string, string>>(new Map());
   const { id: productId = "null" } = useParams();
@@ -106,19 +105,13 @@ export default function ProductDetails() {
       // Build array of selected variant IDs from the user's selections
       const selectedVariantIds: string[] = [];
       
-      if (colour) {
-        const colourId = variantValueToIdMap.get(colour);
-        if (colourId) {
-          selectedVariantIds.push(colourId);
+      // Iterate through all selected variants and get their IDs
+      selectedVariants.forEach((variantValue) => {
+        const variantId = variantValueToIdMap.get(variantValue);
+        if (variantId) {
+          selectedVariantIds.push(variantId);
         }
-      }
-      
-      if (itemSize) {
-        const sizeId = variantValueToIdMap.get(itemSize);
-        if (sizeId) {
-          selectedVariantIds.push(sizeId);
-        }
-      }
+      });
 
       // Get the product item ID that matches the selected configurations
       const { id: productItemId } = await productItemService.retrieveByConfigurations(
@@ -210,12 +203,15 @@ export default function ProductDetails() {
         }
       }
       
-      // Set default selections
-      if (result.variations?.Size?.length) {
-        setItemSize(result.variations.Size[0]);
-      }
-      if (result.variations?.Color?.length) {
-        setColour(result.variations.Color[0]);
+      // Set default selections for all variant types
+      if (result.variations) {
+        const defaultSelections = new Map<string, string>();
+        Object.entries(result.variations).forEach(([variantType, values]) => {
+          if (Array.isArray(values) && values.length > 0) {
+            defaultSelections.set(variantType, values[0]);
+          }
+        });
+        setSelectedVariants(defaultSelections);
       }
     } else console.error(`Nothing found for ${id}`);
   };
@@ -434,72 +430,61 @@ export default function ProductDetails() {
             </Typography>
           </Box>
 
-          {productDetails?.variations?.Color?.length > 0 && (
-            <Box>
-              <Box sx={{ display: "flex" }}>
-                <Typography variant="body1">Colour:</Typography>
-                <Typography
-                  variant="body1"
-                  sx={{ display: "inline", fontWeight: "600" }}
-                >
-                  {colour}
-                </Typography>
+          {/* Dynamic variant rendering for any variant type */}
+          {productDetails?.variations && Object.entries(productDetails.variations).map(([variantType, values]) => {
+            if (!Array.isArray(values) || values.length === 0) return null;
+            
+            const selectedValue = selectedVariants.get(variantType);
+            const isColorVariant = variantType.toLowerCase() === 'color' || variantType.toLowerCase() === 'colour';
+            
+            return (
+              <Box key={variantType}>
+                <Box sx={{ display: "flex", gap: 1 }}>
+                  <Typography variant="body1">{variantType}:</Typography>
+                  <Typography
+                    variant="body1"
+                    sx={{ display: "inline", fontWeight: "600" }}
+                  >
+                    {selectedValue}
+                  </Typography>
+                </Box>
+                <Box sx={{ display: "flex", flexWrap: "wrap" }}>
+                  {values.map((value) => (
+                    <ButtonBase
+                      key={value}
+                      onClick={() => {
+                        setSelectedVariants(prev => {
+                          const updated = new Map(prev);
+                          updated.set(variantType, value);
+                          return updated;
+                        });
+                      }}
+                      sx={{
+                        width: isColorVariant ? 40 : "auto",
+                        height: "40px",
+                        minWidth: isColorVariant ? 40 : "40px",
+                        paddingX: isColorVariant ? 0 : "12px",
+                        backgroundColor: isColorVariant ? value : "#E7E7E7",
+                        borderRadius: isColorVariant ? "50%" : "8px",
+                        margin: "4px",
+                        border:
+                          selectedValue === value
+                            ? isColorVariant 
+                              ? "2px solid black"
+                              : `2px solid ${grey[900]}`
+                            : isColorVariant
+                              ? "1px solid rgba(0, 0, 0, 0.23)"
+                              : "1px solid transparent",
+                        boxSizing: "border-box",
+                      }}
+                    >
+                      {!isColorVariant && <Typography>{value}</Typography>}
+                    </ButtonBase>
+                  ))}
+                </Box>
               </Box>
-              {productDetails?.variations?.Color?.map((color) => (
-                <ButtonBase
-                  key={color}
-                  onClick={() => setColour(color)}
-                  sx={{
-                    width: 40,
-                    height: 40,
-                    backgroundColor: color,
-                    borderRadius: "50%",
-                    margin: "4px",
-                    border:
-                      colour === color
-                        ? "2px solid black"
-                        : "1px solid rgba(0, 0, 0, 0.23)",
-                    boxSizing: "border-box",
-                  }}
-                ></ButtonBase>
-              ))}
-            </Box>
-          )}
-
-          {productDetails?.variations?.Size?.length > 0 && (
-            <Box>
-              <Box sx={{ display: "flex" }}>
-                <Typography variant="body1">Size:</Typography>
-                <Typography
-                  variant="body1"
-                  sx={{ display: "inline", fontWeight: "600" }}
-                >
-                  {itemSize}
-                </Typography>
-              </Box>
-              {productDetails?.variations?.Size?.map((size) => (
-                <ButtonBase
-                  key={size}
-                  onClick={() => {
-                    setItemSize(size);
-                  }}
-                  sx={{
-                    width: "40px",
-                    height: "40px",
-                    borderRadius: "8px",
-                    margin: "2px",
-                    backgroundColor: "#E7E7E7",
-                    border:
-                      size === itemSize
-                        ? `2px solid ${grey[900]}`
-                        : "1px solid transparent",
-                  }}
-                >
-                  <Typography>{size}</Typography>
-                </ButtonBase>
-              ))}
-            </Box>
-          )}
+            );
+          })}
 
           {/* Qty and cart - number input is real finnicky as MUI does not support fully */}
           <Box
