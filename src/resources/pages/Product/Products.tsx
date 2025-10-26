@@ -251,24 +251,21 @@ export default function Products() {
                     </Menu>
                   </Box>
                 </Box>
-                <Grid container spacing={3}>
+                <Grid container spacing={3.75}>
                   {products?.results.map((product) => (
                     <Grid
-                      size={{ xs: 12, sm: 12, md: 6, lg: 6, xl: 4 }}
+                      size={{ xs: 12, sm: 6, md: 6, lg: 6, xl: 4 }}
                       key={product.id}
+                      sx={{
+                        display: "flex",
+                        justifyContent: "center",
+                      }}
                     >
-                      <Box
-                        sx={{
-                          display: "flex",
-                          justifyContent: "center",
-                        }}
-                      >
-                        <ProductCard
-                          product={product}
-                          width="100%"
-                          height="100%"
-                        />
-                      </Box>
+                      <ProductCard
+                        product={product}
+                        width="100%"
+                        height="auto"
+                      />
                     </Grid>
                   ))}
                 </Grid>

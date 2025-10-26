@@ -124,15 +124,16 @@ export default function Home() {
           {products.length > 0 ? (
             products.map((product) => {
               return (
-                <Grid size={{ xs: 12, sm: 6, md: 4, lg: 3 }} key={product.id}>
-                  <Box
-                    sx={{
-                      display: "flex",
-                      justifyContent: "center",
-                    }}
-                  >
-                    <ProductCard product={product} width="100%" height="100%" />
-                  </Box>
+                <Grid 
+                  size={{ xs: 12, sm: 6, md: 4, lg: 3 }} 
+                  key={product.id}
+                  sx={{
+                    display: "flex",
+                    justifyContent: "center",
+                    maxWidth: "350px",
+                  }}
+                >
+                  <ProductCard product={product} width="100%" height="auto" />
                 </Grid>
               );
             })

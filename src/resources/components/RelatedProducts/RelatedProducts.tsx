@@ -22,37 +22,39 @@ export default function ProductDetails(props: RelatedProductsProps) {
   const [relatedProducts, setRelatedProducts] = useState<Array<ProductModel>>(
     []
   );
+  const [currentSlide, setCurrentSlide] = useState(0);
   const userLocation = locationState((state) => state.userLocation);
   const userCurrency = locationState((state) => state.getUserCurrency());
   const navigate = useNavigate();
 
   const settings = {
-    dots: true,
+    dots: false,
     infinite: true,
     speed: 500,
     slidesToShow: 5,
     slidesToScroll: 1,
+    beforeChange: (current: number, next: number) => setCurrentSlide(next),
     responsive: [
       {
-        breakpoint: 1200,
+        breakpoint: 2100,
         settings: {
           slidesToShow: 4,
         },
       },
       {
-        breakpoint: 900,
+        breakpoint: 1400,
         settings: {
           slidesToShow: 3,
         },
       },
       {
-        breakpoint: 600,
+        breakpoint: 1000,
         settings: {
           slidesToShow: 2,
         },
       },
       {
-        breakpoint: 400,
+        breakpoint: 700,
         settings: {
           slidesToShow: 1,
         },
@@ -79,27 +81,32 @@ export default function ProductDetails(props: RelatedProductsProps) {
 
   return (
     <>
-      <Typography
-        sx={{
-          display: "flex",
-          flexDirection: { xs: "column", md: "row" },
-          justifyContent: "center",
-          textAlign: "center",
-          margin: "2rem",
-          paddingX: { xs: "2rem" },
-          gap: "2rem",
-        }}
-        variant="h5"
-        fontWeight="bold"
-        gutterBottom
-      >
-        Related Products
-      </Typography>
       <Box
         sx={{
           width: "90%",
+          maxWidth: "1680px",
           mx: "auto",
-          position: "relative"
+        }}
+      >
+        <Typography
+          sx={{
+            textAlign: { xs: "center", md: "left" },
+            margin: "2rem 0",
+          }}
+          variant="h5"
+          fontWeight="bold"
+          gutterBottom
+        >
+          Related Products
+        </Typography>
+      </Box>
+      <Box
+        sx={{
+          width: "90%",
+          maxWidth: "1680px",
+          mx: "auto",
+          position: "relative",
+          mb: "100px"
         }}
       >
         {/* 
@@ -120,11 +127,11 @@ export default function ProductDetails(props: RelatedProductsProps) {
           {relatedProducts.length > 0 ? (
             relatedProducts.map((product) => (
               <Box key={product.id} sx={{
-                display: "flex",
+                display: "flex !important",
                 justifyContent: "center",
                 px: 1,
               }}>
-                <ProductCard product={product} width="100%" height="350px" onClickCallback={() => {
+                <ProductCard product={product} width="100%" height="auto" onClickCallback={() => {
                   navigate(`/products/${product.id}/details`);
                   window.scrollTo({ top: 0, behavior: "smooth" })
                 }}
@@ -135,6 +142,18 @@ export default function ProductDetails(props: RelatedProductsProps) {
             <Typography>Loading...</Typography>
           )}
         </Slider >
+        {/* Slide counter */}
+        <Typography
+          variant="body2"
+          sx={{
+            textAlign: "center",
+            mt: 2,
+            color: "text.secondary",
+            fontSize: "14px",
+          }}
+        >
+          {currentSlide + 1}/{relatedProducts.length}
+        </Typography>
       </Box >
     </>
   );
