@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import {
   Dialog,
   DialogTitle,
@@ -69,7 +69,7 @@ export default function EditVariantModal({ open, variant, onClose, onSave }: Edi
    */
   useEffect(() => {
     if (open && variant && categories.length > 0) {
-      const variantVals = variant.variations.map(v => ({ id: v.id, value: v.value }));
+      const variantVals = variant?.variations?.map(v => ({ id: v.id, value: v.value })) || [];
       const selected = variant.categories && variant.categories.length > 0
         ? categories.filter(cat => variant.categories.includes(cat.internalName))
         : [];
