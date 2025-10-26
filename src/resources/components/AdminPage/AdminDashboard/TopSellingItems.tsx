@@ -48,6 +48,7 @@ export default function TopSellingItems() {
                     component="img"
                     image={item.images?.[0]}
                     alt={item.name}
+                    loading="lazy"
                     sx={{
                       width: 64,
                       height: 64,

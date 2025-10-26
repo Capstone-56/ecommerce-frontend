@@ -237,6 +237,7 @@ export default function ProductDetails() {
                       <img
                         src={link}
                         alt="image alt text"
+                        loading="lazy"
                         style={{
                           position: "absolute",
                           top: 0,

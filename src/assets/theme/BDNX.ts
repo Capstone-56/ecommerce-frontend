@@ -17,7 +17,6 @@ const commonSettings: Partial<ThemeOptions> = {
         root: {
           boxShadow:
             "0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1)",
-          border: "1px solid #e2e8f0",
         },
       },
     },
@@ -39,6 +38,71 @@ const commonSettings: Partial<ThemeOptions> = {
         },
       },
     },
+    // Override Accordion component styling
+    MuiAccordion: {
+      styleOverrides: {
+        root: {
+          // Remove default spacing between accordions
+          "&:not(:last-child)": {
+            borderBottom: 0,
+          },
+          // Remove the default elevation/shadow
+          boxShadow: "none",
+          // Remove the default border radius for all accordions
+          borderRadius: 0,
+          // Add border radius only to first and last accordion
+          "&:first-of-type": {
+            borderTopLeftRadius: "8px", // Adjust radius as needed
+            borderTopRightRadius: "8px", // Adjust radius as needed
+          },
+          "&:last-of-type": {
+            borderBottomLeftRadius: "8px", // Adjust radius as needed
+            borderBottomRightRadius: "8px", // Adjust radius as needed
+          },
+          // Remove the pseudo-element used for elevation
+          "&:before": {
+            display: "none",
+          },
+          // Remove margin when expanded to prevent gaps
+          "&.Mui-expanded": {
+            margin: 0,
+          },
+          // Optional: you can add a border if desired
+          border: "1px solid rgba(0, 0, 0, 0.12)",
+        },
+      },
+      defaultProps: {
+        // Set default elevation to 0 to remove the shadow
+        elevation: 0,
+      },
+    },
+    // Optionally style the summary part
+    MuiAccordionSummary: {
+      styleOverrides: {
+        root: {
+          "&.Mui-expanded": {
+            minHeight: 48,
+          },
+          paddingBottom: "0px",
+        },
+        content: {
+          "&.Mui-expanded": {
+            margin: "12px 0 4px",
+          },
+        },
+      },
+    },
+    // Style the details part
+    MuiAccordionDetails: {
+      styleOverrides: {
+        root: {
+          // Keep left, right, bottom padding but reduce top padding
+          padding: "0px 16px 16px 16px", // Adjust these values as needed
+          // Move content higher
+          marginTop: "-8px",
+        },
+      },
+    },
   },
 };
 
@@ -52,15 +116,15 @@ export const lightTheme = createTheme({
       paper: "#ffffff",
     },
     text: {
-      primary: "#535353",
-      secondary: "#acb3d6ff",
+      primary: "#2b2b2bff",
+      secondary: "#737373",
     },
     primary: {
-      main: "#de7850",
+      main: "#243F68",
       contrastText: "#ffffff",
     },
     secondary: {
-      main: "#acb3d6ff",
+      main: "##737373",
       contrastText: "#ffffff",
     },
     divider: "#ececff",

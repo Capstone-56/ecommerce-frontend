@@ -98,6 +98,7 @@ const CartProductCard: React.FC<ProductCardProps> = ({ cartItem }) => {
             component="img"
             image={thumbnail}
             alt={name}
+            loading="lazy"
             sx={{
               width: "100%",
               height: 150,

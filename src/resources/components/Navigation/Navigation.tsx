@@ -240,7 +240,7 @@ const Navbar: React.FC = () => {
     <AppBar position="static" elevation={0}>
       <Paper
         elevation={0}
-        sx={{ boxShadow: "0px 4px 8px rgba(55, 55, 55, 0.15)" }}
+        sx={{ boxShadow: "0px 4px 8px rgba(116, 116, 116, 0.03)" }}
       >
         <Toolbar
           sx={{
@@ -305,7 +305,7 @@ const Navbar: React.FC = () => {
                     src="src/assets/logo_bdnx.png" // <-- replace with your logo path
                     alt="BDNX"
                     sx={{
-                      height: { xs: 32, md: 40 },
+                      height: { xs: 32, md: 32 },
                       width: "auto",
                       mr: 1.5,
                       objectFit: "contain",
