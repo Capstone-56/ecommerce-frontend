@@ -92,6 +92,7 @@ export default function ProductDetails(props: RelatedProductsProps) {
           sx={{
             textAlign: { xs: "center", md: "left" },
             margin: "2rem 0",
+            fontSize: { xs: "20px", sm: "20px", md: "24px" },
           }}
           variant="h5"
           fontWeight="bold"

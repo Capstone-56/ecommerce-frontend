@@ -227,11 +227,11 @@ export default function ProductDetails() {
         sx={{
           display: "flex",
           flexDirection: { xs: "column", md: "row" },
-          justifyContent: "center",
-          alignItems: { xs: "center", md: "flex-start" },
-          padding: { xs: "2rem", md: "3rem"},
+          justifyContent: "space-between",
+          alignItems: { xs: "center", md: "flex-start"},
+          py: { xs: "2rem", md: "3rem"},
           gap: "2rem",
-          width: "100%",
+          width: "90%",
           maxWidth: "1680px",
           mx: "auto",
         }}
@@ -240,7 +240,7 @@ export default function ProductDetails() {
         <Box
           sx={{
             width: "100%",
-            maxWidth: { xs: 350, sm: 500, md: 800 },
+            maxWidth: { xs: "100%", sm: "100%", md: 800 },
             display: "flex",
             justifyContent: "center",
           }}
@@ -251,7 +251,7 @@ export default function ProductDetails() {
             gap={4}
             sx={{
               width: "100%",
-              maxWidth: { xs: 350, sm: 500, md: 800 },
+              maxWidth: { xs: "100%", sm: "100%", md: 800 },
             }}
           >
             {Array.isArray(images) && images.length > 0 ? (
@@ -432,7 +432,7 @@ export default function ProductDetails() {
             flexDirection: "column",
             gap: "30px",
             width: "100%",
-            maxWidth: { xs: 350, sm: 500, md: 800 },
+            maxWidth: { xs: "100%", sm: "100%", md: 800 },
           }}
         >
           {/* Title, price, desc */}
@@ -448,8 +448,8 @@ export default function ProductDetails() {
               sx={{
                 color: "black",
                 fontWeight: "400",
-                fontSize: { xs: "48px", md: "36px" },
-                paddingTop: "24px",
+                fontSize: { xs: "16px", sm: "24px", md: "28px" },
+                paddingTop: { xs: "0px", sm: "0px", md: "24px" },
               }}
             >
               {name}
@@ -461,7 +461,8 @@ export default function ProductDetails() {
                 variant="caption"
                 sx={{
                   color: "black",
-                  fontSize: "1.5rem",
+                  fontSize: { xs: "20px", sm: "24px", md: "24px" },
+                  fontWeight: "600",
                 }}
               >
                 {formatPrice(price, currency)}
@@ -485,10 +486,19 @@ export default function ProductDetails() {
             return (
               <Box key={variantType}>
                 <Box sx={{ display: "flex", gap: 1 }}>
-                  <Typography variant="body1">{variantType}:</Typography>
+                  <Typography 
+                    variant="body1"
+                    sx={{ fontSize: { xs: "14px", sm: "16px" } }}
+                  >
+                    {variantType}:
+                  </Typography>
                   <Typography
                     variant="body1"
-                    sx={{ display: "inline", fontWeight: "600" }}
+                    sx={{ 
+                      display: "inline", 
+                      fontWeight: "600",
+                      fontSize: { xs: "14px", sm: "16px" }
+                    }}
                   >
                     {selectedValue}
                   </Typography>
@@ -523,7 +533,11 @@ export default function ProductDetails() {
                         boxSizing: "border-box",
                       }}
                     >
-                      {!isColorVariant && <Typography>{value}</Typography>}
+                      {!isColorVariant && (
+                        <Typography sx={{ fontSize: { xs: "14px", sm: "16px" } }}>
+                          {value}
+                        </Typography>
+                      )}
                     </ButtonBase>
                   ))}
                 </Box>
@@ -544,7 +558,12 @@ export default function ProductDetails() {
             }}
           >
             <Box sx={{ display: "flex", alignItems: "center" }}>
-              <Typography variant="body1">Quantity:</Typography>
+              <Typography 
+                variant="body1"
+                sx={{ fontSize: { xs: "14px", sm: "16px" } }}
+              >
+                Quantity:
+              </Typography>
               <Input
                 type="number"
                 value={qty}
@@ -578,7 +597,11 @@ export default function ProductDetails() {
                 }}
                 onClick={handleAddToCart}
               >
-                <Typography fontWeight="500" textTransform="none">
+                <Typography 
+                  fontWeight="500" 
+                  textTransform="none"
+                  sx={{ fontSize: { xs: "14px", sm: "16px" } }}
+                >
                   Add to Cart
                 </Typography>
               </Button>
