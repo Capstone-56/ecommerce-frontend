@@ -140,22 +140,14 @@ const OrderHistory: React.FC = () => {
                           >
                             Qty: {item.quantity}
                           </Typography>
-                          {/* Show variant/option info if available */}
-                          {item.productItem.product?.variations && (
-                            <Box sx={{ width: "100%" }}>
-                              {Object.entries(
-                                item.productItem.product.variations
-                              ).map(([key, value]) => (
-                                <Typography
-                                  key={key}
-                                  variant="caption"
-                                  color="text.secondary"
-                                  sx={{ display: "block" }}
-                                >
-                                  {key}: {String(value)}
-                                </Typography>
-                              ))}
-                            </Box>
+                          {item.productItem.sku && (
+                            <Typography
+                              variant="caption"
+                              color="text.secondary"
+                              sx={{ display: "block" }}
+                            >
+                              {item.productItem.sku}
+                            </Typography>
                           )}
                           <Typography
                             variant="subtitle2"
