@@ -205,7 +205,7 @@ const CheckoutForm = ({
     }
   };
 
-  if (loading) {
+  if (!address) {
     return (
       <Box
         display="flex"

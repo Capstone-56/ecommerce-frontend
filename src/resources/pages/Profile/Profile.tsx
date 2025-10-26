@@ -20,6 +20,7 @@ import {
   ShoppingBag,
   ChevronRight,
   LocalShipping,
+  AccountCircle,
 } from "@mui/icons-material";
 import { useTheme } from "@mui/material/styles";
 import { UserService } from "@/services/user-service";
@@ -105,15 +106,11 @@ const Profile: React.FC = () => {
                 alignItems: "center",
               }}
             >
-              <Avatar
-                src={profileUrl}
-                alt="Profile"
+              <AccountCircle
                 sx={{
                   width: { xs: 64, sm: 96 },
                   height: { xs: 64, sm: 96 },
-                  border: "4px solid white",
-                  boxShadow: 3,
-                  bgcolor: "grey.100",
+                  color: "grey.400",
                   my: 2,
                 }}
               />
