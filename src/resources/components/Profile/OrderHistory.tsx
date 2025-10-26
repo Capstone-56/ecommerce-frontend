@@ -33,7 +33,7 @@ const OrderHistory: React.FC = () => {
       if (!username) return;
       try {
         const orders = await orderService.getLatestOrders({
-          userName: username,
+          userNames: username,
         });
         setOrders(orders || []);
       } catch (error) {
