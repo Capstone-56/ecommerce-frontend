@@ -199,7 +199,7 @@ export default function ProductDetails() {
           
           // Build map from variant value to variant ID
           variations.forEach(variation => {
-            variation.variant_values.forEach(variantValue => {
+            variation.variant_values?.forEach(variantValue => {
               valueToIdMap.set(variantValue.value, variantValue.id);
             });
           });
