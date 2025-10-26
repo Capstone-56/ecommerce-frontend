@@ -12,7 +12,7 @@ import { Button, Chip, IconButton, Popover, TablePagination, Tooltip, Typography
 import { useCallback, useEffect, useState } from "react";
 import React from 'react';
 import { VariationService } from '@/services/variation-service';
-import { useNavigate } from 'react-router-dom';
+import { toast } from 'react-toastify';
 
 /**
  * Variant table props.
@@ -22,12 +22,13 @@ export interface VariantTableProps {
   searchTerm: string;
   // Refresh trigger to force re-fetch of data
   refreshTrigger?: number;
+  // Callback when edit button is clicked
+  onEditVariant: (variant: VariationModel) => void;
 }
 
 const variationService = new VariationService();
 
 export default function VariantTable(props: VariantTableProps) {
-  const navigate = useNavigate();
   const [anchorEl, setAnchorEl] = useState<HTMLButtonElement | null>(null);
   const [selectedVariant, setSelectedVariant] = useState<VariationModel | null>(null);
   const [page, setPage] = React.useState(0);
@@ -110,20 +111,21 @@ export default function VariantTable(props: VariantTableProps) {
     if (selectedVariant) {
       try {
         await variationService.deleteVariation(selectedVariant.id);
+        toast.success('Variation type deleted successfully');
         await fetchVariants(); // Refresh the list
         handleClose();
       } catch (error) {
         console.error("Error deleting variant:", error);
-        alert("Failed to delete variant. Please try again.");
+        toast.error("Failed to delete variation type. Please try again.");
       }
     }
   };
 
   /**
-   * Handles navigating to the edit variant page.
+   * Handles opening the edit variant modal.
    */
   const handleEditVariant = (variant: VariationModel) => {
-    navigate("/admin/variant/edit", { state: { variantId: variant.id } });
+    props.onEditVariant(variant);
   };
 
   const open = Boolean(anchorEl);
@@ -137,12 +139,13 @@ export default function VariantTable(props: VariantTableProps) {
 
   return (
     <Paper sx={{ width: '100%', overflow: 'hidden' }}>
-      <TableContainer sx={{ maxHeight: 440 }}>
+      <TableContainer>
         <Table stickyHeader aria-label="variant table">
           <TableHead>
             <TableRow>
               <TableCell sx={{ fontWeight: 'bold' }}>ID</TableCell>
               <TableCell sx={{ fontWeight: 'bold' }}>Variant Name</TableCell>
+              <TableCell sx={{ fontWeight: 'bold' }}>Categories</TableCell>
               <TableCell sx={{ fontWeight: 'bold' }}>Values</TableCell>
               <TableCell sx={{ fontWeight: 'bold' }} align="center">Actions</TableCell>
             </TableRow>
@@ -162,23 +165,39 @@ export default function VariantTable(props: VariantTableProps) {
                   </TableCell>
                   <TableCell>
                     <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5, maxWidth: 400 }}>
-                      {(() => {
-                        const values = variant.variations || variant.variant_values || [];
-                        return values.length > 0 ? (
-                          values.map((value) => (
-                            <Chip
-                              key={value.id}
-                              label={value.value}
-                              size="small"
-                              variant="outlined"
-                            />
-                          ))
-                        ) : (
-                          <Typography variant="caption" color="text.secondary">
-                            No values defined
-                          </Typography>
-                        );
-                      })()}
+                      {variant.categories && variant.categories.length > 0 ? (
+                        variant.categories.map((categoryName) => (
+                          <Chip
+                            key={categoryName}
+                            label={categoryName}
+                            size="small"
+                            color="primary"
+                            variant="outlined"
+                          />
+                        ))
+                      ) : (
+                        <Typography variant="caption" color="text.secondary">
+                          No Assigned Categories
+                        </Typography>
+                      )}
+                    </Box>
+                  </TableCell>
+                  <TableCell>
+                    <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5, maxWidth: 400 }}>
+                      {variant.variations.length > 0 ? (
+                        variant.variations.map((value) => (
+                          <Chip
+                            key={value.id}
+                            label={value.value}
+                            size="small"
+                            variant="outlined"
+                          />
+                        ))
+                      ) : (
+                        <Typography variant="caption" color="text.secondary">
+                          No values defined
+                        </Typography>
+                      )}
                     </Box>
                   </TableCell>
                   <TableCell align="center">
@@ -203,7 +222,7 @@ export default function VariantTable(props: VariantTableProps) {
               ))
             ) : (
               <TableRow>
-                <TableCell colSpan={4} align="center">
+                <TableCell colSpan={5} align="center">
                   <Typography variant="body2" color="text.secondary">
                     No variants found
                   </Typography>
