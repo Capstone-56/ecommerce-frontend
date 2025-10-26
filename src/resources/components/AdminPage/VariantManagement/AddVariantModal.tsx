@@ -175,7 +175,7 @@ export default function AddVariantModal({ open, onClose, onSave }: AddVariantMod
           <Autocomplete
             multiple
             options={categories}
-            getOptionLabel={(option) => option.name}
+            getOptionLabel={(option) => option.internalName}
             value={selectedCategories}
             onChange={(event, newValue) => {
               setSelectedCategories(newValue);

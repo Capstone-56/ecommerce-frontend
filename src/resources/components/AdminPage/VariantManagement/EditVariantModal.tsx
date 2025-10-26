@@ -236,7 +236,7 @@ export default function EditVariantModal({ open, variant, onClose, onSave }: Edi
           <Autocomplete
             multiple
             options={categories}
-            getOptionLabel={(option) => option.name}
+            getOptionLabel={(option) => option.internalName}
             value={selectedCategories}
             onChange={(event, newValue) => {
               setSelectedCategories(newValue);
