@@ -21,6 +21,7 @@ import { ProductModel } from "@/domain/models/ProductModel";
 
 import Paginator from "@/resources/components/Pagination/Paginator";
 import ProductCard from "@/resources/components/ProductCard/ProductCard";
+import ProductCardSkeleton from "@/resources/components/ProductCard/ProductCardSkeleton";
 import Filter from "@/resources/components/Filter/Filter";
 import DynamicBreadcrumbs from '@/resources/components/Navigation/DynamicBreadcrumbs';
 
@@ -29,6 +30,7 @@ import { Constants } from "@/domain/constants";
 
 export default function Products() {
   const [products, setProducts] = useState<PagedList<ProductModel>>();
+  const [loading, setLoading] = useState<boolean>(true);
   const [searchParams, setSearchParams] = useSearchParams();
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
 
@@ -61,6 +63,7 @@ export default function Products() {
 
   // Fetch products based on current search params
   const fetchProducts = async () => {
+    setLoading(true);
     const productService = new ProductService();
     // Fetch products with filters and sorting
     try {
@@ -79,6 +82,8 @@ export default function Products() {
       setProducts(result);
     } catch (error) {
       console.error("Failed to fetch products", error);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -252,22 +257,38 @@ export default function Products() {
                   </Box>
                 </Box>
                 <Grid container spacing={3.75}>
-                  {products?.results.map((product) => (
-                    <Grid
-                      size={{ xs: 12, sm: 6, md: 6, lg: 6, xl: 4 }}
-                      key={product.id}
-                      sx={{
-                        display: "flex",
-                        justifyContent: "center",
-                      }}
-                    >
-                      <ProductCard
-                        product={product}
-                        width="100%"
-                        height="auto"
-                      />
-                    </Grid>
-                  ))}
+                  {loading ? (
+                    // Show skeleton cards while loading
+                    Array.from({ length: pageSize }).map((_, index) => (
+                      <Grid
+                        size={{ xs: 12, sm: 6, md: 6, lg: 6, xl: 4 }}
+                        key={`skeleton-${index}`}
+                        sx={{
+                          display: "flex",
+                          justifyContent: "center",
+                        }}
+                      >
+                        <ProductCardSkeleton />
+                      </Grid>
+                    ))
+                  ) : (
+                    products?.results.map((product) => (
+                      <Grid
+                        size={{ xs: 12, sm: 6, md: 6, lg: 6, xl: 4 }}
+                        key={product.id}
+                        sx={{
+                          display: "flex",
+                          justifyContent: "center",
+                        }}
+                      >
+                        <ProductCard
+                          product={product}
+                          width="100%"
+                          height="auto"
+                        />
+                      </Grid>
+                    ))
+                  )}
                 </Grid>
               </Box>
             </Box>

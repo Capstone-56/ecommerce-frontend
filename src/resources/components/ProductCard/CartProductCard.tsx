@@ -116,10 +116,13 @@ const CartProductCard: React.FC<ProductCardProps> = ({ cartItem }) => {
               <CardContent sx={{ py: 0.5, px: 1 }}>
                 <Typography
                   gutterBottom
-                  variant="h6"
                   component="div"
                   noWrap
-                  sx={{ mb: 0 }}
+                  sx={{ 
+                    mb: 0,
+                    fontSize: { xs: "16px", sm: "18px", md: "20px" },
+                    fontWeight: 500,
+                  }}
                 >
                   {name}
                 </Typography>
@@ -127,6 +130,9 @@ const CartProductCard: React.FC<ProductCardProps> = ({ cartItem }) => {
                   variant="body2"
                   color="text.secondary"
                   noWrap
+                  sx={{
+                    fontSize: { xs: "12px", sm: "14px" },
+                  }}
                 >
                   {description}
                 </Typography>
@@ -138,8 +144,11 @@ const CartProductCard: React.FC<ProductCardProps> = ({ cartItem }) => {
               <CardContent sx={{ py: 0.5, px: 1, textAlign: "right" }}>
                 <Typography
                   gutterBottom
-                  fontWeight={"bold"}
                   component="div"
+                  sx={{
+                    fontWeight: 700,
+                    fontSize: { xs: "16px", sm: "18px", md: "20px" },
+                  }}
                 >
                   {formatPrice(price, currency)}
                 </Typography>

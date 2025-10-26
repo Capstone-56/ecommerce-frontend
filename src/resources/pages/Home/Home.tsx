@@ -14,11 +14,13 @@ import {
 import { ProductService } from "@/services/product-service";
 import { ProductModel } from "@/domain/models/ProductModel";
 import ProductCard from "@/resources/components/ProductCard/ProductCard";
+import ProductCardSkeleton from "@/resources/components/ProductCard/ProductCardSkeleton";
 import { locationState } from "@/domain/state";
 import { Constants } from "@/domain/constants";
 
 export default function Home() {
   const [products, setProducts] = useState<Array<ProductModel>>([]);
+  const [loading, setLoading] = useState<boolean>(true);
   const location = locationState((state) => state.userLocation);
   const userCurrency = locationState((state) => state.getUserCurrency());
 
@@ -33,8 +35,15 @@ export default function Home() {
 
     // Function to retrieve featured products via the API.
     const getProducts = async () => {
-      const products = await productService.getFeaturedProducts(location, userCurrency);
-      setProducts(products);
+      setLoading(true);
+      try {
+        const products = await productService.getFeaturedProducts(location, userCurrency);
+        setProducts(products);
+      } catch (error) {
+        console.error("Failed to fetch featured products", error);
+      } finally {
+        setLoading(false);
+      }
     };
 
     getProducts();
@@ -121,7 +130,22 @@ export default function Home() {
         </Typography>
         <Grid container spacing={3} sx={{ mb: 4, justifyContent: "center" }}>
           {/* Generate product cards for three featured products. */}
-          {products.length > 0 ? (
+          {loading ? (
+            // Show skeleton cards while loading
+            Array.from({ length: 6 }).map((_, index) => (
+              <Grid 
+                size={{ xs: 12, sm: 6, md: 4, lg: 3 }} 
+                key={`skeleton-${index}`}
+                sx={{
+                  display: "flex",
+                  justifyContent: "center",
+                  maxWidth: "350px",
+                }}
+              >
+                <ProductCardSkeleton />
+              </Grid>
+            ))
+          ) : products.length > 0 ? (
             products.map((product) => {
               return (
                 <Grid 
