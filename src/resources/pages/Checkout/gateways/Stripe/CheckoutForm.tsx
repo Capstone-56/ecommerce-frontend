@@ -59,6 +59,7 @@ const CheckoutForm = ({
   const [savingShipping, setSavingShipping] = useState(false);
 
   const [loading, setLoading] = useState(false);
+  const [defaultAddressLoading, setDefaultAddressLoading] = useState(false);
 
   // Extract PaymentIntent ID from clientSecret
   const getIntentIdFromClientSecret = (clientSecret: string): string => {
@@ -146,6 +147,7 @@ const CheckoutForm = ({
   useEffect(() => {
     (async () => {
       setLoading(true);
+      setDefaultAddressLoading(true);
       if (!username) return;
       try {
         const userService = new UserService();
@@ -165,6 +167,7 @@ const CheckoutForm = ({
         console.error("Failed to fetch user profile:", e);
       } finally {
         setLoading(false);
+        setDefaultAddressLoading(false);
       }
     })();
   }, [username]);
@@ -205,7 +208,7 @@ const CheckoutForm = ({
     }
   };
 
-  if (!address) {
+  if (defaultAddressLoading) {
     return (
       <Box
         display="flex"
