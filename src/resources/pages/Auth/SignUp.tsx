@@ -1,4 +1,7 @@
 import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
+
 import {
   Box,
   Button,
@@ -10,13 +13,12 @@ import {
   CircularProgress,
 } from "@mui/material";
 import { Visibility, VisibilityOff } from "@mui/icons-material";
-import api from "@/api";
-import { StatusCodes } from "http-status-codes";
-import { authenticationState, userState } from "@/domain/state";
-import { Role } from "@/domain/enum/role";
+
+import { AuthService } from "@/services/auth-service";
+
 import { UserSignUpModel } from "@/domain/models/UserModel";
-import { useNavigate } from "react-router-dom";
-import { toast } from "react-toastify";
+
+const authService = new AuthService();
 
 const SignUp: React.FC = () => {
   const [form, setForm] = useState({
@@ -40,8 +42,10 @@ const SignUp: React.FC = () => {
   };
 
   const handleSubmit = async () => {
-    if (form.password !== form.confirmPassword)
+    if (form.password !== form.confirmPassword) {
       return toast.error("Passwords do not match");
+    }
+
     setLoading(true);
     try {
       const user: UserSignUpModel = {
@@ -51,18 +55,16 @@ const SignUp: React.FC = () => {
         lastName: form.lastName,
         phone: form.phone,
         password: form.password,
-        role: Role.CUSTOMER,
       };
 
-      const response = await api.post("/auth/signup", user);
-      if (response.status === StatusCodes.OK) {
-        authenticationState.setState({ authenticated: true });
-        userState.setState({ role: response.data.role });
-        userState.setState({ userName: form.username });
-        userState.setState({ id: response.data.id });
-        toast.success("Account created successfully");
-
-        navigate("/profile");
+      const success = await authService.signup(user);
+      if (success) {
+        toast.success(
+          "Please verify your account by checking your email for a verification code"
+        );
+        navigate("/mfa/signup");
+      } else {
+        toast.error("Signup failed");
       }
     } catch (err: any) {
       toast.error(err?.response?.data?.detail || "Signup failed");
@@ -98,7 +100,12 @@ const SignUp: React.FC = () => {
         { label: "Username", name: "username", type: "text" },
         { label: "First Name", name: "firstName", type: "text" },
         { label: "Last Name", name: "lastName", type: "text" },
-        { label: "Phone", name: "phone", type: "tel" },
+        {
+          label: "Phone Number",
+          name: "phone",
+          type: "tel",
+          placeholder: "+61 4XX XXX XXX",
+        },
         { label: "Email", name: "email", type: "email" },
       ].map((field) => (
         <TextField
@@ -115,8 +122,11 @@ const SignUp: React.FC = () => {
           helperText={
             field.name === "username" && usernameTaken
               ? "Username already exists"
+              : field.name === "phone"
+              ? "Include country code (e.g., +61 for Australia)"
               : ""
           }
+          placeholder={field.name === "phone" ? field.placeholder : undefined}
         />
       ))}
 

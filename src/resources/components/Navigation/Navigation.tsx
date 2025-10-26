@@ -290,7 +290,6 @@ const Navbar: React.FC = () => {
                   alignItems: "center",
                 }}
               >
-                {/* Logo image (replace src with your asset path) */}
                 <Box
                   component={RouterLink}
                   to={Constants.HOME_ROUTE}
@@ -302,7 +301,7 @@ const Navbar: React.FC = () => {
                 >
                   <Box
                     component="img"
-                    src="/logo_bdnx.png"
+                    src="logo_bdnx.png"
                     alt="BDNX"
                     sx={{
                       height: { xs: 32, md: 40 },

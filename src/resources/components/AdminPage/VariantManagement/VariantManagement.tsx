@@ -8,9 +8,12 @@ import {
 import SearchIcon from "@mui/icons-material/Search";
 import VariantTable from "./VariantTable";
 import AddVariantModal from "./AddVariantModal";
+import EditVariantModal from "./EditVariantModal";
 import { useNavigate } from "react-router";
 import { useCallback, useState } from "react";
 import { VariationService } from "@/services/variation-service";
+import { VariationModel } from "@/domain/models/VariationModel";
+import { toast } from "react-toastify";
 
 const variationService = new VariationService();
 
@@ -23,6 +26,8 @@ export default function VariantManagement() {
   const [searchTerm, setSearchTerm] = useState('');
   const [searchInput, setSearchInput] = useState('');
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+  const [selectedVariant, setSelectedVariant] = useState<VariationModel | null>(null);
   const [refreshTrigger, setRefreshTrigger] = useState(0);
 
   /**
@@ -57,12 +62,53 @@ export default function VariantManagement() {
         variations: variantData.values.map(value => ({ value }))
       });
       
+      toast.success('Variation type created successfully');
+      
       // Trigger refresh of the table
       setRefreshTrigger(prev => prev + 1);
       setIsAddModalOpen(false);
     } catch (error) {
       console.error('Error saving variant:', error);
-      alert('Error saving variant. Please try again.');
+      toast.error('Failed to create variation type. Please try again.');
+    }
+  };
+
+  /**
+   * Handle opening the edit variant modal
+   */
+  const handleEditVariant = (variant: VariationModel) => {
+    setSelectedVariant(variant);
+    setIsEditModalOpen(true);
+  };
+
+  /**
+   * Handle closing the edit variant modal
+   */
+  const handleCloseEditModal = () => {
+    setIsEditModalOpen(false);
+    setSelectedVariant(null);
+  };
+
+  /**
+   * Handle saving an edited variant
+   */
+  const handleSaveEdit = async (variantId: string, variantData: { name: string; variations: { id?: string; value: string }[]; categories: string[] }) => {
+    try {
+      await variationService.updateVariation(variantId, {
+        name: variantData.name,
+        categories: variantData.categories,
+        variations: variantData.variations
+      });
+      
+      toast.success('Variation type updated successfully');
+      
+      // Trigger refresh of the table
+      setRefreshTrigger(prev => prev + 1);
+      setIsEditModalOpen(false);
+      setSelectedVariant(null);
+    } catch (error) {
+      console.error('Error updating variant:', error);
+      toast.error('Failed to update variation type. Please try again.');
     }
   };
 
@@ -121,6 +167,7 @@ export default function VariantManagement() {
         <VariantTable 
           searchTerm={searchTerm} 
           refreshTrigger={refreshTrigger}
+          onEditVariant={handleEditVariant}
         />
       </Box>
       <Box sx={{ paddingTop: "15px", paddingBottom: "15px", display: "flex", justifyContent: "right" }}>
@@ -132,6 +179,14 @@ export default function VariantManagement() {
         open={isAddModalOpen}
         onClose={handleCloseModal}
         onSave={handleSaveVariant}
+      />
+
+      {/* Edit Variant Modal */}
+      <EditVariantModal
+        open={isEditModalOpen}
+        variant={selectedVariant}
+        onClose={handleCloseEditModal}
+        onSave={handleSaveEdit}
       />
     </Box>
   );
