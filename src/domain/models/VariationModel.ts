@@ -6,7 +6,7 @@ export interface VariantValue {
 export interface VariationModel {
   id: string,
   name: string,
-  category: string,
+  categories: string[],
   variations?: VariantValue[],
   variant_values?: VariantValue[],
 }

@@ -1,9 +1,9 @@
-import { Link, useLocation, useParams } from "react-router-dom";
+import { useParams } from "react-router-dom";
 
 import { Constants } from "@/domain/constants";
 import { ProductModel } from "@/domain/models/ProductModel";
 import { AddShoppingCartItemModel, LocalShoppingCartItemModel } from "@/domain/models/ShoppingCartItemModel";
-import { VariationModel } from "@/domain/models/VariationModel";
+
 
 import { useEffect, useState } from "react";
 

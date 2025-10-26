@@ -165,7 +165,7 @@ export default function VariantTable(props: VariantTableProps) {
                   </TableCell>
                   <TableCell>
                     <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5, maxWidth: 400 }}>
-                      {variant.categories && variant.categories.length > 0 ? (
+                      {variant?.categories && variant.categories.length > 0 ? (
                         variant.categories.map((categoryName) => (
                           <Chip
                             key={categoryName}
@@ -184,8 +184,8 @@ export default function VariantTable(props: VariantTableProps) {
                   </TableCell>
                   <TableCell>
                     <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5, maxWidth: 400 }}>
-                      {variant.variations.length > 0 ? (
-                        variant.variations.map((value) => (
+                      {variant?.variations && variant?.variations?.length > 0 ? (
+                        variant?.variations?.map((value) => (
                           <Chip
                             key={value.id}
                             label={value.value}
