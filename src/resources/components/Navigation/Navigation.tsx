@@ -301,7 +301,7 @@ const Navbar: React.FC = () => {
                 >
                   <Box
                     component="img"
-                    src="logo_bdnx.png"
+                    src="/logo_bdnx.png"
                     alt="BDNX"
                     sx={{
                       height: { xs: 32, md: 32 },
