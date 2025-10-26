@@ -36,22 +36,18 @@ export class ProductItemService {
    * Retrieves the product item id that matches the given configurations.
    * @param productId The ID of the product to retrieve items for.
    * @param variantIds An array of variant IDs to match.
-   * @param userLocation User's location for filtering product items.
-   * @param currency User's preferred currency for pricing.
-   * @returns The matching product item id.
+   * @returns An object containing the matching product item id.
    */
   async retrieveByConfigurations(
     productId: string, 
-    variantIds: Array<string>,
-    userLocation?: string | null,
-    currency?: string | null
-  ): Promise<number> {
+    variantIds: Array<string>
+  ): Promise<{ id: string }> {
     try {
       const model = {
         variantIds: variantIds,
       };
 
-      const response = await api.post(`/api/productItem/${productId}/retrieveByConfigurations`, model);
+      const response = await api.post(`/api/productItem/${productId}/configurations`, model);
 
       return response.data;
     } catch (error) {

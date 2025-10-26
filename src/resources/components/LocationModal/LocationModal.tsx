@@ -135,7 +135,7 @@ const LocationModal: React.FC<LocationModalProps> = ({ open, onClose }) => {
         </Typography>
 
         {/* Benefits list */}
-        <Box sx={{ mb: 4 }}>
+        <Box sx={{ mb: 4, ml: 1 }}>
           <Typography
             variant="body2"
             sx={{
@@ -162,12 +162,24 @@ const LocationModal: React.FC<LocationModalProps> = ({ open, onClose }) => {
             variant="body2"
             sx={{
               color: grey[600],
-              mb: 3,
+              mb: 1,
               display: "flex",
               alignItems: "flex-start",
             }}
           >
             • Display relevant local offers and promotions
+          </Typography>
+          <Typography
+            variant="body2"
+            sx={{
+              color: grey[600],
+              mb: 3,
+              display: "flex",
+              alignItems: "flex-start",
+            }}
+          >
+            • Allow you to save addresses in your account to make checking out
+            easier
           </Typography>
         </Box>
 

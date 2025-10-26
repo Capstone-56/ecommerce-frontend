@@ -360,7 +360,7 @@ export default function EditStockInformation(props: EditStockInformationProps) {
                     }
                   >
                     <MenuItem key={'initial'} value={'initial'}>Choose {variation.name}</MenuItem>
-                    {variation.variant_values.map((variant) =>
+                    {variation.variations?.map((variant) =>
                       <MenuItem key={variant.id} value={variant.id}>{variant.value}</MenuItem>
                     )}
                   </TextField>

@@ -53,7 +53,7 @@ const UserDetails: React.FC = () => {
   };
 
   const handleSave = async () => {
-    if (!user) return; // probably toast an error here
+    if (!user) return;
     setSaving(true);
     setError(null);
     setSuccess(false);

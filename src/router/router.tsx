@@ -30,8 +30,12 @@ import ShippingAddress from "@/resources/components/Profile/ShippingAddress";
 import OrderHistory from "@/resources/components/AdminPage/OrderHistory/OrderHistory";
 import EditProduct from "@/resources/components/AdminPage/ProductManagement/EditProduct/EditProduct";
 import CategoryManagement from "@/resources/components/AdminPage/CategoryManagement/CategoryManagement";
+import EditCategory from "@/resources/components/AdminPage/CategoryManagement/EditCategory/EditCategory";
+import AddCategory from "@/resources/components/AdminPage/CategoryManagement/AddCategory/AddCategory";
+import VariantManagement from "@/resources/components/AdminPage/VariantManagement/VariantManagement";
 import ForgotPassword from "@/resources/pages/Auth/ForgotPassword";
 import ResetPassword from "@/resources/pages/Auth/ResetPassword";
+import MFA from "@/resources/pages/Auth/MFA";
 
 export const router = createBrowserRouter([
   {
@@ -101,6 +105,10 @@ export const router = createBrowserRouter([
         element: <SignUp />,
       },
       {
+        path: "mfa/:type",
+        element: <MFA />,
+      },
+      {
         path: "checkout",
         element: <Payment />,
       },
@@ -140,11 +148,15 @@ export const router = createBrowserRouter([
       },
       {
         path: "category/management/add",
-        element: <div>Add Category (Coming Soon)</div>,
+        element: <AddCategory />
       },
       {
         path: "category/management/:internalName",
-        element: <div>Edit Category (Coming Soon)</div>,
+        element: <EditCategory />
+      },
+      {
+        path: "variant",
+        element: <VariantManagement />
       },
       {
         path: "orders",

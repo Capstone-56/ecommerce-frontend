@@ -21,12 +21,17 @@ import {
   Divider,
   CircularProgress,
   Grid,
+  Checkbox,
+  FormControlLabel,
+  MenuItem,
 } from "@mui/material";
 import AddIcon from "@mui/icons-material/Add";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
 import SaveIcon from "@mui/icons-material/Save";
 import CloseIcon from "@mui/icons-material/Close";
+import StarIcon from "@mui/icons-material/Star";
+import StarBorderIcon from "@mui/icons-material/StarBorder";
 
 import { AddressService } from "@/services/address-service";
 import type {
@@ -34,8 +39,106 @@ import type {
   AddressModel,
 } from "@/domain/models/AddressModel";
 import { toast } from "react-toastify";
+import { locationState } from "@/domain/state";
+import LocationModal from "@/resources/components/LocationModal/LocationModal";
 
 const addressService = new AddressService();
+
+const COUNTRY_OPTIONS = [
+  { code: "Australia", label: "Australia" },
+  { code: "Bangladesh", label: "Bangladesh" },
+  { code: "South Africa", label: "South Africa" },
+  { code: "Canada", label: "Canada" },
+  { code: "Singapore", label: "Singapore" },
+  { code: "Saudi Arabia", label: "Saudi Arabia" },
+  { code: "Italy", label: "Italy" },
+  { code: "France", label: "France" },
+  { code: "Qatar", label: "Qatar" },
+  { code: "America", label: "America" },
+];
+
+// Helper to get country-specific address field labels
+const getAddressLabels = (country: string) => {
+  switch (country) {
+    case "America":
+      return {
+        addressLine: "Street Address",
+        city: "City",
+        state: "State",
+        postcode: "ZIP Code",
+      };
+    case "Canada":
+      return {
+        addressLine: "Street Address",
+        city: "City",
+        state: "Province",
+        postcode: "Postal Code",
+      };
+    case "Australia":
+      return {
+        addressLine: "Street Address",
+        city: "Suburb",
+        state: "State",
+        postcode: "Postcode",
+      };
+    case "Bangladesh":
+      return {
+        addressLine: "Street Address",
+        city: "City",
+        state: "Division",
+        postcode: "Postal Code",
+      };
+    case "South Africa":
+      return {
+        addressLine: "Street Address",
+        city: "City",
+        state: "Province",
+        postcode: "Postal Code",
+      };
+    case "Singapore":
+      return {
+        addressLine: "Street Address",
+        city: "City",
+        state: "Region",
+        postcode: "Postal Code",
+      };
+    case "Saudi Arabia":
+      return {
+        addressLine: "Street Address",
+        city: "City",
+        state: "Region",
+        postcode: "Postal Code",
+      };
+    case "Italy":
+      return {
+        addressLine: "Street Address",
+        city: "City",
+        state: "Province",
+        postcode: "CAP",
+      };
+    case "France":
+      return {
+        addressLine: "Street Address",
+        city: "City",
+        state: "Region",
+        postcode: "Postal Code",
+      };
+    case "Qatar":
+      return {
+        addressLine: "Street Address",
+        city: "City",
+        state: "Municipality",
+        postcode: "Postal Code",
+      };
+    default:
+      return {
+        addressLine: "Street Address",
+        city: "City",
+        state: "State/Province/Region",
+        postcode: "Postal Code",
+      };
+  }
+};
 
 /**
  * ShippingAddress
@@ -52,6 +155,10 @@ const ShippingAddress: React.FC = () => {
   const [deleting, setDeleting] = useState(false);
   const [loading, setLoading] = useState(true);
   const [loadError, setLoadError] = useState<string | null>(null);
+
+  // Location state from zustand
+  const userLocation = locationState((state) => state.userLocation);
+  const [locationModalOpen, setLocationModalOpen] = useState(false);
 
   // used in both initial load and refetch after CRUD
   const refreshAddresses = async () => {
@@ -80,20 +187,28 @@ const ShippingAddress: React.FC = () => {
     };
   }, []);
 
+  // Only allow add/edit if location is set
   const openAdd = () => {
+    if (!userLocation) {
+      setLocationModalOpen(true);
+      return;
+    }
     const empty: AddressModel = {
       addressLine: "",
       city: "",
       postcode: "",
       state: "",
-      country: "",
+      country: userLocation,
     };
-
     setEditing({ id: "", address: empty, isDefault: false });
     setDialogOpen(true);
   };
 
   const openEdit = (addr: AddressModelData) => {
+    if (!userLocation) {
+      setLocationModalOpen(true);
+      return;
+    }
     setEditing(JSON.parse(JSON.stringify(addr)) as AddressModelData);
     setDialogOpen(true);
   };
@@ -114,6 +229,14 @@ const ShippingAddress: React.FC = () => {
     });
   };
 
+  const handleDefaultChange = (checked: boolean) => {
+    if (!editing) return;
+    setEditing({
+      ...editing,
+      isDefault: checked,
+    });
+  };
+
   const handleSave = async () => {
     if (!editing) return;
     if (
@@ -131,7 +254,7 @@ const ShippingAddress: React.FC = () => {
         city: editing.address.city,
         state: editing.address.state,
         postcode: editing.address.postcode,
-        country: editing.address.country,
+        country: userLocation,
         makeDefault: !!editing.isDefault,
       };
 
@@ -204,6 +327,30 @@ const ShippingAddress: React.FC = () => {
     }
   };
 
+  // Set an address as default (PUT /api/address/{id} with makeDefault: true)
+  const handleSetDefault = async (addr: AddressModelData) => {
+    if (addr.isDefault) return;
+    setSaving(true);
+    try {
+      const payload = {
+        addressLine: addr.address.addressLine,
+        city: addr.address.city,
+        state: addr.address.state,
+        postcode: addr.address.postcode,
+        country: userLocation,
+        makeDefault: true,
+      };
+      await addressService.updateAddress(addr.id, payload as any);
+      await refreshAddresses();
+      toast.success("Default address updated");
+    } catch (err) {
+      console.error("Failed to set default address", err);
+      toast.error("Failed to set default address");
+    } finally {
+      setSaving(false);
+    }
+  };
+
   const renderedRows = useMemo(() => addresses, [addresses]);
 
   return (
@@ -264,7 +411,24 @@ const ShippingAddress: React.FC = () => {
                 ) : (
                   renderedRows.map((addr) => (
                     <TableRow key={addr.id} hover>
-                      <TableCell>{addr.isDefault ? "True" : "—"}</TableCell>
+                      <TableCell>
+                        {addr.isDefault ? (
+                          <Tooltip title="Default address">
+                            <StarIcon color="primary" fontSize="small" />
+                          </Tooltip>
+                        ) : (
+                          <Tooltip title="Set as default">
+                            <IconButton
+                              size="small"
+                              onClick={() => handleSetDefault(addr)}
+                              disabled={saving}
+                              sx={{ p: 0 }}
+                            >
+                              <StarBorderIcon fontSize="small" />
+                            </IconButton>
+                          </Tooltip>
+                        )}
+                      </TableCell>
                       <TableCell
                         sx={{
                           maxWidth: 320,
@@ -296,6 +460,7 @@ const ShippingAddress: React.FC = () => {
                             <IconButton
                               size="small"
                               onClick={() => confirmDelete(addr)}
+                              disabled={addr.isDefault}
                             >
                               <DeleteIcon />
                             </IconButton>
@@ -312,7 +477,7 @@ const ShippingAddress: React.FC = () => {
       )}
 
       {/* edit / add form */}
-      <Dialog open={dialogOpen} onClose={closeDialog} fullWidth maxWidth="sm">
+      <Dialog open={dialogOpen} onClose={closeDialog} fullWidth maxWidth="md">
         <DialogTitle
           sx={{
             display: "flex",
@@ -329,58 +494,82 @@ const ShippingAddress: React.FC = () => {
         </DialogTitle>
 
         <DialogContent dividers>
-          <Grid container spacing={2} sx={{ mt: 1 }}>
-            <Grid size={{ xs: 12 }}>
-              <TextField
-                label="Address line"
-                placeholder="123 Example Street, Suburb"
-                value={editing?.address.addressLine ?? ""}
-                onChange={(e) => handleChange("addressLine", e.target.value)}
-                required
-                fullWidth
-              />
-            </Grid>
-
-            <Grid size={{ xs: 12, sm: 6 }}>
-              <TextField
-                label="City"
-                placeholder="Sydney"
-                value={editing?.address.city ?? ""}
-                onChange={(e) => handleChange("city", e.target.value)}
-                required
-                fullWidth
-              />
-            </Grid>
-
-            <Grid size={{ xs: 6, sm: 3 }}>
-              <TextField
-                label="State"
-                placeholder="NSW"
-                value={editing?.address.state ?? ""}
-                onChange={(e) => handleChange("state", e.target.value)}
-                fullWidth
-              />
-            </Grid>
-
-            <Grid size={{ xs: 6, sm: 3 }}>
-              <TextField
-                label="Postcode"
-                placeholder="2000"
-                value={editing?.address.postcode ?? ""}
-                onChange={(e) => handleChange("postcode", e.target.value)}
-                required
-                fullWidth
-                sx={{ minWidth: 120 }}
-              />
-            </Grid>
-
+          <Grid container columns={12} gap={2} sx={{ mt: 1 }}>
+            {/* Country is fixed to userLocation */}
             <Grid size={{ xs: 12, sm: 6 }}>
               <TextField
                 label="Country"
-                placeholder="Australia"
-                value={editing?.address.country ?? ""}
-                onChange={(e) => handleChange("country", e.target.value)}
+                value={userLocation ?? ""}
+                disabled
+                required
                 fullWidth
+              />
+            </Grid>
+
+            {(() => {
+              const country = userLocation ?? "";
+              const labels = getAddressLabels(country);
+
+              return (
+                <>
+                  <Grid size={{ xs: 12 }}>
+                    <TextField
+                      label={labels.addressLine}
+                      placeholder={labels.addressLine}
+                      value={editing?.address.addressLine ?? ""}
+                      onChange={(e) =>
+                        handleChange("addressLine", e.target.value)
+                      }
+                      required
+                      fullWidth
+                    />
+                  </Grid>
+
+                  <Grid size={{ xs: 12, sm: 6 }}>
+                    <TextField
+                      label={labels.city}
+                      placeholder={labels.city}
+                      value={editing?.address.city ?? ""}
+                      onChange={(e) => handleChange("city", e.target.value)}
+                      required
+                      fullWidth
+                    />
+                  </Grid>
+
+                  <Grid size={{ xs: 12, sm: 6 }}>
+                    <TextField
+                      label={labels.state}
+                      placeholder={labels.state}
+                      value={editing?.address.state ?? ""}
+                      onChange={(e) => handleChange("state", e.target.value)}
+                      fullWidth
+                    />
+                  </Grid>
+
+                  <Grid size={{ xs: 6, sm: 3 }}>
+                    <TextField
+                      label={labels.postcode}
+                      placeholder={labels.postcode}
+                      value={editing?.address.postcode ?? ""}
+                      onChange={(e) => handleChange("postcode", e.target.value)}
+                      required
+                      fullWidth
+                      sx={{ minWidth: 120 }}
+                    />
+                  </Grid>
+                </>
+              );
+            })()}
+
+            <Grid size={{ xs: 12 }}>
+              <FormControlLabel
+                control={
+                  <Checkbox
+                    checked={!!editing?.isDefault}
+                    onChange={(e) => handleDefaultChange(e.target.checked)}
+                  />
+                }
+                label="Set as default address"
               />
             </Grid>
           </Grid>
@@ -400,6 +589,12 @@ const ShippingAddress: React.FC = () => {
           </Button>
         </DialogActions>
       </Dialog>
+
+      {/* Location prompt modal */}
+      <LocationModal
+        open={locationModalOpen}
+        onClose={() => setLocationModalOpen(false)}
+      />
 
       {/* confirmation dialogue */}
       <Dialog open={!!deleteTarget} onClose={cancelDelete}>

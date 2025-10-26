@@ -59,7 +59,7 @@ export class OrderService {
    * @returns An array of OrderModel objects.
    */
   async getLatestOrders(options?: {
-    userName?: string,
+    userNames?: string,
     shippingAddress?: string,
     shippingVendors?: string,
     status?: OrderStatus,
