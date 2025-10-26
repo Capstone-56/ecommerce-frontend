@@ -328,7 +328,7 @@ export default function StockInformation(props: StockInformationProps) {
                       <Box>
                         <Typography variant={"body1"}>{variant.name}</Typography>
                         <Typography variant={"body1"} fontSize={12} color={"textSecondary"} paddingBottom={1}>Pick Available {variant.name}</Typography>
-                        {variant.variant_values?.map((v) => {
+                        {variant.variations?.map((v) => {
                           const isSelected = chosenVariations[variant.name]?.some((selected) => selected.value === v.value);
                           return (
                             <Button
