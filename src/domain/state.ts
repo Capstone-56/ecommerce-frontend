@@ -37,7 +37,10 @@ type cartStore = {
    * @param updates Partial updates to apply to the cart item.
    * @returns A cart with the updated item.
    */
-  updateCartItem: (cartItemId: string, updates: Partial<LocalShoppingCartItemModel>) => void;
+  updateCartItem: (
+    cartItemId: string,
+    updates: Partial<LocalShoppingCartItemModel>
+  ) => void;
 
   /**
    * A function to set the entire cart (for authenticated users loading from API).
@@ -49,7 +52,7 @@ type cartStore = {
    * A function to clear all cart items.
    */
   clearCart: () => void;
-  
+
   /**
    * A function to get a cart item by ID.
    * @param cartItemId The cart item ID to find.
@@ -88,7 +91,7 @@ type UserStore = {
   /**
    * User's ID
    */
-  id: number | null;
+  id: string | null;
   /**
    * The user's detailed information.
    */
@@ -105,12 +108,12 @@ type UserStore = {
   /**
    * Function to set current user's id, should only be used upon login/signup
    */
-  setId: (id: number) => void;
+  setId: (id: string) => void;
   /**
    * A function to set the user's detailed information.
    */
   setUserInformation: (userInformation: UserModel) => void;
-}
+};
 
 type LocationStore = {
   /**
@@ -139,7 +142,7 @@ type LocationStore = {
    * Gets the effective currency to use (selected currency or user currency).
    */
   getUserCurrency: () => string | null;
-}
+};
 
 /**
  * Cart global state to be used for non-registered users. Since non-registered
@@ -155,27 +158,29 @@ export const cartState = create<cartStore>()(
 
       addToCart: (cartItem: LocalShoppingCartItemModel) => {
         // Check if product already exists in cart by product item ID
-        const existingItem = get().cart.find(item => 
-          item.productItem.id === cartItem.productItem.id
+        const existingItem = get().cart.find(
+          (item) => item.productItem.id === cartItem.productItem.id
         );
 
         if (existingItem) {
           // Update quantity of existing item
           set((state) => ({
-            cart: state.cart.map(item => 
-              item.productItem.id === cartItem.productItem.id 
+            cart: state.cart.map((item) =>
+              item.productItem.id === cartItem.productItem.id
                 ? {
                     ...existingItem, // Keep existing item's ID
                     quantity: item.quantity + cartItem.quantity,
-                    totalPrice: item.productItem.price * (item.quantity + cartItem.quantity)
+                    totalPrice:
+                      item.productItem.price *
+                      (item.quantity + cartItem.quantity),
                   }
                 : item
-            )
+            ),
           }));
         } else {
           // Add new item with the provided ID
           set((state) => ({
-            cart: [...state.cart, cartItem]
+            cart: [...state.cart, cartItem],
           }));
         }
       },
@@ -185,7 +190,10 @@ export const cartState = create<cartStore>()(
           cart: state.cart.filter((item) => item.id !== cartItemId),
         })),
 
-      updateCartItem: (cartItemId: string, updates: Partial<LocalShoppingCartItemModel>) =>
+      updateCartItem: (
+        cartItemId: string,
+        updates: Partial<LocalShoppingCartItemModel>
+      ) =>
         set((state) => ({
           cart: state.cart.map((item) =>
             item.id === cartItemId
@@ -193,9 +201,10 @@ export const cartState = create<cartStore>()(
                   ...item,
                   ...updates,
                   // Recalculate totalPrice if quantity is updated
-                  totalPrice: updates.quantity !== undefined
-                    ? item.productItem.price * updates.quantity
-                    : item.totalPrice
+                  totalPrice:
+                    updates.quantity !== undefined
+                      ? item.productItem.price * updates.quantity
+                      : item.totalPrice,
                 }
               : item
           ),
@@ -205,7 +214,7 @@ export const cartState = create<cartStore>()(
         set({ cart: cartItems, cartLoaded: true }),
 
       clearCart: () => set({ cart: [], cartLoaded: false }),
-      
+
       getCartItem: (cartItemId: string) => {
         return get().cart.find((item) => item.id === cartItemId);
       },
@@ -214,14 +223,14 @@ export const cartState = create<cartStore>()(
     }),
     {
       name: Constants.LOCAL_STORAGE_CART_STORAGE,
-      storage: createJSONStorage(() => localStorage)
+      storage: createJSONStorage(() => localStorage),
     }
   )
 );
 
 // Add cross-tab synchronisation
 if (typeof window !== "undefined") {
-  window.addEventListener("storage", e => {
+  window.addEventListener("storage", (e) => {
     // Only react to cart storage changes
     if (e.key === Constants.LOCAL_STORAGE_CART_STORAGE) {
       // Force rehydration of the store
@@ -259,8 +268,8 @@ export const userState = create<UserStore>()(
       userInformation: null,
       setRole: (role: Role) => set({ role }),
       setUserName: (userName: string) => set({ userName }),
-      setId: (id: number) => set ({ id }),
-      setUserInformation: (userInformation: any) => set({ userInformation })
+      setId: (id: string) => set({ id }),
+      setUserInformation: (userInformation: any) => set({ userInformation }),
     }),
     {
       name: Constants.LOCAL_STORAGE_USER_STORAGE,

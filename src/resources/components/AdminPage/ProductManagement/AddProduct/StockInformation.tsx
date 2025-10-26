@@ -33,6 +33,7 @@ import {
 import { useCallback, useEffect, useState } from "react";
 import CancelIcon from '@mui/icons-material/Cancel';
 import { FileWithPreview } from "./AddProduct";
+import { LocationPricing } from "@/domain/models/ProductModel";
 import { ProductService } from "@/services/product-service";
 import { StatusCodes } from "http-status-codes";
 import { useNavigate } from "react-router-dom";
@@ -47,9 +48,8 @@ interface StockInformationProps {
   category: string,
   productName: string,
   productDescription: string,
-  price: number,
+  locationPricing: LocationPricing[],
   images: FileWithPreview[],
-  locations: string[],
   featured: string
 }
 
@@ -252,10 +252,9 @@ export default function StockInformation(props: StockInformationProps) {
       props.category,
       props.featured,
       props.images,
-      props.price,
-      props.locations,
       permutations,
-      allVariations
+      allVariations,
+      props.locationPricing
     );
 
     if (response.status == StatusCodes.CREATED) {
@@ -329,7 +328,7 @@ export default function StockInformation(props: StockInformationProps) {
                       <Box>
                         <Typography variant={"body1"}>{variant.name}</Typography>
                         <Typography variant={"body1"} fontSize={12} color={"textSecondary"} paddingBottom={1}>Pick Available {variant.name}</Typography>
-                        {variant.variant_values.map((v) => {
+                        {variant.variant_values?.map((v) => {
                           const isSelected = chosenVariations[variant.name]?.some((selected) => selected.value === v.value);
                           return (
                             <Button
@@ -421,9 +420,9 @@ export default function StockInformation(props: StockInformationProps) {
                           <MenuItem key={"initial"} value={"initial"} disabled>
                             Choose listing location...
                           </MenuItem>
-                          {props.locations && props.locations.map((location) => (
-                            <MenuItem key={location} value={location}>
-                              {location}
+                          {props.locationPricing && props.locationPricing.map((locationPrice) => (
+                            <MenuItem key={locationPrice.country_code} value={locationPrice.country_code}>
+                              {locationPrice.country_code}
                             </MenuItem>
                           ))}
                         </TextField>

@@ -148,17 +148,15 @@ export default function ProductDetails() {
         const model: AddShoppingCartItemModel = {
           productItemId: selectedProductItem.id,
           quantity: qty,
-        }
+        };
 
         // Pass userLocation as second parameter
         await shoppingCartService.addToCart(model, userLocation);
 
         // Dispatch custom event to notify Navigation to reload cart
         window.dispatchEvent(new CustomEvent(Constants.EVENT_CART_UPDATED));
-        
-        console.log("Item added to cart successfully!");
       } else {
-        // For unauthenticated users, manually create a local cart item 
+        // For unauthenticated users, manually create a local cart item
         const cartItem: LocalShoppingCartItemModel = {
           id: MathUtils.generateGUID(),
           productItem: selectedProductItem,
@@ -185,7 +183,11 @@ export default function ProductDetails() {
   }, [images]);
 
   const fetchProductDetails = async (id: string) => {
-    const result = await productService.getProduct(id, userLocation, userCurrency);
+    const result = await productService.getProduct(
+      id,
+      userLocation,
+      userCurrency
+    );
     if (result) {
       setProductDetails(result);
       

@@ -1,3 +1,7 @@
+import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
+
 import {
   Box,
   Button,
@@ -9,13 +13,14 @@ import {
   CircularProgress,
 } from "@mui/material";
 import { Visibility, VisibilityOff } from "@mui/icons-material";
-import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
-import api from "@/api";
 
 import { authenticationState, userState } from "@/domain/state";
 import { Constants } from "@/domain/constants";
 import { Role } from "@/domain/enum/role";
+
+import { AuthService } from "@/services/auth-service";
+
+const authService = new AuthService();
 
 const Login: React.FC = () => {
   const [form, setForm] = useState({
@@ -38,26 +43,28 @@ const Login: React.FC = () => {
     setLoading(true);
 
     try {
-      const response = await api.post("/auth/login", form);
-      if (response.status === 200) {
-        authenticationState.setState({ authenticated: true });
-        userState.setState({ role: response.data.role });
-        userState.setState({ userName: response.data.username });
-        userState.setState({ id: response.data.id });
-      }
-
-
-      if (
-        userState.getState().role == Role.ADMIN ||
-        userState.getState().role == Role.MANAGER
-      ) {
-        navigate(Constants.ADMIN_DASHBOARD_ROUTE);
+      const response = await authService.login(form.username, form.password);
+      
+      if (response.mfaEnabled) {
+        navigate("/mfa/login");
       } else {
-        navigate("/");
+        authenticationState.setState({ authenticated: true });
+        userState.setState({
+          role: response.role,
+          userName: response.username,
+          id: response.id
+        });
+
+        if (response.role === Role.ADMIN || response.role === Role.MANAGER) {
+          navigate(Constants.ADMIN_DASHBOARD_ROUTE);
+        } else {
+          navigate("/");
+        }
+        
+        toast.success("Login successful!");
       }
     } catch (err: any) {
-      console.error("Login error:", err?.response?.data || err);
-      setError("Login failed. Check your credentials.");
+      setError(err?.response?.data?.message || "Login failed. Check your credentials.");
     } finally {
       setLoading(false);
     }

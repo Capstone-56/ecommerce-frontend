@@ -360,7 +360,7 @@ export default function EditStockInformation(props: EditStockInformationProps) {
                     }
                   >
                     <MenuItem key={'initial'} value={'initial'}>Choose {variation.name}</MenuItem>
-                    {variation.variant_values.map((variant) =>
+                    {variation.variant_values?.map((variant) =>
                       <MenuItem key={variant.id} value={variant.id}>{variant.value}</MenuItem>
                     )}
                   </TextField>
@@ -380,9 +380,9 @@ export default function EditStockInformation(props: EditStockInformationProps) {
                   <MenuItem key={"initial"} value={"initial"} disabled>
                     Choose listing location...
                   </MenuItem>
-                  {props.product && props.product.locations.map((location) => (
-                    <MenuItem key={location} value={location}>
-                      {location}
+                  {props.product && props.product.location_pricing.map((locationPrice) => (
+                    <MenuItem key={locationPrice.country_code} value={locationPrice.country_code}>
+                      {locationPrice.country_code}
                     </MenuItem>
                   ))}
                 </TextField>
