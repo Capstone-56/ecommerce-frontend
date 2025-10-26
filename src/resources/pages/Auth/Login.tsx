@@ -44,7 +44,7 @@ const Login: React.FC = () => {
 
     try {
       const response = await authService.login(form.username, form.password);
-      
+
       if (response.mfaEnabled) {
         navigate("/mfa/login");
       } else {
@@ -52,7 +52,7 @@ const Login: React.FC = () => {
         userState.setState({
           role: response.role,
           userName: response.username,
-          id: response.id
+          id: response.id,
         });
 
         if (response.role === Role.ADMIN || response.role === Role.MANAGER) {
@@ -60,11 +60,13 @@ const Login: React.FC = () => {
         } else {
           navigate("/");
         }
-        
+
         toast.success("Login successful!");
       }
     } catch (err: any) {
-      setError(err?.response?.data?.message || "Login failed. Check your credentials.");
+      setError(
+        err?.response?.data?.message || "Login failed. Check your credentials."
+      );
     } finally {
       setLoading(false);
     }

@@ -45,7 +45,7 @@ const SignUp: React.FC = () => {
     if (form.password !== form.confirmPassword) {
       return toast.error("Passwords do not match");
     }
-      
+
     setLoading(true);
     try {
       const user: UserSignUpModel = {
@@ -54,12 +54,14 @@ const SignUp: React.FC = () => {
         firstName: form.firstName,
         lastName: form.lastName,
         phone: form.phone,
-        password: form.password
+        password: form.password,
       };
 
       const success = await authService.signup(user);
       if (success) {
-        toast.success("Please verify your account by checking your email for a verification code");
+        toast.success(
+          "Please verify your account by checking your email for a verification code"
+        );
         navigate("/mfa/signup");
       } else {
         toast.error("Signup failed");
@@ -98,7 +100,12 @@ const SignUp: React.FC = () => {
         { label: "Username", name: "username", type: "text" },
         { label: "First Name", name: "firstName", type: "text" },
         { label: "Last Name", name: "lastName", type: "text" },
-        { label: "Phone Number", name: "phone", type: "tel", placeholder: "+61 4XX XXX XXX" },
+        {
+          label: "Phone Number",
+          name: "phone",
+          type: "tel",
+          placeholder: "+61 4XX XXX XXX",
+        },
         { label: "Email", name: "email", type: "email" },
       ].map((field) => (
         <TextField
@@ -119,9 +126,7 @@ const SignUp: React.FC = () => {
               ? "Include country code (e.g., +61 for Australia)"
               : ""
           }
-          placeholder={
-            field.name === "phone" ? field.placeholder : undefined
-          }
+          placeholder={field.name === "phone" ? field.placeholder : undefined}
         />
       ))}
 
