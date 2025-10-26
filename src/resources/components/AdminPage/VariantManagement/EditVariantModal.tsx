@@ -241,6 +241,21 @@ export default function EditVariantModal({ open, variant, onClose, onSave }: Edi
             onChange={(event, newValue) => {
               setSelectedCategories(newValue);
             }}
+            renderOption={(props, option) => (
+              <Box component="li" {...props} sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                <Typography>{option.name}</Typography>
+                <Chip 
+                  label={option.internalName} 
+                  size="small" 
+                  sx={{ 
+                    height: '20px',
+                    fontSize: '0.75rem',
+                    backgroundColor: '#e3f2fd',
+                    color: '#1976d2'
+                  }} 
+                />
+              </Box>
+            )}
             renderInput={(params) => (
               <TextField
                 {...params}
