@@ -120,11 +120,11 @@ export const lightTheme = createTheme({
       secondary: "#737373",
     },
     primary: {
-      main: "#243F68",
+      main: "#DD5548",
       contrastText: "#ffffff",
     },
     secondary: {
-      main: "##737373",
+      main: "#737373",
       contrastText: "#ffffff",
     },
     divider: "#ececff",
