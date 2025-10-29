@@ -74,7 +74,10 @@ const ProductCard: React.FC<ProductCardProps> = ({
             width: "100%",
             height: "100%",
             objectFit: "cover",
-            borderRadius: "10px",
+            borderTopLeftRadius: "10px",
+            borderTopRightRadius: "10px",
+            borderBottomLeftRadius: "0px",
+            borderBottomRightRadius: "0px",
           }}
         />
       </Box>
@@ -85,13 +88,15 @@ const ProductCard: React.FC<ProductCardProps> = ({
            variant="body2"
            component="div"
            sx={{ 
-             fontSize: "20px",
+             fontSize: "16px",
              fontWeight: 500,
-             mb: "14px",
-             marginTop: "14px",
+             mb: "0.5rem",
+             marginTop: { xs: "1rem", sm: "0.5rem", md: "1rem" },
              overflow: 'hidden',
              textOverflow: 'ellipsis',
-             whiteSpace: 'nowrap',
+             display: '-webkit-box',
+             WebkitLineClamp: 2,
+             WebkitBoxOrient: 'vertical',
            }}
          >
            {name}
@@ -100,8 +105,8 @@ const ProductCard: React.FC<ProductCardProps> = ({
          <Typography
            variant="subtitle1"
            sx={{
-             fontSize: "20px",
-             fontWeight: 700,
+             fontSize: "16px",
+             fontWeight: 500,
              color: '#000',
            }}
          >

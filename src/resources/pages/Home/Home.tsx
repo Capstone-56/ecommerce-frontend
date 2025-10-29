@@ -17,6 +17,7 @@ import ProductCard from "@/resources/components/ProductCard/ProductCard";
 import ProductCardSkeleton from "@/resources/components/ProductCard/ProductCardSkeleton";
 import { locationState } from "@/domain/state";
 import { Constants } from "@/domain/constants";
+import bannerImage from "@/assets/Home/Gemini_Generated_Banner_Image.png";
 
 export default function Home() {
   const [products, setProducts] = useState<Array<ProductModel>>([]);
@@ -54,54 +55,107 @@ export default function Home() {
       {/* Hero Section */}
       <Box
         sx={{
-          bgcolor: "#D9D9D9",
-          minHeight: "550px",
+          position: "relative",
+          minHeight: { xs: "600px", sm: "700px", md: "800px" },
           width: "100%",
           display: "flex",
           flexDirection: "column",
           justifyContent: "center",
-          alignItems: "center",
-          textAlign: "center",
-          px: 3,
+          backgroundImage: `url(${bannerImage})`,
+          backgroundSize: "cover",
+          backgroundPosition: { 
+            xs: "center center",
+            sm: "center 20%",
+            md: "center 30%"
+          },
+          backgroundRepeat: "no-repeat",
+          "&::before": {
+            content: '""',
+            position: "absolute",
+            top: 0,
+            left: 0,
+            right: 0,
+            bottom: 0,
+            backgroundColor: "rgba(0, 0, 0, 0.4)", // Dark overlay for text readability
+            zIndex: 1,
+          },
         }}
       >
-        <Typography
-          variant="h1"
-          component="h1"
+        <Container
+          maxWidth={false}
           sx={{
-            fontSize: { xs: "48px", md: "72px" },
-            mb: 1,
+            position: "relative",
+            zIndex: 2,
+            maxWidth: "1200px",
+            px: 3,
           }}
         >
-          Discover the latest
-        </Typography>
-
-        <Typography
-          variant="h5"
-          component="h2"
-          color="text.secondary"
-          sx={{ mb: 4 }}
-        >
-          Lorem ipsum dolor sit amet, consectetur adipiscing
-        </Typography>
-        <Box sx={{ display: "flex", gap: 2 }}>
-          <Button
-            variant="outlined"
-            color="primary"
-            component={Link}
-            to={Constants.PRODUCTS_ROUTE}
+          <Box 
+            sx={{ 
+              textAlign: { xs: "center", md: "center", lg: "left" },
+              display: "flex",
+              flexDirection: "column",
+              alignItems: { xs: "center", md: "center", lg: "flex-start" },
+            }}
           >
-            Shop Now
-          </Button>
+            <Typography
+              variant="h1"
+              component="h1"
+              sx={{
+                fontSize: { xs: "48px", md: "72px", lg: "80px" },
+                mb: 1,
+                color: "white",
+                fontWeight: "bold",
+                textShadow: "2px 2px 4px rgba(0,0,0,0.5)",
+              }}
+            >
+              Discover What's <br /> New at BDNX
+            </Typography>
 
-          <Button
-            variant="contained"
-            component={Link}
-            to={Constants.CATEGORIES_ROUTE}
-          >
-            Categories
-          </Button>
-        </Box>
+            <Typography
+              variant="h5"
+              component="h2"
+              sx={{ 
+                mb: 4,
+                color: "white",
+                fontSize: { xs: "20px", md: "24px"},
+                textShadow: "1px 1px 2px rgba(0,0,0,0.5)",
+                pt: 2,
+                fontWeight: 300,
+                maxWidth: "600px", // Control when text wraps naturally
+              }}
+            >
+              Fresh styles. Smart deals. Endless inspiration. <br />
+              Explore our latest arrivals before they're gone.
+            </Typography>
+            <Box sx={{ display: "flex", gap: 2 }}>
+              <Button
+                variant="outlined"
+                color="primary"
+                component={Link}
+                to={Constants.PRODUCTS_ROUTE}
+                sx={{
+                  borderColor: "white",
+                  color: "white",
+                  "&:hover": {
+                    borderColor: "white",
+                    backgroundColor: "rgba(255, 255, 255, 0.1)",
+                  },
+                }}
+              >
+                Shop Now
+              </Button>
+
+              <Button
+                variant="contained"
+                component={Link}
+                to={Constants.PRODUCTS_ROUTE}
+              >
+                Browse Categories
+              </Button>
+            </Box>
+          </Box>
+        </Container>
       </Box>
 
       {/* Featured Products Section */}
@@ -176,46 +230,6 @@ export default function Home() {
           View All Products
         </Button>
       </Container>
-
-      {/* Categories Section */}
-      <Box
-        sx={{
-          bgcolor: "#efefef",
-          py: 8,
-          px: 4,
-          width: "100%",
-          textAlign: "center",
-        }}
-      >
-        <Typography
-          variant="h2"
-          component="h2"
-          sx={{
-            fontSize: "36px",
-            fontWeight: 500,
-            mb: 1,
-          }}
-          color="text.primary"
-        >
-          Shop By Category
-        </Typography>
-
-        <Typography variant="body1" color="text.secondary" sx={{ mb: 6 }}>
-          Browse our collections and find what you're looking for
-        </Typography>
-
-        <Box
-          sx={{
-            display: "flex",
-            justifyContent: "center",
-            mb: 4,
-          }}
-        >
-          <Typography color="text.secondary">
-            [Category cards would go here]
-          </Typography>
-        </Box>
-      </Box>
     </>
   );
 }
