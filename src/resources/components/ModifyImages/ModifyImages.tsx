@@ -110,6 +110,7 @@ export default function ModifyImages(props: ModifyImagesProps) {
                       <CardMedia
                         component="img"
                         image={image}
+                        loading="lazy"
                         sx={{
                           width: "150px",
                           height: "150px",
