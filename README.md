@@ -1,6 +1,8 @@
 # frontend
 This repo is responsible for the UI of the BDNX site.
 
+https://dev.d5b52nnp5ggvx.amplifyapp.com/ or https://bdnx.com
+
 # React + TypeScript + Vite
 
 This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
@@ -55,3 +57,4 @@ export default tseslint.config({
   },
 })
 ```
+
