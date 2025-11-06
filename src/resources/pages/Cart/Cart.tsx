@@ -5,7 +5,6 @@ import { Constants } from "@/domain/constants";
 
 import OrderSummary from "@/resources/components/OrderSummary/OrderSummary";
 import CartProductCard from "@/resources/components/ProductCard/CartProductCard";
-import { common } from "@mui/material/colors";
 
 export default function Cart() {
   // Use unified cart state for both authenticated and unauthenticated users
@@ -16,24 +15,28 @@ export default function Cart() {
   }, []);
 
   return (
-    <div>
+    <Box
+      sx={{
+        width: "90%",
+        maxWidth: "1680px",
+        mx: "auto",
+        py: { xs: "2rem", md: "3rem" },
+        px: { xs: "1rem", md: 0 },
+      }}
+    >
       <Typography
-        variant="h4"
-        fontWeight="bold"
-        color={common.black}
-        pt={"50px"}
-        pb={"20px"}
-        marginLeft={"100px"}
+        variant="h2"
+        sx={{
+          fontWeight: 600,
+          fontSize: { xs: "24px", sm: "32px", md: "36px" },
+          mb: { xs: 2, md: 3 },
+        }}
       >
         Shopping Cart
       </Typography>
       <Grid
         container
-        justifyContent="center"
-        alignItems="flex-start"
-        spacing={6}
-        marginLeft={"100px"}
-        marginRight={"100px"}
+        spacing={{ xs: 3, md: 6 }}
       >
         <Grid size={{ xs: 12, md: 7 }}>
           <Box display="flex" flexDirection="column" gap={2}>
@@ -44,21 +47,23 @@ export default function Cart() {
                   <CartProductCard 
                     key={cartItem.productItem.product.id} 
                     cartItem={cartItem}
-                  ></CartProductCard>
+                  />
                 )
               }) :
               <Typography
-                variant="h5"
-                color={common.black}
+                sx={{
+                  fontSize: { xs: "16px", sm: "18px", md: "20px" },
+                  color: "text.secondary",
+                }}
               >
                 Your cart is currently empty
               </Typography>}
           </Box>
         </Grid>
         <Grid size={{ xs: 12, md: 5 }}>
-          <OrderSummary cartState={cart}></OrderSummary>
+          <OrderSummary cartState={cart} />
         </Grid>
       </Grid>
-    </div>
+    </Box>
   );
 };

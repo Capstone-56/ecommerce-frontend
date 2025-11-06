@@ -227,18 +227,20 @@ export default function ProductDetails() {
         sx={{
           display: "flex",
           flexDirection: { xs: "column", md: "row" },
-          justifyContent: "center",
-          alignItems: { xs: "center", md: "flex-start" },
-          padding: { xs: "2rem", md: "3rem" },
+          justifyContent: "space-between",
+          alignItems: { xs: "center", md: "flex-start"},
+          py: { xs: "2rem", md: "3rem"},
           gap: "2rem",
-          width: "100%",
+          width: "90%",
+          maxWidth: "1680px",
+          mx: "auto",
         }}
       >
         {/* img list */}
         <Box
           sx={{
             width: "100%",
-            maxWidth: { xs: 350, sm: 500, md: 600 },
+            maxWidth: { xs: "100%", sm: "100%", md: 800 },
             display: "flex",
             justifyContent: "center",
           }}
@@ -249,7 +251,7 @@ export default function ProductDetails() {
             gap={4}
             sx={{
               width: "100%",
-              maxWidth: { xs: 350, sm: 500, md: 600 },
+              maxWidth: { xs: "100%", sm: "100%", md: 800 },
             }}
           >
             {Array.isArray(images) && images.length > 0 ? (
@@ -273,11 +275,16 @@ export default function ProductDetails() {
                         width: "100%",
                         paddingTop: "100%",
                         overflow: "hidden",
+                        cursor: "pointer",
+                        "&:hover img": {
+                          opacity: 0.9,
+                        },
                       }}
                     >
                       <img
                         src={link}
                         alt="image alt text"
+                        loading="lazy"
                         style={{
                           position: "absolute",
                           top: 0,
@@ -286,6 +293,7 @@ export default function ProductDetails() {
                           height: "100%",
                           objectFit: "cover",
                           borderRadius: index === 0 ? "16px" : "8px",
+                          transition: "opacity 0.2s ease",
                         }}
                       />
                     </Box>
@@ -298,23 +306,52 @@ export default function ProductDetails() {
             )}
             {collection.length > 0 && (
               <ImageListItem key="panel" onClick={() => setDialogOpen(true)}>
-                <div
-                  style={{
+                <Box
+                  sx={{
+                    position: "relative",
                     width: "100%",
-                    height: "100%",
-                    backgroundColor: "#ccc",
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "center",
-                    textAlign: "center",
+                    paddingTop: "100%",
+                    overflow: "hidden",
                     cursor: "pointer",
-                    borderRadius: "8px",
+                    "&:hover img": {
+                      opacity: 0.9,
+                    },
                   }}
                 >
-                  <Typography variant="h6" color="white">
-                    +{collection.length} More
-                  </Typography>
-                </div>
+                  <img
+                    src={collection[0]}
+                    alt="More images"
+                    loading="lazy"
+                    style={{
+                      position: "absolute",
+                      top: 0,
+                      left: 0,
+                      width: "100%",
+                      height: "100%",
+                      objectFit: "cover",
+                      borderRadius: "8px",
+                      transition: "opacity 0.2s ease",
+                    }}
+                  />
+                  <Box
+                    sx={{
+                      position: "absolute",
+                      top: 0,
+                      left: 0,
+                      width: "100%",
+                      height: "100%",
+                      backgroundColor: "rgba(0, 0, 0, 0.6)",
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "center",
+                      borderRadius: "8px",
+                    }}
+                  >
+                    <Typography variant="h6" color="white">
+                      +{collection.length} More
+                    </Typography>
+                  </Box>
+                </Box>
               </ImageListItem>
             )}
           </ImageList>
@@ -325,19 +362,26 @@ export default function ProductDetails() {
               <Grid container spacing={2}>
                 {collection.map((image, index) => (
                   <Grid size={4} key={index}>
-                    <div
-                      style={{
+                    <Box
+                      sx={{
                         position: "relative",
                         cursor: "pointer",
                         overflow: "hidden",
-                        borderRadius: 8,
+                        borderRadius: "8px",
+                        "&:hover img": {
+                          opacity: 0.8,
+                        },
                       }}
                       onClick={() => handleOpenImage(image)}
                     >
                       <img
                         src={image}
                         alt={name}
-                        style={{ width: "100%", height: "auto" }}
+                        style={{ 
+                          width: "100%", 
+                          height: "auto",
+                          transition: "opacity 0.2s ease",
+                        }}
                       />
                       <IconButton
                         style={{
@@ -350,7 +394,7 @@ export default function ProductDetails() {
                       >
                         <ZoomIn />
                       </IconButton>
-                    </div>
+                    </Box>
                   </Grid>
                 ))}
               </Grid>
@@ -388,7 +432,7 @@ export default function ProductDetails() {
             flexDirection: "column",
             gap: "30px",
             width: "100%",
-            maxWidth: { xs: 350, sm: 500, md: 600 },
+            maxWidth: { xs: "100%", sm: "100%", md: 800 },
           }}
         >
           {/* Title, price, desc */}
@@ -404,7 +448,8 @@ export default function ProductDetails() {
               sx={{
                 color: "black",
                 fontWeight: "400",
-                fontSize: { xs: "48px", md: "36px" },
+                fontSize: { xs: "16px", sm: "24px", md: "28px" },
+                paddingTop: { xs: "0px", sm: "0px", md: "24px" },
               }}
             >
               {name}
@@ -416,7 +461,8 @@ export default function ProductDetails() {
                 variant="caption"
                 sx={{
                   color: "black",
-                  fontSize: "1.5rem",
+                  fontSize: { xs: "20px", sm: "24px", md: "24px" },
+                  fontWeight: "600",
                 }}
               >
                 {formatPrice(price, currency)}
@@ -440,10 +486,19 @@ export default function ProductDetails() {
             return (
               <Box key={variantType}>
                 <Box sx={{ display: "flex", gap: 1 }}>
-                  <Typography variant="body1">{variantType}:</Typography>
+                  <Typography 
+                    variant="body1"
+                    sx={{ fontSize: { xs: "14px", sm: "16px" } }}
+                  >
+                    {variantType}:
+                  </Typography>
                   <Typography
                     variant="body1"
-                    sx={{ display: "inline", fontWeight: "600" }}
+                    sx={{ 
+                      display: "inline", 
+                      fontWeight: "600",
+                      fontSize: { xs: "14px", sm: "16px" }
+                    }}
                   >
                     {selectedValue}
                   </Typography>
@@ -478,7 +533,11 @@ export default function ProductDetails() {
                         boxSizing: "border-box",
                       }}
                     >
-                      {!isColorVariant && <Typography>{value}</Typography>}
+                      {!isColorVariant && (
+                        <Typography sx={{ fontSize: { xs: "14px", sm: "16px" } }}>
+                          {value}
+                        </Typography>
+                      )}
                     </ButtonBase>
                   ))}
                 </Box>
@@ -499,7 +558,12 @@ export default function ProductDetails() {
             }}
           >
             <Box sx={{ display: "flex", alignItems: "center" }}>
-              <Typography variant="body1">Quantity:</Typography>
+              <Typography 
+                variant="body1"
+                sx={{ fontSize: { xs: "14px", sm: "16px" } }}
+              >
+                Quantity:
+              </Typography>
               <Input
                 type="number"
                 value={qty}
@@ -533,7 +597,11 @@ export default function ProductDetails() {
                 }}
                 onClick={handleAddToCart}
               >
-                <Typography fontWeight="500" textTransform="none">
+                <Typography 
+                  fontWeight="500" 
+                  textTransform="none"
+                  sx={{ fontSize: { xs: "14px", sm: "16px" } }}
+                >
                   Add to Cart
                 </Typography>
               </Button>

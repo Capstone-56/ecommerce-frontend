@@ -2,6 +2,7 @@ import { ProductModel } from "@/domain/models/ProductModel";
 import { ProductService } from "@/services/product-service";
 import { useEffect, useState } from "react";
 import ProductCard from "../ProductCard/ProductCard";
+import ProductCardSkeleton from "../ProductCard/ProductCardSkeleton";
 import { Box, Typography } from "@mui/material";
 import { locationState } from "@/domain/state";
 import Slider from "react-slick";
@@ -22,37 +23,40 @@ export default function ProductDetails(props: RelatedProductsProps) {
   const [relatedProducts, setRelatedProducts] = useState<Array<ProductModel>>(
     []
   );
+  const [loading, setLoading] = useState<boolean>(true);
+  const [currentSlide, setCurrentSlide] = useState(0);
   const userLocation = locationState((state) => state.userLocation);
   const userCurrency = locationState((state) => state.getUserCurrency());
   const navigate = useNavigate();
 
   const settings = {
-    dots: true,
+    dots: false,
     infinite: true,
     speed: 500,
     slidesToShow: 5,
     slidesToScroll: 1,
+    beforeChange: (current: number, next: number) => setCurrentSlide(next),
     responsive: [
       {
-        breakpoint: 1200,
+        breakpoint: 2100,
         settings: {
           slidesToShow: 4,
         },
       },
       {
-        breakpoint: 900,
+        breakpoint: 1400,
         settings: {
           slidesToShow: 3,
         },
       },
       {
-        breakpoint: 600,
+        breakpoint: 1000,
         settings: {
           slidesToShow: 2,
         },
       },
       {
-        breakpoint: 400,
+        breakpoint: 700,
         settings: {
           slidesToShow: 1,
         },
@@ -68,38 +72,51 @@ export default function ProductDetails(props: RelatedProductsProps) {
    * Retrieves the related products.
    */
   const getRelatedProducts = async () => {
-    const productService = new ProductService();
-    const response = await productService.getRelatedProducts(props.product.id, userLocation, userCurrency);
-    if (response) {
-      setRelatedProducts(response);
-    } else {
-      console.log("Error retrieving related products, " + response);
+    setLoading(true);
+    try {
+      const productService = new ProductService();
+      const response = await productService.getRelatedProducts(props.product.id, userLocation, userCurrency);
+      if (response) {
+        setRelatedProducts(response);
+      } else {
+        console.log("Error retrieving related products, " + response);
+      }
+    } catch (error) {
+      console.error("Error retrieving related products", error);
+    } finally {
+      setLoading(false);
     }
   };
 
   return (
     <>
-      <Typography
-        sx={{
-          display: "flex",
-          flexDirection: { xs: "column", md: "row" },
-          justifyContent: "center",
-          textAlign: "center",
-          margin: "2rem",
-          paddingX: { xs: "2rem" },
-          gap: "2rem",
-        }}
-        variant="h5"
-        fontWeight="bold"
-        gutterBottom
-      >
-        Related Products
-      </Typography>
       <Box
         sx={{
           width: "90%",
+          maxWidth: "1680px",
           mx: "auto",
-          position: "relative"
+        }}
+      >
+        <Typography
+          sx={{
+            textAlign: { xs: "center", md: "left" },
+            margin: "2rem 0",
+            fontSize: { xs: "20px", sm: "20px", md: "24px" },
+          }}
+          variant="h5"
+          fontWeight="bold"
+          gutterBottom
+        >
+          Related Products
+        </Typography>
+      </Box>
+      <Box
+        sx={{
+          width: "90%",
+          maxWidth: "1680px",
+          mx: "auto",
+          position: "relative",
+          mb: "100px"
         }}
       >
         {/* 
@@ -115,26 +132,51 @@ export default function ProductDetails(props: RelatedProductsProps) {
               font-size: 20px;
             }
           `}
-        </style>
-        <Slider {...settings} arrows>
-          {relatedProducts.length > 0 ? (
-            relatedProducts.map((product) => (
-              <Box key={product.id} sx={{
-                display: "flex",
-                justifyContent: "center",
-                px: 1,
-              }}>
-                <ProductCard product={product} width="100%" height="350px" onClickCallback={() => {
-                  navigate(`/products/${product.id}/details`);
-                  window.scrollTo({ top: 0, behavior: "smooth" })
+            </style>
+            <Slider {...settings} arrows>
+              {loading ? (
+                // Show skeleton cards while loading
+                Array.from({ length: 5 }).map((_, index) => (
+                  <Box key={`skeleton-${index}`} sx={{
+                    display: "flex !important",
+                    justifyContent: "center",
+                    px: 1,
+                  }}>
+                    <ProductCardSkeleton />
+                  </Box>
+                ))
+              ) : relatedProducts.length > 0 ? (
+                relatedProducts.map((product) => (
+                  <Box key={product.id} sx={{
+                    display: "flex !important",
+                    justifyContent: "center",
+                    px: 1,
+                  }}>
+                    <ProductCard product={product} width="100%" height="auto" onClickCallback={() => {
+                      navigate(`/products/${product.id}/details`);
+                      window.scrollTo({ top: 0, behavior: "smooth" })
+                    }}
+                    />
+                  </Box>
+                ))
+              ) : (
+                <Typography>No related products available</Typography>
+              )}
+            </Slider >
+            {/* Slide counter */}
+            {!loading && relatedProducts.length > 0 && (
+              <Typography
+                variant="body2"
+                sx={{
+                  textAlign: "center",
+                  mt: 2,
+                  color: "text.secondary",
+                  fontSize: "14px",
                 }}
-                />
-              </Box>
-            ))
-          ) : (
-            <Typography>Loading...</Typography>
-          )}
-        </Slider >
+              >
+                {currentSlide + 1}/{relatedProducts.length}
+              </Typography>
+            )}
       </Box >
     </>
   );

@@ -360,6 +360,7 @@ export default function EditGeneralInformation(props: EditGeneralInformationProp
               component="img"
               image={props.product.images[0]}
               alt={props.product.name}
+              loading="lazy"
               sx={{
                 width: "100%",
                 height: "auto",
