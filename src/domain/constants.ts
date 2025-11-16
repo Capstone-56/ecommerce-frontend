@@ -36,4 +36,9 @@ export class Constants {
 
   // misc
   public static readonly BASE_BROWSER_TAB_TITLE: string = "BDNX";
+
+  // password rules
+  public static readonly PasswordRules = {
+    SPECIAL_CHARS: "!@#$%^&*(),.?:;`~_-"
+  }
 }

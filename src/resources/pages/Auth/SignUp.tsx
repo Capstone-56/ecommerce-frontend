@@ -12,10 +12,11 @@ import {
   Typography,
   CircularProgress,
 } from "@mui/material";
-import { Visibility, VisibilityOff } from "@mui/icons-material";
+import { Visibility, VisibilityOff, Check, Close } from "@mui/icons-material";
 
 import { AuthService } from "@/services/auth-service";
 
+import { Constants } from "@/domain/constants";
 import { UserSignUpModel } from "@/domain/models/UserModel";
 
 const authService = new AuthService();
@@ -36,6 +37,17 @@ const SignUp: React.FC = () => {
   const [loading, setLoading] = useState(false);
   const [usernameTaken, setUsernameTaken] = useState(false);
   const navigate = useNavigate();
+
+  const passwordRules = {
+    minLength: form.password.length >= 8,
+    hasLowercase: /[a-z]/.test(form.password),
+    hasUppercase: /[A-Z]/.test(form.password),
+    hasNumber: /[0-9]/.test(form.password),
+    hasSpecialChar: (new RegExp(`[${Constants.PasswordRules.SPECIAL_CHARS}]`)).test(form.password),
+  };
+
+  const allRulesMet = Object.values(passwordRules).every((rule) => rule === true);
+  const passwordsMatch = form.password.trim() === form.confirmPassword.trim();
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setForm({ ...form, [e.target.name]: e.target.value });
@@ -172,6 +184,57 @@ const SignUp: React.FC = () => {
         }}
       />
 
+      {/* Password Requirements */}
+      <Box sx={{ mt: 2, mb: 2, textAlign: "left" }}>
+        <Typography
+          variant="body2"
+          fontWeight="bold"
+          sx={{ color: "black", mb: 1 }}
+        >
+          Password Requirements:
+        </Typography>
+        
+        {[
+          { label: "At least 8 characters", met: passwordRules.minLength },
+          { label: "Contains lowercase letter", met: passwordRules.hasLowercase },
+          { label: "Contains uppercase letter", met: passwordRules.hasUppercase },
+          { label: "Contains number", met: passwordRules.hasNumber },
+          { label: `Contains special character (e.g., ${Constants.PasswordRules.SPECIAL_CHARS})`, met: passwordRules.hasSpecialChar },
+        ].map((rule, index) => (
+          <Box
+            key={index}
+            sx={{
+              display: "flex",
+              alignItems: "center",
+              gap: 1,
+              mb: 0.5,
+            }}
+          >
+            <Box
+              component="span"
+              sx={{
+                width: 6,
+                height: 6,
+                borderRadius: "50%",
+                backgroundColor: "red",
+                display: "inline-block",
+              }}
+            />
+            <Typography
+              variant="body2"
+              sx={{ color: "black", flexGrow: 1 }}
+            >
+              {rule.label}
+            </Typography>
+            {rule.met ? (
+              <Check sx={{ color: "green", fontSize: 18 }} />
+            ) : (
+              <Close sx={{ color: "red", fontSize: 18 }} />
+            )}
+          </Box>
+        ))}
+      </Box>
+
       {/* Submit */}
       <Button
         fullWidth
@@ -183,7 +246,7 @@ const SignUp: React.FC = () => {
           "&:hover": { backgroundColor: "#333" },
         }}
         onClick={handleSubmit}
-        disabled={loading || usernameTaken}
+        disabled={loading || usernameTaken || !allRulesMet || !passwordsMatch}
       >
         {loading ? (
           <CircularProgress size={24} color="inherit" />
