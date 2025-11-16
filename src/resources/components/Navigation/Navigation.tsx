@@ -304,9 +304,9 @@ const Navbar: React.FC = () => {
                     src="/logo_bdnx.png"
                     alt="BDNX"
                     sx={{
-                      height: { xs: 32, md: 32 },
+                      height: { xs: 24, sm: 28, md: 32 },
                       width: "auto",
-                      mr: 1.5,
+                      mr: { xs: 1, sm: 1.25, md: 1.5 },
                       objectFit: "contain",
                     }}
                   />
@@ -349,7 +349,7 @@ const Navbar: React.FC = () => {
                 display: "flex",
                 flexDirection: "row",
                 alignItems: "center",
-                gap: 1,
+                gap: { xs: 0.5, sm: 1 },
               }}
             >
               {/* Desktop SearchBar */}
@@ -453,19 +453,28 @@ const Navbar: React.FC = () => {
                     component={RouterLink}
                     to={Constants.LOGIN_ROUTE}
                     variant="outlined"
+                    size="small"
                     sx={{
                       bgcolor: grey[50],
                       color: grey[900],
                       borderColor: "primary.main",
                       borderRadius: "8px",
                       textDecoration: "none",
+                      px: { xs: 1.5, sm: 2 },
+                      py: { xs: 0.5, sm: 1 },
+                      minWidth: { xs: "auto", sm: "64px" },
+                      fontSize: { xs: "0.75rem", sm: "0.875rem" },
                       "&:hover": {
                         bgcolor: grey[100],
                         borderColor: "primary.main",
                       },
                     }}
                   >
-                    <Typography fontWeight="500" textTransform="none">
+                    <Typography 
+                      fontWeight="500" 
+                      textTransform="none"
+                      sx={{ fontSize: { xs: "0.75rem", sm: "0.875rem" } }}
+                    >
                       Login
                     </Typography>
                   </Button>
@@ -474,14 +483,26 @@ const Navbar: React.FC = () => {
                     component={RouterLink}
                     to={Constants.SIGNUP_ROUTE}
                     variant="contained"
+                    size="small"
                     sx={{
                       bgcolor: "primary.main",
                       color: grey[50],
                       borderRadius: "8px",
                       textDecoration: "none",
+                      px: { xs: 1.5, sm: 2 },
+                      py: { xs: 0.5, sm: 1 },
+                      minWidth: { xs: "auto", sm: "64px" },
+                      fontSize: { xs: "0.75rem", sm: "0.875rem" },
+                      "&:hover": {
+                        bgcolor: "primary.dark",
+                      },
                     }}
                   >
-                    <Typography fontWeight="500" textTransform="none">
+                    <Typography 
+                      fontWeight="500" 
+                      textTransform="none"
+                      sx={{ fontSize: { xs: "0.75rem", sm: "0.875rem" } }}
+                    >
                       Sign up
                     </Typography>
                   </Button>
