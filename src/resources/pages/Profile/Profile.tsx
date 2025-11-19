@@ -15,6 +15,7 @@ import {
 import CloseIcon from "@mui/icons-material/Close";
 import { useEffect, useState } from "react";
 import MenuNav from "@/resources/components/Profile/Navigation";
+
 import {
   Person,
   ShoppingBag,
@@ -22,7 +23,9 @@ import {
   LocalShipping,
   AccountCircle,
 } from "@mui/icons-material";
+import AccountCircleIcon from "@mui/icons-material/AccountCircle";
 import { useTheme } from "@mui/material/styles";
+
 import { UserService } from "@/services/user-service";
 import { UserModel } from "@/domain/models/UserModel";
 import { userState } from "@/domain/state";
@@ -45,6 +48,7 @@ const menuItems = [
   },
 ];
 
+// TODO: retrive from S3
 const profileUrl = "https://randomuser.me/api/portraits/men/32.jpg"; // Example profile
 
 const Profile: React.FC = () => {
@@ -161,20 +165,20 @@ const Profile: React.FC = () => {
               bgcolor: "background.paper",
             }}
           >
-            <Avatar
-              src={profileUrl}
-              alt="Profile"
+            <AccountCircleIcon 
+              fontSize="medium" 
+              color="disabled"
               sx={{
                 width: 64,
                 height: 64,
-                border: "4px solid white",
-                boxShadow: 3,
-                bgcolor: "grey.100",
+                bgcolor: "transparent",
+                borderRadius: "50%",
                 mx: "auto",
                 mt: 4,
                 mb: 2,
-              }}
+              }} 
             />
+            
             <Typography variant="h5" align="center" sx={{ mb: 3 }}>
               Hey {greetingName}, welcome back!
             </Typography>

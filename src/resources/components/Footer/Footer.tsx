@@ -45,12 +45,22 @@ export default function Footer() {
           </Grid>
 
           {/* Footer links */}
-          <Grid size={{ xs: 6, sm: 6, md: 3, lg: 2 }}>
-            <Box sx={{ textAlign: "left" }}>
+          <Grid
+            size={{ xs: 6, sm: 6, md: 3, lg: 2 }}
+            sx={{ display: "flex", justifyContent: { xs: "center", sm: "flex-start" } }}
+          >
+            <Box
+              sx={{
+                textAlign: { xs: "center", sm: "left" },
+                display: "flex",
+                flexDirection: "column",
+                alignItems: { xs: "center", sm: "flex-start" },
+              }}
+            >
               <Typography
                 variant="h6"
                 gutterBottom
-                align="left"
+                align="center"
                 color="text.primary"
               >
                 Shop Now
@@ -76,12 +86,22 @@ export default function Footer() {
           </Grid>
 
           {/* Footer links */}
-          <Grid size={{ xs: 6, sm: 6, md: 3, lg: 2 }}>
-            <Box sx={{ textAlign: "left" }}>
+          <Grid
+            size={{ xs: 6, sm: 6, md: 3, lg: 2 }}
+            sx={{ display: "flex", justifyContent: { xs: "center", sm: "flex-start" } }}
+          >
+            <Box
+              sx={{
+                textAlign: { xs: "center", sm: "left" },
+                display: "flex",
+                flexDirection: "column",
+                alignItems: { xs: "center", sm: "flex-start" },
+              }}
+            >
               <Typography
                 variant="h6"
                 gutterBottom
-                align="left"
+                align="center"
                 color="text.primary"
               >
                 Company
