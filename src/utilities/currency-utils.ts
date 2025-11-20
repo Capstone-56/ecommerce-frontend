@@ -20,7 +20,7 @@ export function formatCurrency(amount: number, currency: string): string {
   } catch (error) {
     // Fallback formatting if Intl.NumberFormat fails
     console.warn(`Currency formatting failed for ${currency} with locale ${locale}:`, error);
-    return `$${amount.toFixed(2)}`;
+    return `${currency} ${amount.toFixed(2)}`;
   }
 }
 
@@ -32,8 +32,8 @@ export function formatCurrency(amount: number, currency: string): string {
  */
 export function formatPrice(amount: number, currency: string): string {
     // Example with "Price not available"
-  if (amount == null) {
-    return 'Price not available';
-  }
+if (amount == null || !currency) {
+  return 'Price not available';
+}
     return formatCurrency(amount, currency);
   }

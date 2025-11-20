@@ -26,7 +26,6 @@ import { StatusCodes } from "http-status-codes";
 import { toast } from "react-toastify";
 import ModifyImages from "@/resources/components/ModifyImages/ModifyImages";
 import { isEqual } from "lodash";
-import { COUNTRY_CURRENCY_MAP } from "@/domain/enum/currency";
 
 export interface EditGeneralInformationProps {
   product: ProductModel
