@@ -11,5 +11,6 @@ export enum Location {
   IT = "Italy",
   FR = "France",
   QA = "Qatar",
-  US = "America"
+  US = "America",
+  GH = "Ghana"
 }

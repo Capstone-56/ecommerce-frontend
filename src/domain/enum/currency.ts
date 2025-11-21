@@ -11,6 +11,7 @@ export enum Currency {
   EUR = "EUR", // Euro
   QAR = "QAR", // Qatari Riyal
   USD = "USD", // US Dollar
+  GHS = "GHS", // Ghanaian Cedi
 }
 
 /**
@@ -27,6 +28,7 @@ export const COUNTRY_CURRENCY_MAP: Record<string, Currency> = {
   FR: Currency.EUR, // France
   QA: Currency.QAR, // Qatar
   US: Currency.USD, // United States
+  GH: Currency.GHS, // Ghana
 };
 
 /**
@@ -43,4 +45,5 @@ export const CURRENCY_LOCALE_MAP: Record<Currency, string> = {
   [Currency.EUR]: "en-EU", // European English (fallback)
   [Currency.QAR]: "ar-QA", // Arabic (Qatar)
   [Currency.USD]: "en-US", // US English
+  [Currency.GHS]: "en-GH", // Ghana English
 };
