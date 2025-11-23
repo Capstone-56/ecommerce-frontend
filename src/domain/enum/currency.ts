@@ -11,6 +11,10 @@ export enum Currency {
   EUR = "EUR", // Euro
   QAR = "QAR", // Qatari Riyal
   USD = "USD", // US Dollar
+  GHS = "GHS", // Ghanaian Cedi,
+  MYR = "MYR", // Malaysian Ringgit
+  MVR = "MVR", // Maldivian Rufiyaa
+  GBR = "GBR", // Pound Sterling
 }
 
 /**
@@ -27,6 +31,11 @@ export const COUNTRY_CURRENCY_MAP: Record<string, Currency> = {
   FR: Currency.EUR, // France
   QA: Currency.QAR, // Qatar
   US: Currency.USD, // United States
+  GH: Currency.GHS, // Ghana
+  DE: Currency.EUR, // Germany
+  MY: Currency.MYR, // Malaysia
+  MV: Currency.MVR, // Maldives
+  UK: Currency.GBR, // United Kingdom
 };
 
 /**
@@ -43,4 +52,8 @@ export const CURRENCY_LOCALE_MAP: Record<Currency, string> = {
   [Currency.EUR]: "en-EU", // European English (fallback)
   [Currency.QAR]: "ar-QA", // Arabic (Qatar)
   [Currency.USD]: "en-US", // US English
+  [Currency.GHS]: "en-GH", // Ghana English
+  [Currency.MYR]: "ms-MY", // Bahasa Malaysia
+  [Currency.MVR]: "dv-MV", // Maldivian Dhivehi
+  [Currency.GBR]: "en-UK", // British English
 };

@@ -11,5 +11,10 @@ export enum Location {
   IT = "Italy",
   FR = "France",
   QA = "Qatar",
-  US = "America"
+  US = "America",
+  GH = "Ghana",
+  DE = "Germany",
+  MY = "Malaysia",
+  MV = "Maldives",
+  UK = "United Kingdom"
 }

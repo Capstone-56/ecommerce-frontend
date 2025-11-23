@@ -102,7 +102,20 @@ const PreHeader: React.FC = () => {
               </MenuItem>
               {locationOptions.map((location) => (
                 <MenuItem key={location.code} value={location.code}>
-                  <Typography variant="body2">{location.name}</Typography>
+                  <Box
+                    sx={{
+                      display: "flex",
+                      alignItems: "center",
+                      gap: "0.5rem"
+                    }}
+                  >
+                    <Box
+                      component="img"
+                      src={`/country-flags/${location.code}.svg`}
+                      width="1.25rem"
+                    />
+                    <Typography variant="body2">{location.name}</Typography>
+                  </Box>
                 </MenuItem>
               ))}
             </Select>
