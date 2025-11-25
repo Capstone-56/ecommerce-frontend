@@ -73,105 +73,107 @@ const Login: React.FC = () => {
   };
 
   return (
-    <Box
-      component="form"
-      onSubmit={handleSubmit}
-      sx={{
-        maxWidth: 400,
-        mx: "auto",
-        mt: 10,
-        px: 3,
-        py: 4,
-        boxShadow: 3,
-        borderRadius: 2,
-        bgcolor: "background.paper",
-        textAlign: "center",
-      }}
+    <div
+      className="absolute inset-0 flex items-start justify-center pt-32"
     >
-      <Typography
-        variant="h4"
-        fontWeight="bold"
-        gutterBottom
-        sx={{ color: "black" }}
-      >
-        Login
-      </Typography>
-
-      <TextField
-        fullWidth
-        required
-        margin="normal"
-        label="Username"
-        name="username"
-        value={form.username}
-        onChange={handleChange}
-      />
-
-      <TextField
-        fullWidth
-        required
-        margin="normal"
-        label="Password"
-        name="password"
-        type={showPassword ? "text" : "password"}
-        value={form.password}
-        onChange={handleChange}
-        InputProps={{
-          endAdornment: (
-            <Box
-              sx={{ cursor: "pointer" }}
-              onClick={() => setShowPassword(!showPassword)}
-            >
-              {showPassword ? (
-                <VisibilityOff fontSize="small" />
-              ) : (
-                <Visibility fontSize="small" />
-              )}
-            </Box>
-          ),
-        }}
-      />
-
-      <FormControlLabel
-        control={<Checkbox defaultChecked />}
-        label={<Typography sx={{ color: "black" }}>Remember me</Typography>}
-        sx={{ mt: 2 }}
-      />
-
-      {error && (
-        <Typography color="error" mt={1}>
-          {error}
-        </Typography>
-      )}
-
-      <Button
-        type="submit"
-        variant="contained"
-        fullWidth
-        disabled={loading}
+      <Box
+        component="form"
+        onSubmit={handleSubmit}
         sx={{
-          mt: 2,
-          backgroundColor: "black",
-          color: "white",
-          "&:hover": { backgroundColor: "#333" },
+          maxWidth: 400,
+          px: 3,
+          py: 4,
+          boxShadow: 3,
+          borderRadius: 2,
+          bgcolor: "background.paper",
+          textAlign: "center",
         }}
       >
-        {loading ? (
-          <CircularProgress size={24} sx={{ color: "white" }} />
-        ) : (
-          "LOG IN"
-        )}
-      </Button>
+        <Typography
+          variant="h4"
+          fontWeight="bold"
+          gutterBottom
+          sx={{ color: "black" }}
+        >
+          Login
+        </Typography>
 
-      <Box mt={2}>
-        <Link href="/signup" variant="body2">
-          Create a new account
-        </Link>
-        <Link ml={3} href="/forgot" variant="body2">
-          Forgot password
-        </Link>
+        <TextField
+          fullWidth
+          required
+          margin="normal"
+          label="Username"
+          name="username"
+          value={form.username}
+          onChange={handleChange}
+        />
+
+        <TextField
+          fullWidth
+          required
+          margin="normal"
+          label="Password"
+          name="password"
+          type={showPassword ? "text" : "password"}
+          value={form.password}
+          onChange={handleChange}
+          InputProps={{
+            endAdornment: (
+              <Box
+                sx={{ cursor: "pointer" }}
+                onClick={() => setShowPassword(!showPassword)}
+              >
+                {showPassword ? (
+                  <VisibilityOff fontSize="small" />
+                ) : (
+                  <Visibility fontSize="small" />
+                )}
+              </Box>
+            ),
+          }}
+        />
+
+        <FormControlLabel
+          control={<Checkbox defaultChecked />}
+          label={<Typography sx={{ color: "black" }}>Remember me</Typography>}
+          sx={{ mt: 2 }}
+        />
+
+        {error && (
+          <Typography color="error" mt={1}>
+            {error}
+          </Typography>
+        )}
+
+        <Button
+          type="submit"
+          variant="contained"
+          fullWidth
+          disabled={loading}
+          sx={{
+            mt: 2,
+            backgroundColor: "black",
+            color: "white",
+            "&:hover": { backgroundColor: "#333" },
+          }}
+        >
+          {loading ? (
+            <CircularProgress size={24} sx={{ color: "white" }} />
+          ) : (
+            "LOG IN"
+          )}
+        </Button>
+
+        <Box mt={2}>
+          <Link href="/signup" variant="body2">
+            Create a new account
+          </Link>
+          <Link ml={3} href="/forgot" variant="body2">
+            Forgot password
+          </Link>
+        </Box>
       </Box>
-    </Box>
+    </div>
   );
 };
 
