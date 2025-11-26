@@ -246,7 +246,13 @@ const Navbar: React.FC = () => {
           sx={{
             backgroundColor: common.white,
             justifyContent: "center", // Center the content container
-            px: 2,
+            px: {
+              xs: 0.5,
+              sm: 0.5,
+              md: 2
+            },
+            py: 1,
+            alignItems: "stretch",
             minHeight: { xs: 64, sm: 64, md: 64 }, // Force consistent height
           }}
         >
@@ -260,7 +266,7 @@ const Navbar: React.FC = () => {
                 lg: "space-between",
                 xl: "space-between",
               },
-              alignItems: "center",
+              alignItems: "stretch",
               width: "100%",
               maxWidth: "1680px",
             }}
@@ -278,6 +284,13 @@ const Navbar: React.FC = () => {
                   edge="start"
                   color="inherit"
                   onClick={handleMobileMenuOpen}
+                  sx={{
+                    m: 0,
+                    p: {
+                      xs: 0.5,
+                      sm: 1
+                    }
+                  }}
                 >
                   <MenuIcon />
                 </IconButton>
@@ -363,13 +376,24 @@ const Navbar: React.FC = () => {
                   size="medium"
                   color="inherit"
                   onClick={handleSearchDrawerOpen}
+                  sx={{
+                    p: 0,
+                    px: 0.5
+                  }}
                 >
                   <SearchIcon />
                 </IconButton>
               </Box>
 
               {/* Cart Button */}
-              <IconButton component={RouterLink} to={Constants.CART_ROUTE}>
+              <IconButton
+                component={RouterLink}
+                to={Constants.CART_ROUTE}
+                sx={{
+                  p: 0,
+                  px: 0.5
+                }}
+              >
                 <Badge
                   badgeContent={cart.length}
                   color="primary"
@@ -398,7 +422,13 @@ const Navbar: React.FC = () => {
 
               {isAuthenticated && userInformation ? (
                 <>
-                  <IconButton onClick={handleProfileMenuOpen}>
+                  <IconButton
+                    onClick={handleProfileMenuOpen}
+                    sx={{
+                      p: 0,
+                      px: 0.5
+                    }}
+                  >
                     <Avatar
                       sx={{
                         width: 32,
@@ -461,17 +491,16 @@ const Navbar: React.FC = () => {
                       borderRadius: "8px",
                       textDecoration: "none",
                       px: { xs: 1.5, sm: 2 },
-                      py: { xs: 0.5, sm: 1 },
+                      py: { xs: 0.75, sm: 1 },
                       minWidth: { xs: "auto", sm: "64px" },
-                      fontSize: { xs: "0.75rem", sm: "0.875rem" },
                       "&:hover": {
                         bgcolor: grey[100],
                         borderColor: "primary.main",
-                      },
+                      }
                     }}
                   >
-                    <Typography 
-                      fontWeight="500" 
+                    <Typography
+                      fontWeight="500"
                       textTransform="none"
                       sx={{ fontSize: { xs: "0.75rem", sm: "0.875rem" } }}
                     >
@@ -489,17 +518,19 @@ const Navbar: React.FC = () => {
                       color: grey[50],
                       borderRadius: "8px",
                       textDecoration: "none",
+                      border: "1px",
+                      borderStyle: "solid",
+                      borderColor: "primary.main",
                       px: { xs: 1.5, sm: 2 },
-                      py: { xs: 0.5, sm: 1 },
+                      py: { xs: 0.75, sm: 1 },
                       minWidth: { xs: "auto", sm: "64px" },
-                      fontSize: { xs: "0.75rem", sm: "0.875rem" },
                       "&:hover": {
                         bgcolor: "primary.dark",
                       },
                     }}
                   >
-                    <Typography 
-                      fontWeight="500" 
+                    <Typography
+                      fontWeight="500"
                       textTransform="none"
                       sx={{ fontSize: { xs: "0.75rem", sm: "0.875rem" } }}
                     >
