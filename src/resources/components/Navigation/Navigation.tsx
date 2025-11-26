@@ -493,7 +493,6 @@ const Navbar: React.FC = () => {
                       px: { xs: 1.5, sm: 2 },
                       py: { xs: 0.75, sm: 1 },
                       minWidth: { xs: "auto", sm: "64px" },
-                      // fontSize: { xs: "0.75rem", sm: "0.875rem" },
                       "&:hover": {
                         bgcolor: grey[100],
                         borderColor: "primary.main",
