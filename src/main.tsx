@@ -10,6 +10,7 @@ import LocationProvider from "./providers/LocationProvider";
 
 import { router } from "./router/router.tsx";
 import { Slide, ToastContainer } from "react-toastify";
+import UserContextProvider from "./contexts/UserContext.tsx";
 
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
@@ -27,7 +28,9 @@ createRoot(document.getElementById("root")!).render(
         }}
       />
       <LocationProvider>
-        <RouterProvider router={router} />
+        <UserContextProvider>
+          <RouterProvider router={router} />
+        </UserContextProvider>
       </LocationProvider>
       <ToastContainer
         position="bottom-center"
