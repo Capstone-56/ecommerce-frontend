@@ -213,7 +213,9 @@ const Navbar: React.FC = () => {
         userState.setState({ id: null });
         userState.setState({ userInformation: null });
         clearCart(); // Clear cart data on logout
-        navigate(Constants.HOME_ROUTE);
+        navigate(Constants.HOME_ROUTE, {
+          replace: true
+        });
       }
     } catch (error) {
       console.error("Logout failed", error);
