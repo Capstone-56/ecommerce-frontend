@@ -213,7 +213,9 @@ const Navbar: React.FC = () => {
         userState.setState({ id: null });
         userState.setState({ userInformation: null });
         clearCart(); // Clear cart data on logout
-        navigate(Constants.HOME_ROUTE);
+        navigate(Constants.HOME_ROUTE, {
+          replace: true
+        });
       }
     } catch (error) {
       console.error("Logout failed", error);
@@ -470,8 +472,8 @@ const Navbar: React.FC = () => {
                       },
                     }}
                   >
-                    <Typography 
-                      fontWeight="500" 
+                    <Typography
+                      fontWeight="500"
                       textTransform="none"
                       sx={{ fontSize: { xs: "0.75rem", sm: "0.875rem" } }}
                     >
@@ -498,8 +500,8 @@ const Navbar: React.FC = () => {
                       },
                     }}
                   >
-                    <Typography 
-                      fontWeight="500" 
+                    <Typography
+                      fontWeight="500"
                       textTransform="none"
                       sx={{ fontSize: { xs: "0.75rem", sm: "0.875rem" } }}
                     >
