@@ -96,12 +96,12 @@ export default function MFA() {
       });
 
       toast.success("Authentication successful!");
-
-      if (response.role === Role.ADMIN || response.role === Role.MANAGER) {
-        navigate(Constants.ADMIN_DASHBOARD_ROUTE);
-      } else {
-        navigate("/");
-      }
+      navigate(
+        (response.role === Role.ADMIN || response.role === Role.MANAGER)
+          ? Constants.ADMIN_DASHBOARD_ROUTE
+          : "/", {
+        replace: true
+      });
     } catch (error: any) {
       toast.error(error.response?.data?.message || "Invalid code");
     } finally {
