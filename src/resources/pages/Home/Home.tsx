@@ -61,7 +61,11 @@ export default function Home() {
           display: "flex",
           flexDirection: "column",
           justifyContent: "center",
-          backgroundImage: `url(${bannerImage})`,
+          backgroundImage: {
+            xs: "url(\"/banner-mobile.png\")",
+            sm: "url(\"/banner-mobile.png\")",
+            md: "url(\"/banner.png\")"
+          },
           backgroundSize: "cover",
           backgroundPosition: { 
             xs: "center center",
