@@ -109,7 +109,7 @@ export default function Home() {
                 textShadow: "2px 2px 4px rgba(0,0,0,0.5)",
               }}
             >
-              Discover What's <br /> New at BDNX
+              Exclusive Quality <br /> for Better Living
             </Typography>
 
             <Typography
