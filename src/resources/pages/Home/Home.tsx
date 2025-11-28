@@ -17,7 +17,7 @@ import ProductCard from "@/resources/components/ProductCard/ProductCard";
 import ProductCardSkeleton from "@/resources/components/ProductCard/ProductCardSkeleton";
 import { locationState } from "@/domain/state";
 import { Constants } from "@/domain/constants";
-import bannerImage from "@/assets/Home/Gemini_Generated_Banner_Image.png";
+import Header from "@/resources/components/HomePage/Header";
 
 export default function Home() {
   const [products, setProducts] = useState<Array<ProductModel>>([]);
@@ -67,7 +67,7 @@ export default function Home() {
             md: "url(\"/banner.png\")"
           },
           backgroundSize: "cover",
-          backgroundPosition: { 
+          backgroundPosition: {
             xs: "center center",
             sm: "center 20%",
             md: "center 30%"
@@ -94,35 +94,22 @@ export default function Home() {
             px: 3,
           }}
         >
-          <Box 
-            sx={{ 
+          <Box
+            sx={{
               textAlign: { xs: "center", md: "center", lg: "left" },
               display: "flex",
               flexDirection: "column",
               alignItems: { xs: "center", md: "center", lg: "flex-start" },
             }}
           >
-            <Typography
-              variant="h1"
-              component="h1"
-              sx={{
-                fontSize: { xs: "48px", md: "72px", lg: "80px" },
-                mb: 1,
-                color: "white",
-                fontWeight: "bold",
-                textShadow: "2px 2px 4px rgba(0,0,0,0.5)",
-              }}
-            >
-              Exclusive Quality <br /> for Better Living
-            </Typography>
-
+            <Header />
             <Typography
               variant="h5"
               component="h2"
-              sx={{ 
+              sx={{
                 mb: 4,
                 color: "white",
-                fontSize: { xs: "20px", md: "24px"},
+                fontSize: { xs: "20px", md: "24px" },
                 textShadow: "1px 1px 2px rgba(0,0,0,0.5)",
                 pt: 2,
                 fontWeight: 300,
@@ -191,8 +178,8 @@ export default function Home() {
           {loading ? (
             // Show skeleton cards while loading
             Array.from({ length: 6 }).map((_, index) => (
-              <Grid 
-                size={{ xs: 12, sm: 6, md: 4, lg: 3 }} 
+              <Grid
+                size={{ xs: 12, sm: 6, md: 4, lg: 3 }}
                 key={`skeleton-${index}`}
                 sx={{
                   display: "flex",
@@ -206,8 +193,8 @@ export default function Home() {
           ) : products.length > 0 ? (
             products.map((product) => {
               return (
-                <Grid 
-                  size={{ xs: 12, sm: 6, md: 4, lg: 3 }} 
+                <Grid
+                  size={{ xs: 12, sm: 6, md: 4, lg: 3 }}
                   key={product.id}
                   sx={{
                     display: "flex",
