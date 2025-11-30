@@ -31,12 +31,12 @@ const ProfileV2 = (): ReactNode => {
 
   return (
     <div className="absolute inset-0 flex items-stretch justify-center bg-gray-100 mx-auto p-8">
-      <div className="flex items-start gap-2 rounded-lg shadow-lg border bg-white border-gray-100 p-4 h-full w-full max-w-360">
+      <div className="flex items-start gap-4 rounded-lg shadow-lg border bg-white border-gray-100 p-4 h-full w-full max-w-360">
         <div className="flex flex-col gap-1 w-64">
           {ROUTES.map((route, i): ReactNode => {
             return (
               <button
-                className={`cursor-pointer rounded-lg text-left ${i === selected ? "bg-sky-500 hover:bg-sky-600 active:bg-sky-700 text-white" : "bg-transparent hover:bg-black/10 active:bg-black/20 text-gray-600"} transition-colors px-4 py-2`}
+                className={`cursor-pointer rounded-lg text-left ${i === selected ? "bg-sky-500 hover:bg-sky-600 active:bg-sky-700 text-white" : "bg-white hover:bg-gray-100 active:bg-gray-200 text-gray-700"} transition-colors px-4 py-2`}
                 onClick={(): void => {
                   navigate(`/profile${route.routeSuffix}`);
                 }}
@@ -46,7 +46,7 @@ const ProfileV2 = (): ReactNode => {
             );
           })}
         </div>
-        <div>
+        <div className="grow relative">
           {selected !== -1 && (
             <Outlet />
           )}

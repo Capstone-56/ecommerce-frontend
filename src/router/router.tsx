@@ -37,6 +37,7 @@ import ForgotPassword from "@/resources/pages/Auth/ForgotPassword";
 import ResetPassword from "@/resources/pages/Auth/ResetPassword";
 import MFA from "@/resources/pages/Auth/MFA";
 import ProfileV2 from "@/resources/pages/Profile/ProfileV2";
+import UserDetailsV2 from "@/resources/components/Profile/UserDetailsV2";
 
 export const router = createBrowserRouter([
   {
@@ -61,7 +62,7 @@ export const router = createBrowserRouter([
           },
           {
             index: true,
-            element: <UserDetails />,
+            element: <UserDetailsV2 />,
           },
           {
             path: "shipping",
