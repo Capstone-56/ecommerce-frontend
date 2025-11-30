@@ -47,7 +47,9 @@ const ProfileV2 = (): ReactNode => {
           })}
         </div>
         <div>
-          <Outlet />
+          {selected !== -1 && (
+            <Outlet />
+          )}
         </div>
       </div>
     </div>
