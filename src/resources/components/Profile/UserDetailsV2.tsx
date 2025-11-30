@@ -1,6 +1,7 @@
 import { UserContext } from "@/contexts/UserContext";
 import { ReactNode, useContext, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
+import PersonalInfo from "./PersonalInfo";
 
 const PROFILE_URL = "https://randomuser.me/api/portraits/men/32.jpg";
 
@@ -32,42 +33,7 @@ const UserDetailsV2 = (): ReactNode => {
           Edit
         </button>
       </div>
-      <div className="flex items-start justify-between rounded-lg border-2 border-gray-100 p-4">
-        <div className="flex flex-col gap-4 w-full max-w-2xl">
-          <p className="font-semibold text-2xl">Personal Information</p>
-          <div className="grid grid-cols-2 gap-4 w-full">
-            <div className="flex flex-col">
-              <p className="text-gray-600">First Name</p>
-              <p className="text-2xl">{user.firstname}</p>
-            </div>
-            <div className="flex flex-col">
-              <p className="text-gray-600">Last Name</p>
-              <p className="text-2xl">{user.lastname}</p>
-            </div>
-            <div className="flex flex-col">
-              <p className="text-gray-600">Email</p>
-              <p className="text-2xl">{user.email}</p>
-            </div>
-            <div className="flex flex-col">
-              <p className="text-gray-600">Phone</p>
-              <p className="text-2xl">{user.phone}</p>
-            </div>
-            <div className="flex flex-col">
-              <p className="text-gray-600">Date of Birth</p>
-              <p className={`text-2xl ${user.dateOfBirth ? "" : "text-gray-600"}`}>{user.dateOfBirth ? new Date(user.dateOfBirth).toLocaleDateString() : "--"}</p>
-            </div>
-            <div className="flex flex-col">
-              <p className="text-gray-600">Gender</p>
-              <p className={`text-2xl ${user.gender ? "" : "text-gray-600"}`}>
-                {user.gender ? user.gender[0].toUpperCase() + user.gender.substring(1).toLowerCase() : "--"}
-              </p>
-            </div>
-          </div>
-        </div>
-        <button className="cursor-pointer hover:bg-gray-100 active:bg-gray-200 transition-colors border-2 border-gray-200 rounded-full px-4 py-2">
-          Edit
-        </button>
-      </div>
+      <PersonalInfo user={user} />
     </div>
   );
 };

@@ -9,6 +9,8 @@ export interface UserModel {
   lastName: string;
   phone: string;
   role: Role;
+  dateOfBirth: string | null;
+  gender: "male" | "female" | null;
   mfaEnabled: boolean;
 }
 
