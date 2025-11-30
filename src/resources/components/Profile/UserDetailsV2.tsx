@@ -52,6 +52,16 @@ const UserDetailsV2 = (): ReactNode => {
               <p className="text-gray-600">Phone</p>
               <p className="text-2xl">{user.phone}</p>
             </div>
+            <div className="flex flex-col">
+              <p className="text-gray-600">Date of Birth</p>
+              <p className={`text-2xl ${user.dateOfBirth ? "" : "text-gray-600"}`}>{user.dateOfBirth ? new Date(user.dateOfBirth).toLocaleDateString() : "--"}</p>
+            </div>
+            <div className="flex flex-col">
+              <p className="text-gray-600">Gender</p>
+              <p className={`text-2xl ${user.gender ? "" : "text-gray-600"}`}>
+                {user.gender ? user.gender[0].toUpperCase() + user.gender.substring(1).toLowerCase() : "--"}
+              </p>
+            </div>
           </div>
         </div>
         <button className="cursor-pointer hover:bg-gray-100 active:bg-gray-200 transition-colors border-2 border-gray-200 rounded-full px-4 py-2">

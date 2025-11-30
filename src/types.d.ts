@@ -4,5 +4,7 @@ interface Me {
   lastname: string;
   email: string;
   phone: string;
+  dateOfBirth: string;
+  gender: "male" | "female" | "";
   role: "admin" | "customer";
 }
