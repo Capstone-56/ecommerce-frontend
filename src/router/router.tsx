@@ -36,6 +36,8 @@ import VariantManagement from "@/resources/components/AdminPage/VariantManagemen
 import ForgotPassword from "@/resources/pages/Auth/ForgotPassword";
 import ResetPassword from "@/resources/pages/Auth/ResetPassword";
 import MFA from "@/resources/pages/Auth/MFA";
+import ProfileV2 from "@/resources/pages/Profile/ProfileV2";
+import UserDetailsV2 from "@/resources/components/Profile/UserDetailsV2";
 
 export const router = createBrowserRouter([
   {
@@ -52,19 +54,15 @@ export const router = createBrowserRouter([
       },
       {
         path: "/profile",
-        element: <Profile />,
+        element: <ProfileV2 />,
         children: [
-          {
-            index: true,
-            element: <ProfileLanding />,
-          },
           {
             path: "orders",
             element: <OrderDetails />,
           },
           {
-            path: "account",
-            element: <UserDetails />,
+            index: true,
+            element: <UserDetailsV2 />,
           },
           {
             path: "shipping",

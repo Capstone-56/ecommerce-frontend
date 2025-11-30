@@ -66,6 +66,8 @@ const SignUp: React.FC = () => {
         firstName: form.firstName,
         lastName: form.lastName,
         phone: form.phone,
+        dateOfBirth: null,
+        gender: null,
         password: form.password,
       };
 
