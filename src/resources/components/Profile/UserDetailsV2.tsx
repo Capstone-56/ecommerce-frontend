@@ -20,18 +20,13 @@ const UserDetailsV2 = (): ReactNode => {
 
   return (
     <div className="absolute inset-0 flex flex-col gap-2 items-stretch">
-      <p className="font-semibold text-4xl">My Profile</p>
-      <div className="flex items-start justify-between rounded-lg border-2 border-gray-100 p-4">
-        <div className="flex items-start gap-4">
-          <img src={PROFILE_URL} className="rounded-full border-2 border-gray-100 size-16" />
-          <div className="flex flex-col gap-1">
-            <p className="text-2xl">Welcome, <span className="font-semibold">{user.username}</span></p>
-            <p className="text-gray-600">{user.role === "admin" ? "Admin" : "Customer"}</p>
-          </div>
+      <p className="font-semibold md:text-4xl text-2xl">My Profile</p>
+      <div className="flex items-start rounded-lg border-2 border-gray-100 gap-4 p-4">
+        <img src={PROFILE_URL} className="rounded-full border-2 border-gray-100 size-16" />
+        <div className="flex flex-col gap-1">
+          <p className="md:text-2xl text-lg">Welcome, <span className="font-semibold">{user.username}</span></p>
+          <p className="text-gray-600 md:text-lg text-sm">{user.role === "admin" ? "Admin" : "Customer"}</p>
         </div>
-        <button className="cursor-pointer hover:bg-gray-100 active:bg-gray-200 transition-colors border-2 border-gray-200 rounded-full px-4 py-2">
-          Edit
-        </button>
       </div>
       <PersonalInfo user={user} />
     </div>

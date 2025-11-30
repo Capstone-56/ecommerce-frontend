@@ -43,12 +43,12 @@ const PersonalInfo = ({
   };
 
   return (
-    <div className="flex items-start justify-between rounded-lg border-2 border-gray-100 p-4">
+    <div className="flex lg:flex-row flex-col items-start lg:justify-between rounded-lg border-2 border-gray-100 gap-2 p-4">
       <div className="flex flex-col gap-4 w-full max-w-2xl">
-        <p className="font-semibold text-2xl">Personal Information</p>
-        <div className="grid grid-cols-2 gap-4 w-full">
+        <p className="font-semibold md:text-2xl text-lg">Personal Information</p>
+        <div className="grid lg:grid-cols-2 grid-cols-1 gap-4 w-full">
           <div className="flex flex-col">
-            <p className="text-gray-600">First Name</p>
+            <p className="text-gray-600 md:text-lg text-sm">First Name</p>
             {editing ? (
               <input
                 className="rounded-lg border-2 border-gray-200 px-4 py-2"
@@ -61,11 +61,11 @@ const PersonalInfo = ({
                 }}
               />
             ) : (
-              <p className="text-2xl">{varUser.firstname}</p>
+              <p className="md:text-2xl text-lg">{varUser.firstname}</p>
             )}
           </div>
           <div className="flex flex-col">
-            <p className="text-gray-600">Last Name</p>
+            <p className="text-gray-600 md:text-lg text-sm">Last Name</p>
             {editing ? (
               <input
                 className="rounded-lg border-2 border-gray-200 px-4 py-2"
@@ -78,11 +78,11 @@ const PersonalInfo = ({
                 }}
               />
             ) : (
-              <p className="text-2xl">{varUser.lastname}</p>
+              <p className="md:text-2xl text-lg">{varUser.lastname}</p>
             )}
           </div>
           <div className="flex flex-col">
-            <p className="text-gray-600">Email</p>
+            <p className="text-gray-600 md:text-lg text-sm">Email</p>
             {editing ? (
               <input
                 className="rounded-lg border-2 border-gray-200 px-4 py-2"
@@ -96,11 +96,11 @@ const PersonalInfo = ({
                 }}
               />
             ) : (
-              <p className="text-2xl">{varUser.email}</p>
+              <p className="md:text-2xl text-lg">{varUser.email}</p>
             )}
           </div>
           <div className="flex flex-col">
-            <p className="text-gray-600">Phone</p>
+            <p className="text-gray-600 md:text-lg text-sm">Phone</p>
             {editing ? (
               <input
                 className="rounded-lg border-2 border-gray-200 px-4 py-2"
@@ -114,11 +114,11 @@ const PersonalInfo = ({
                 }}
               />
             ) : (
-              <p className="text-2xl">{varUser.phone}</p>
+              <p className="md:text-2xl text-lg">{varUser.phone}</p>
             )}
           </div>
           <div className="flex flex-col">
-            <p className="text-gray-600">Date of Birth</p>
+            <p className="text-gray-600 md:text-lg text-sm">Date of Birth</p>
             {editing ? (
               <input
                 className="rounded-lg border-2 border-gray-200 px-4 py-2"
@@ -132,11 +132,11 @@ const PersonalInfo = ({
                 }}
               />
             ) : (
-              <p className={`text-2xl ${varUser.dateOfBirth ? "" : "text-gray-600"}`}>{varUser.dateOfBirth ? new Date(varUser.dateOfBirth).toLocaleDateString() : "--"}</p>
+              <p className={`md:text-2xl text-lg ${varUser.dateOfBirth ? "" : "text-gray-600"}`}>{varUser.dateOfBirth ? new Date(varUser.dateOfBirth).toLocaleDateString() : "--"}</p>
             )}
           </div>
           <div className="flex flex-col">
-            <p className="text-gray-600">Gender</p>
+            <p className="text-gray-600 md:text-lg text-sm">Gender</p>
             {editing ? (
               <select
                 className="rounded-lg border-2 border-gray-200 px-4 py-2"
@@ -152,7 +152,7 @@ const PersonalInfo = ({
                 <option value="female">Female</option>
               </select>
             ) : (
-              <p className={`text-2xl ${varUser.gender ? "" : "text-gray-600"}`}>
+              <p className={`md:text-2xl text-lg ${varUser.gender ? "" : "text-gray-600"}`}>
                 {varUser.gender ? varUser.gender[0].toUpperCase() + varUser.gender.substring(1).toLowerCase() : "--"}
               </p>
             )}
@@ -160,7 +160,7 @@ const PersonalInfo = ({
         </div>
       </div>
       {editing ? (
-        <div className="flex gap-2">
+        <div className="lg:self-start self-end flex gap-2">
           <button
             className="cursor-pointer rounded-full text-white bg-green-500 hover:bg-green-600 active:bg-green-700 transition-colors p-2"
             onClick={handleSave}
@@ -180,7 +180,7 @@ const PersonalInfo = ({
         </div>
       ) : (
         <button
-          className="cursor-pointer rounded-full text-gray-600 hover:bg-gray-100 active:bg-gray-200 transition-colors border-2 border-gray-200 p-2"
+          className="lg:self-start self-end cursor-pointer rounded-full text-gray-600 hover:bg-gray-100 active:bg-gray-200 transition-colors border-2 border-gray-200 p-2"
           onClick={(): void => {
             setEditing(true);
           }}
