@@ -4,38 +4,52 @@
 export enum Currency {
   AUD = "AUD", // Australian Dollar
   BDT = "BDT", // Bangladeshi Taka
-  ZAR = "ZAR", // South African Rand
+  BRL = "BRL", // Braizilian Real
+  GBR = "GBR", // British Pound
   CAD = "CAD", // Canadian Dollar
-  SGD = "SGD", // Singapore Dollar
-  SAR = "SAR", // Saudi Riyal
+  CNY = "CNY", // Chinese Yuan
   EUR = "EUR", // Euro
-  QAR = "QAR", // Qatari Riyal
-  USD = "USD", // US Dollar
   GHS = "GHS", // Ghanaian Cedi,
+  INR = "INR", // Indian Rupee
+  JPY = "JPY", // Japanese Yen
   MYR = "MYR", // Malaysian Ringgit
   MVR = "MVR", // Maldivian Rufiyaa
-  GBR = "GBR", // Pound Sterling
+  MXN = "MXN", // Mexican Peso
+  PKR = "PKR", // Pakistani Rupee
+  QAR = "QAR", // Qatari Riyal
+  SAR = "SAR", // Saudi Riyal
+  SGD = "SGD", // Singapore Dollar
+  ZAR = "ZAR", // South African Rand
+  AED = "AED", // UAE Dirham
+  USD = "USD", // US Dollar
 }
 
 /**
  * Mapping of country codes to their respective currencies.
  */
 export const COUNTRY_CURRENCY_MAP: Record<string, Currency> = {
-  AU: Currency.AUD, // Australia
-  BD: Currency.BDT, // Bangladesh
-  ZA: Currency.ZAR, // South Africa
-  CA: Currency.CAD, // Canada
-  SG: Currency.SGD, // Singapore
-  SA: Currency.SAR, // Saudi Arabia
-  IT: Currency.EUR, // Italy
-  FR: Currency.EUR, // France
-  QA: Currency.QAR, // Qatar
-  US: Currency.USD, // United States
-  GH: Currency.GHS, // Ghana
-  DE: Currency.EUR, // Germany
-  MY: Currency.MYR, // Malaysia
-  MV: Currency.MVR, // Maldives
-  UK: Currency.GBR, // United Kingdom
+  AU: Currency.AUD,   // Australia
+  BD: Currency.BDT,   // Bangladesh
+  BR: Currency.BRL,   // Brazil
+  CA: Currency.CAD,   // Canada
+  CN: Currency.CNY,   // China
+  FR: Currency.EUR,   // France
+  DE: Currency.EUR,   // Germany
+  GH: Currency.GHS,   // Ghana
+  IN: Currency.INR,   // India
+  IT: Currency.EUR,   // Italy
+  JP: Currency.JPY,   // Japan
+  MY: Currency.MYR,   // Malaysia
+  MV: Currency.MVR,   // Maldives
+  MX: Currency.MXN,   // Mexico
+  PK: Currency.PKR,   // Pakistan
+  QA: Currency.QAR,   // Qatar
+  SA: Currency.SAR,   // Saudi Arabia
+  SG: Currency.SGD,   // Singapore
+  ZA: Currency.ZAR,   // South Africa
+  UAE: Currency.AED,  // United Arab Emirates
+  UK: Currency.GBR,   // United Kingdom
+  US: Currency.USD,   // United States
 };
 
 /**
@@ -43,17 +57,24 @@ export const COUNTRY_CURRENCY_MAP: Record<string, Currency> = {
  * Using currency-based mapping for more reliable formatting since location can be manually changed.
  */
 export const CURRENCY_LOCALE_MAP: Record<Currency, string> = {
-  [Currency.AUD]: "en-AU", // Australian English
+  [Currency.AUD]: "en-AU", // English (Australia)
   [Currency.BDT]: "bn-BD", // Bengali (Bangladesh)
-  [Currency.ZAR]: "en-ZA", // South African English
-  [Currency.CAD]: "en-CA", // Canadian English
-  [Currency.SGD]: "en-SG", // Singapore English
-  [Currency.SAR]: "ar-SA", // Arabic (Saudi Arabia)
-  [Currency.EUR]: "en-EU", // European English (fallback)
+  [Currency.BRL]: "pt-BR", // Portuguese (Brazil)
+  [Currency.CAD]: "en-CA", // English (Canada)
+  [Currency.CNY]: "zh-CN", // Chinese (China, Simplified)
+  [Currency.EUR]: "en-EU", // English (Europe)
+  [Currency.GHS]: "en-GH", // English (Ghana)
+  [Currency.INR]: "en-IN", // English (India)
+  [Currency.JPY]: "ja-JP", // Japanese (Japan)
+  [Currency.MYR]: "ms-MY", // Bahasa Malaysia (Malaysia)
+  [Currency.MVR]: "dv-MV", // Dhivehi (Maldives)
+  [Currency.MXN]: "es-MX", // Spanish (Mexico)
+  [Currency.PKR]: "en-IN", // English (India)
   [Currency.QAR]: "ar-QA", // Arabic (Qatar)
-  [Currency.USD]: "en-US", // US English
-  [Currency.GHS]: "en-GH", // Ghana English
-  [Currency.MYR]: "ms-MY", // Bahasa Malaysia
-  [Currency.MVR]: "dv-MV", // Maldivian Dhivehi
-  [Currency.GBR]: "en-UK", // British English
+  [Currency.SAR]: "ar-SA", // Arabic (Saudi Arabia)
+  [Currency.SGD]: "en-SG", // English (Singapore)
+  [Currency.ZAR]: "en-ZA", // English (South Africa)
+  [Currency.AED]: "ar-AE", // Arabic (United Arab Emirates)
+  [Currency.GBR]: "en-UK", // English (United Kingdom)
+  [Currency.USD]: "en-US", // English (United States)
 };

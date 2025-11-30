@@ -1,6 +1,7 @@
 import api from "@/api";
 
 import { UserModel } from "@/domain/models/UserModel";
+import { AxiosError } from "axios";
 
 export class UserService {
   /**
@@ -16,6 +17,14 @@ export class UserService {
     } catch (error) {
       console.error("Error getting user:", error);
       throw error;
+    }
+  }
+
+  async getMe(): Promise<Me | null> {
+    try {
+      return (await api.get("/api/user/me")).data;
+    } catch (error) {
+      return null;
     }
   }
 

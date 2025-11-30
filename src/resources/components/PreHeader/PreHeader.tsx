@@ -61,7 +61,7 @@ const PreHeader: React.FC = () => {
         {/* Right side - Country selection and currency display */}
         <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
           <Typography variant="body2" color="text.secondary">
-            Ship to
+            Deliver to
           </Typography>
           <FormControl size="small" sx={{ minWidth: "auto" }}>
             <Select

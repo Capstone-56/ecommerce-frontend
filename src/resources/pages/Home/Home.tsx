@@ -61,7 +61,11 @@ export default function Home() {
           display: "flex",
           flexDirection: "column",
           justifyContent: "center",
-          backgroundImage: `url(${bannerImage})`,
+          backgroundImage: {
+            xs: "url(\"/banner-mobile.png\")",
+            sm: "url(\"/banner-mobile.png\")",
+            md: "url(\"/banner.png\")"
+          },
           backgroundSize: "cover",
           backgroundPosition: { 
             xs: "center center",
@@ -109,7 +113,7 @@ export default function Home() {
                 textShadow: "2px 2px 4px rgba(0,0,0,0.5)",
               }}
             >
-              Discover What's <br /> New at BDNX
+              Exclusive Quality <br /> for Better Living
             </Typography>
 
             <Typography
