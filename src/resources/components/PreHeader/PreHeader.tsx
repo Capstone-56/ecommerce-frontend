@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useRef } from "react";
 import {
   Box,
   Select,
@@ -16,6 +16,8 @@ const PreHeader: React.FC = () => {
   const userLocation = locationState((state) => state.userLocation);
   const userCurrency = locationState((state) => state.getUserCurrency());
   const setLocation = locationState((state) => state.setLocation);
+  const invisibleElemRef = useRef<HTMLDivElement>(null);
+  const locationElemRef = useRef<HTMLDivElement>(null);
 
   const handleLocationChange = (event: SelectChangeEvent<string>) => {
     const selectedCountryCode = event.target.value;
@@ -35,6 +37,14 @@ const PreHeader: React.FC = () => {
     return location ? location[1] : userLocation;
   };
 
+  useEffect((): void => {
+    if (!invisibleElemRef.current || !locationElemRef.current) {
+      return;
+    }
+
+    invisibleElemRef.current.style.width = `${locationElemRef.current.clientWidth}px`;
+  }, []);
+
   return (
     <Box
       sx={{
@@ -51,15 +61,28 @@ const PreHeader: React.FC = () => {
           alignItems: "center",
           maxWidth: "1680px",
           mx: "auto",
+          position: "relative"
         }}
       >
-        {/* Left side - promotional text */}
-        <Typography variant="body2" color="text.secondary">
-          
-        </Typography>
+        <div
+          ref={invisibleElemRef}
+          className="opacity-0"
+        >
+          .
+        </div>
+
+        <p>
+          Exclusive Quality for Better Living
+        </p>
 
         {/* Right side - Country selection and currency display */}
-        <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
+        <Box
+          ref={locationElemRef}
+          sx={{
+            display: "flex",
+            alignItems: "center",
+            gap: 1
+          }}>
           <Typography variant="body2" color="text.secondary">
             Deliver to
           </Typography>
@@ -120,7 +143,7 @@ const PreHeader: React.FC = () => {
               ))}
             </Select>
           </FormControl>
-          
+
           {/* Currency display */}
           {userCurrency && (
             <>
