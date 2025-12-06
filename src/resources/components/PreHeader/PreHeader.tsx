@@ -46,14 +46,7 @@ const PreHeader: React.FC = () => {
   }, []);
 
   return (
-    <Box
-      sx={{
-        backgroundColor: "#F8F8F8",
-        py: 0.5,
-        px: 3,
-        borderBottom: `1px solid ${grey[300]}`,
-      }}
-    >
+    <div className="bg-sky-100 py-2 px-4 border-b border-sky-200">
       <Box
         sx={{
           display: "flex",
@@ -154,7 +147,7 @@ const PreHeader: React.FC = () => {
           )}
         </Box>
       </Box>
-    </Box>
+    </div>
   );
 };
 
