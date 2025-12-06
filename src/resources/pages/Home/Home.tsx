@@ -67,7 +67,7 @@ export default function Home() {
             md: "url(\"/banner.png\")"
           },
           backgroundSize: "cover",
-          backgroundPosition: { 
+          backgroundPosition: {
             xs: "center center",
             sm: "center 20%",
             md: "center 30%"
@@ -113,24 +113,25 @@ export default function Home() {
                 textShadow: "2px 2px 4px rgba(0,0,0,0.5)",
               }}
             >
-              Exclusive Quality <br /> for Better Living
+              Discover What's <br /> New at BDNX
             </Typography>
 
             <Typography
               variant="h5"
               component="h2"
-              sx={{ 
+              sx={{
                 mb: 4,
                 color: "white",
-                fontSize: { xs: "20px", md: "24px"},
+                fontSize: { xs: "16px", md: "20px" },
                 textShadow: "1px 1px 2px rgba(0,0,0,0.5)",
                 pt: 2,
                 fontWeight: 300,
                 maxWidth: "600px", // Control when text wraps naturally
               }}
             >
-              Fresh styles. Smart deals. Endless inspiration. <br />
-              Explore our latest arrivals before they're gone.
+              Style That Fits Your Life. A Fusion of Classic and Modern. Inspired Living.
+              <br />
+              Discover fashion and lifestyle essentials crafted for everyday comfort and modern living—comfortable, reliable, great value, and always on trend.
             </Typography>
             <Box sx={{ display: "flex", gap: 2 }}>
               <Button
