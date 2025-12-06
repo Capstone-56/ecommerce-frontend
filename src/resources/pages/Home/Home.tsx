@@ -94,8 +94,8 @@ export default function Home() {
             px: 3,
           }}
         >
-          <Box 
-            sx={{ 
+          <Box
+            sx={{
               textAlign: { xs: "center", md: "center", lg: "left" },
               display: "flex",
               flexDirection: "column",
@@ -160,16 +160,17 @@ export default function Home() {
               </Button>
             </Box>
           </Box>
-        </Container>
-      </Box>
+        </Container >
+      </Box >
 
       {/* Featured Products Section */}
-      <Container
+      < Container
         maxWidth="xl"
         sx={{
           my: { xs: 8, md: 16 },
           textAlign: "center",
-        }}
+        }
+        }
       >
         <Typography
           variant="h2"
@@ -192,8 +193,8 @@ export default function Home() {
           {loading ? (
             // Show skeleton cards while loading
             Array.from({ length: 6 }).map((_, index) => (
-              <Grid 
-                size={{ xs: 12, sm: 6, md: 4, lg: 3 }} 
+              <Grid
+                size={{ xs: 12, sm: 6, md: 4, lg: 3 }}
                 key={`skeleton-${index}`}
                 sx={{
                   display: "flex",
@@ -207,8 +208,8 @@ export default function Home() {
           ) : products.length > 0 ? (
             products.map((product) => {
               return (
-                <Grid 
-                  size={{ xs: 12, sm: 6, md: 4, lg: 3 }} 
+                <Grid
+                  size={{ xs: 12, sm: 6, md: 4, lg: 3 }}
                   key={product.id}
                   sx={{
                     display: "flex",
@@ -234,7 +235,7 @@ export default function Home() {
         >
           View All Products
         </Button>
-      </Container>
+      </Container >
     </>
   );
 }
