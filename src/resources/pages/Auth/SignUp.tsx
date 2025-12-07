@@ -18,6 +18,7 @@ import { AuthService } from "@/services/auth-service";
 
 import { Constants } from "@/domain/constants";
 import { UserSignUpModel } from "@/domain/models/UserModel";
+import { authenticationState, userState } from "@/domain/state";
 
 const authService = new AuthService();
 
@@ -74,9 +75,17 @@ const SignUp: React.FC = () => {
       const success = await authService.signup(user);
       if (success) {
         toast.success(
-          "Please verify your account by checking your email for a verification code"
+          "Account created successfully!"
         );
-        navigate("/mfa/signup");
+        const response = await authService.login(form.username, form.password);
+        authenticationState.setState({ authenticated: true });
+        userState.setState({
+          role: response.role,
+          userName: response.username,
+          id: response.id,
+        });
+        
+        location.href = "/";
       } else {
         toast.error("Signup failed");
       }
