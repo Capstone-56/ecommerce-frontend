@@ -56,9 +56,9 @@ const Login: React.FC = () => {
         });
 
         if (response.role === Role.ADMIN || response.role === Role.MANAGER) {
-          navigate(Constants.ADMIN_DASHBOARD_ROUTE);
+          location.href = Constants.ADMIN_DASHBOARD_ROUTE;
         } else {
-          navigate("/");
+          location.href = "/";
         }
 
         toast.success("Login successful!");
