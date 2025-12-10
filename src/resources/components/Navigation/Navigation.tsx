@@ -15,15 +15,10 @@ import {
   Paper,
   Badge,
   Drawer,
-  MenuItem,
-  Menu,
-  Avatar,
 } from "@mui/material";
 import {
-  NavLink,
   Link as RouterLink,
   useLocation,
-  useNavigate,
 } from "react-router-dom";
 import { grey, common } from "@mui/material/colors";
 import { Constants } from "@/domain/constants";
@@ -37,13 +32,11 @@ import {
   userState,
   locationState,
 } from "@/domain/state";
-import { Role } from "@/domain/enum/role";
 
 import SearchBar from "@/resources/components/Search/SearchBar";
-import { AuthService } from "@/services/auth-service";
-import { StatusCodes } from "http-status-codes";
 import { UserService } from "@/services/user-service";
 import { ShoppingCartService } from "@/services/shopping-cart-service";
+import ProfileAvatar from "./ProfileAvatar";
 
 // Menu Items
 // Should move to another file
@@ -56,7 +49,6 @@ const menus = [
 ];
 
 // Create service instances once per module (shared across all component instances)
-const authService = new AuthService();
 const shoppingCartService = new ShoppingCartService();
 const userService = new UserService();
 
@@ -68,7 +60,6 @@ function getInitial(name?: string | null) {
 const Navbar: React.FC = () => {
   // Routing
   const location = useLocation();
-  const navigate = useNavigate();
 
   // Global store state
   const isAuthenticated = authenticationState((state) => state.authenticated);
@@ -86,9 +77,6 @@ const Navbar: React.FC = () => {
   // Local UI state
   const [mobileDrawerOpen, setMobileDrawerOpen] = useState(false);
   const [searchDrawerOpen, setSearchDrawerOpen] = useState(false);
-  const [profileAnchorEl, setProfileAnchorEl] = useState<null | HTMLElement>(
-    null
-  );
 
   // Category state
   const [categories, setCategories] = useState<CategoryModel[]>([]);
@@ -193,34 +181,6 @@ const Navbar: React.FC = () => {
       prevAuthRef.current = isAuthenticated;
     }
   }, [isAuthenticated, setCartLoaded]);
-
-  const handleProfileMenuOpen = (event: React.MouseEvent<HTMLElement>) => {
-    setProfileAnchorEl(event.currentTarget);
-  };
-
-  const handleProfileMenuClose = () => {
-    setProfileAnchorEl(null);
-  };
-
-  const handleLogout = async () => {
-    try {
-      const status = await authService.logout();
-
-      if (status === StatusCodes.OK) {
-        authenticationState.setState({ authenticated: false });
-        userState.setState({ role: Role.CUSTOMER });
-        userState.setState({ userName: null });
-        userState.setState({ id: null });
-        userState.setState({ userInformation: null });
-        clearCart(); // Clear cart data on logout
-        navigate(Constants.HOME_ROUTE, {
-          replace: true
-        });
-      }
-    } catch (error) {
-      console.error("Logout failed", error);
-    }
-  };
 
   const handleMobileMenuOpen = () => {
     setMobileDrawerOpen(true);
@@ -423,62 +383,7 @@ const Navbar: React.FC = () => {
               </IconButton>
 
               {isAuthenticated && userInformation ? (
-                <>
-                  <IconButton
-                    onClick={handleProfileMenuOpen}
-                    sx={{
-                      p: 0,
-                      px: 0.5
-                    }}
-                  >
-                    <Avatar
-                      sx={{
-                        width: 32,
-                        height: 32,
-                        bgcolor: "primary.light",
-                        fontSize: 14,
-                        fontWeight: 600,
-                      }}
-                    >
-                      {getInitial(username)}
-                    </Avatar>
-                  </IconButton>
-                  <Menu
-                    anchorEl={profileAnchorEl}
-                    open={Boolean(profileAnchorEl)}
-                    onClose={handleProfileMenuClose}
-                    anchorOrigin={{
-                      vertical: "bottom",
-                      horizontal: "right",
-                    }}
-                    transformOrigin={{
-                      vertical: "top",
-                      horizontal: "right",
-                    }}
-                  >
-                    {isAuthenticated &&
-                      (userInformation?.role === Role.ADMIN ||
-                        userInformation?.role === Role.MANAGER) && (
-                        <MenuItem
-                          component={RouterLink}
-                          to={Constants.ADMIN_DASHBOARD_ROUTE}
-                          onClick={handleProfileMenuClose}
-                        >
-                          Admin Dashboard
-                        </MenuItem>
-                      )}
-
-                    <MenuItem
-                      component={RouterLink}
-                      to={Constants.PROFILE_ROUTE}
-                      onClick={handleProfileMenuClose}
-                    >
-                      Profile
-                    </MenuItem>
-
-                    <MenuItem onClick={handleLogout}>Logout</MenuItem>
-                  </Menu>
-                </>
+                <ProfileAvatar />
               ) : (
                 <>
                   <Button

@@ -13,7 +13,7 @@ type Props = {
  */
 const RequireAdmin = ({ children }: Props) => {
   const navigate = useNavigate();
-  const me = useContext(UserContext);
+  const {user: me} = useContext(UserContext);
 
   useEffect(() => {
     if (!me || me.role !== "admin") {

@@ -28,6 +28,14 @@ export class UserService {
     }
   }
 
+  async uploadPfp(image: Blob): Promise<void> {
+    const formData = new FormData();
+
+    formData.append("pfp", image);
+
+    return await api.postForm("/api/user/upload_pfp", formData);
+  }
+
   /**
    * Calls /api/user/{username}
    * @params username: string
