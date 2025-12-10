@@ -6,6 +6,7 @@ interface Me {
   email: string;
   phone: string;
   dateOfBirth: string;
+  hasPfp: boolean;
   gender: "male" | "female" | "";
   role: "admin" | "customer";
 }

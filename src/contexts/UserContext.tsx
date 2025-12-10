@@ -1,7 +1,14 @@
 import { UserService } from "@/services/user-service";
 import { createContext, ReactNode, useEffect, useRef, useState } from "react";
 
-export const UserContext = createContext<Me | null>(null);
+type UserContextType = {
+  user: Me | null;
+  updateUser: () => Promise<void>;
+}
+
+export const UserContext = createContext<UserContextType>({
+  user: null, updateUser: async (): Promise<void> => { }
+});
 
 const UserContextProvider = ({
   children
@@ -9,12 +16,12 @@ const UserContextProvider = ({
   children: ReactNode
 }): ReactNode => {
   const [loading, setLoading] = useState(true);
-  const meRef = useRef<Me | null>(null);
+  const [me, setMe] = useState<Me | null>(null);
 
   const init = async (): Promise<void> => {
     const userService = new UserService();
-    meRef.current = await userService.getMe();
 
+    setMe(await userService.getMe());
     setLoading(false);
   };
 
@@ -23,7 +30,10 @@ const UserContextProvider = ({
   }, []);
 
   return (
-    <UserContext.Provider value={meRef.current}>
+    <UserContext.Provider value={{
+      user: me,
+      updateUser: init
+    }}>
       {!loading && (
         <>{children}</>
       )}
