@@ -61,7 +61,6 @@ const PreHeader: React.FC = () => {
         </p>
 
         {/* Right side - Country selection and currency display */}
-
         <div
           ref={locationElemRef}
           className="flex items-center gap-1"
