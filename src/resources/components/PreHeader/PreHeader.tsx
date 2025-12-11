@@ -43,23 +43,15 @@ const PreHeader: React.FC = () => {
     }
 
     invisibleElemRef.current.style.width = `${locationElemRef.current.clientWidth}px`;
+    invisibleElemRef.current.style.height = `${locationElemRef.current.clientHeight}px`;
   }, []);
 
   return (
     <div className="bg-sky-100 py-2 px-4 border-b border-sky-200">
-      <Box
-        sx={{
-          display: "flex",
-          justifyContent: "space-between",
-          alignItems: "center",
-          maxWidth: "1680px",
-          mx: "auto",
-          position: "relative"
-        }}
-      >
+      <div className="relative flex md:flex-row flex-col md:justify-between justify-start items-center max-w-[1680px]">
         <div
           ref={invisibleElemRef}
-          className="opacity-0"
+          className="md:block hidden opacity-0"
         >
           .
         </div>
@@ -69,13 +61,10 @@ const PreHeader: React.FC = () => {
         </p>
 
         {/* Right side - Country selection and currency display */}
-        <Box
+        <div
           ref={locationElemRef}
-          sx={{
-            display: "flex",
-            alignItems: "center",
-            gap: 1
-          }}>
+          className="flex items-center gap-1"
+        >
           <Typography variant="body2" color="text.secondary">
             Deliver to
           </Typography>
@@ -145,8 +134,8 @@ const PreHeader: React.FC = () => {
               </Typography>
             </>
           )}
-        </Box>
-      </Box>
+        </div>
+      </div>
     </div>
   );
 };
