@@ -274,16 +274,10 @@ const Navbar: React.FC = () => {
                     textDecoration: "none",
                   }}
                 >
-                  <Box
-                    component="img"
-                    src="/logo_bdnx.png"
-                    alt="BDNX"
-                    sx={{
-                      height: { xs: 24, sm: 28, md: 32 },
-                      width: "auto",
-                      mr: { xs: 1, sm: 1.25, md: 1.5 },
-                      objectFit: "contain",
-                    }}
+                  <img
+                    className="h-6 md:h-8"
+                    src="/logo_bdnx_transparent.png"
+                    alt="bdnx-logo"
                   />
                 </Box>
               </Box>
