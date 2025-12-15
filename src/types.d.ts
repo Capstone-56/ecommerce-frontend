@@ -10,3 +10,8 @@ interface Me {
   gender: "male" | "female" | "";
   role: "admin" | "customer";
 }
+
+interface DateItemType {
+  name: string;
+  date: Date;
+}

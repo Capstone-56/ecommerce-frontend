@@ -1,9 +1,17 @@
-import { ReactNode, useMemo, useState } from "react";
+import { ReactNode, useMemo } from "react";
 import { Outlet, useLocation, useNavigate } from "react-router-dom";
 
-const ROUTES = [{
+type RouteItemType = {
+  name: string;
+  routeSuffix: string;
+};
+
+const ROUTES: RouteItemType[] = [{
   name: "Account",
   routeSuffix: ""
+}, {
+  name: "Dates",
+  routeSuffix: "/dates"
 }, {
   name: "Addresses",
   routeSuffix: "/shipping"
@@ -17,21 +25,20 @@ const ProfileV2 = (): ReactNode => {
   const navigate = useNavigate();
   const selected = useMemo((): number => {
     const pathname = location.pathname;
+    let toReturn = -1;
 
-    if (pathname === "/profile") {
-      return 0;
-    } else if (pathname === "/profile/shipping") {
-      return 1;
-    } else if (pathname === "/profile/orders") {
-      return 2;
-    } else {
-      return -1;  // unlikely case
-    }
+    ROUTES.forEach((route, i): void => {
+      if (pathname === `/profile${route.routeSuffix}`) {
+        toReturn = i;
+      }
+    });
+
+    return toReturn;
   }, [location]);
 
   return (
     <div className="absolute inset-0 flex items-stretch justify-center bg-gray-100 mx-auto md:p-8 p-2">
-      <div className={`flex lg:flex-row flex-col lg:items-start items-stretch gap-4 rounded-lg shadow-lg border bg-white border-gray-100 p-4 h-full w-full max-w-360`}>
+      <div className={`flex lg:flex-row flex-col lg:items-stretch gap-4 rounded-lg shadow-lg border bg-white border-gray-100 p-4 h-full w-full max-w-360`}>
         <div className="flex lg:flex-col flex-row lg:justify-start justify-center gap-1 w-full lg:max-w-64 max-w-full">
           {ROUTES.map((route, i): ReactNode => {
             return (
