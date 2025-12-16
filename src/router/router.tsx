@@ -38,6 +38,7 @@ import ResetPassword from "@/resources/pages/Auth/ResetPassword";
 import MFA from "@/resources/pages/Auth/MFA";
 import ProfileV2 from "@/resources/pages/Profile/ProfileV2";
 import UserDetailsV2 from "@/resources/components/Profile/UserDetailsV2";
+import ProfileDates from "@/resources/components/Profile/ProfileDates";
 
 export const router = createBrowserRouter([
   {
@@ -55,20 +56,19 @@ export const router = createBrowserRouter([
       {
         path: "/profile",
         element: <ProfileV2 />,
-        children: [
-          {
-            path: "orders",
-            element: <OrderDetails />,
-          },
-          {
-            index: true,
-            element: <UserDetailsV2 />,
-          },
-          {
-            path: "shipping",
-            element: <ShippingAddress />,
-          },
-        ],
+        children: [{
+          index: true,
+          element: <UserDetailsV2 />,
+        }, {
+          path: "dates",
+          element: <ProfileDates />
+        }, {
+          path: "shipping",
+          element: <ShippingAddress />,
+        }, {
+          path: "orders",
+          element: <OrderDetails />,
+        }],
       },
       {
         path: "products",
