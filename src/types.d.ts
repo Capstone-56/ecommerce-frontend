@@ -13,5 +13,6 @@ interface Me {
 
 interface DateItemType {
   name: string;
-  date: Date;
+  date: number;
+  month: number;
 }

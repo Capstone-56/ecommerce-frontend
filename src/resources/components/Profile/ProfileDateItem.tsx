@@ -1,3 +1,4 @@
+import { MONTHS } from "@/utilities/date";
 import { ReactNode } from "react";
 
 type ProfileDateItemProps = {
@@ -17,7 +18,7 @@ const ProfileDateItem = ({
       <p
         className="text-gray-600"
       >
-        {`${dateItem.date.getDate()}-${dateItem.date.getMonth()}`}
+        {`${dateItem.date.toString().padStart(2, "0")} ${MONTHS[dateItem.month].name}`}
       </p>
     </div>
   );
