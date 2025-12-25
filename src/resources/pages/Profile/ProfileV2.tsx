@@ -28,7 +28,7 @@ const ProfileV2 = (): ReactNode => {
     let toReturn = -1;
 
     ROUTES.forEach((route, i): void => {
-      if (pathname === `/profile${route.routeSuffix}`) {
+      if (pathname === `/profile${route.routeSuffix}` || pathname === `/profile${route.routeSuffix}/`) {
         toReturn = i;
       }
     });
