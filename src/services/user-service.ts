@@ -1,7 +1,6 @@
 import api from "@/api";
 
 import { UserModel } from "@/domain/models/UserModel";
-import { AxiosError } from "axios";
 
 export class UserService {
   /**
@@ -34,6 +33,40 @@ export class UserService {
     formData.append("pfp", image);
 
     return await api.postForm("/api/user/upload_pfp", formData);
+  }
+
+  async getUserDates(): Promise<DateItemType[]> {
+    return Array.from((await api.get("/api/user-dates/all")).data).map((date_item: any): DateItemType => {
+      return {
+        id: date_item.id,
+        name: date_item.name,
+        date: parseInt(date_item.date),
+        month: parseInt(date_item.month)
+      }
+    });
+  }
+
+  async addUserDate(name: string, date: number, month: number): Promise<DateItemType | null> {
+    try {
+      const response = await api.post("/api/user-dates/add", {
+        name,
+        date,
+        month
+      });
+
+      return {
+        id: response.data.id,
+        name,
+        date,
+        month
+      };
+    } catch (err: any) {
+      if (err.status === 409) {
+        return null
+      } else {
+        throw err;
+      }
+    }
   }
 
   /**

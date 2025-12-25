@@ -12,6 +12,7 @@ interface Me {
 }
 
 interface DateItemType {
+  id: string;
   name: string;
   date: number;
   month: number;
