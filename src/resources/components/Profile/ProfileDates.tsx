@@ -3,6 +3,7 @@ import { ReactNode, useEffect, useState } from "react";
 import ProfileDateItem from "./ProfileDateItem";
 import ProfileDateInput from "./ProfileDateInput";
 import { UserService } from "@/services/user-service";
+import { toast } from "react-toastify";
 
 const userService = new UserService();
 
@@ -14,19 +15,21 @@ const ProfileDates = (): ReactNode => {
     setAskDate(true);
   };
 
-  const addDate = (title: string, date: number, month: number): void => {
-    setDates((prev) => {
-      const temp = Array.from(prev);
+  const addDate = async (title: string, date: number, month: number): Promise<void> => {
+    const newDate = await userService.addUserDate(title, date, month);
 
-      temp.push({
-        id: window.crypto.randomUUID(),
-        name: title,
-        date,
-        month
+    if (newDate === null) {
+      toast.error("Date with this title already exists.");
+    } else {
+      setDates((prev) => {
+        const temp = Array.from(prev);
+
+        temp.push(newDate);
+
+        return temp;
       });
-
-      return temp;
-    });
+      toast.success("Added new date successfully.");
+    }
   };
 
   const init = async (): Promise<void> => {

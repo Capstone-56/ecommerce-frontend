@@ -1,7 +1,6 @@
 import api from "@/api";
 
 import { UserModel } from "@/domain/models/UserModel";
-import { AxiosError } from "axios";
 
 export class UserService {
   /**
@@ -45,6 +44,29 @@ export class UserService {
         month: parseInt(date_item.month)
       }
     });
+  }
+
+  async addUserDate(name: string, date: number, month: number): Promise<DateItemType | null> {
+    try {
+      const response = await api.post("/api/user-dates/add", {
+        name,
+        date,
+        month
+      });
+
+      return {
+        id: response.data.id,
+        name,
+        date,
+        month
+      };
+    } catch (err: any) {
+      if (err.status === 409) {
+        return null
+      } else {
+        throw err;
+      }
+    }
   }
 
   /**
