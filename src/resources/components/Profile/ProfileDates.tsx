@@ -1,7 +1,10 @@
 import { PlusIcon } from "lucide-react";
-import { ReactNode, useState } from "react";
+import { ReactNode, useEffect, useState } from "react";
 import ProfileDateItem from "./ProfileDateItem";
 import ProfileDateInput from "./ProfileDateInput";
+import { UserService } from "@/services/user-service";
+
+const userService = new UserService();
 
 const ProfileDates = (): ReactNode => {
   const [dates, setDates] = useState(new Array<DateItemType>());
@@ -16,6 +19,7 @@ const ProfileDates = (): ReactNode => {
       const temp = Array.from(prev);
 
       temp.push({
+        id: window.crypto.randomUUID(),
         name: title,
         date,
         month
@@ -24,6 +28,14 @@ const ProfileDates = (): ReactNode => {
       return temp;
     });
   };
+
+  const init = async (): Promise<void> => {
+    setDates(await userService.getUserDates());
+  }
+
+  useEffect((): void => {
+    init();
+  }, [])
 
   return (
     <div className="absolute inset-0 flex flex-col gap-2 items-stretch">

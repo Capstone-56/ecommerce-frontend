@@ -36,6 +36,17 @@ export class UserService {
     return await api.postForm("/api/user/upload_pfp", formData);
   }
 
+  async getUserDates(): Promise<DateItemType[]> {
+    return Array.from((await api.get("/api/user-dates/all")).data).map((date_item: any): DateItemType => {
+      return {
+        id: date_item.id,
+        name: date_item.name,
+        date: parseInt(date_item.date),
+        month: parseInt(date_item.month)
+      }
+    });
+  }
+
   /**
    * Calls /api/user/{username}
    * @params username: string
