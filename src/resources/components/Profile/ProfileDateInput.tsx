@@ -4,14 +4,15 @@ import { ReactNode, useState } from "react";
 
 type ProfileDateInputProps = {
   setAskDate: React.Dispatch<React.SetStateAction<boolean>>;
-  addDate: (title: string, date: number, month: number) => void;
+  addDate: (title: UserDateTitleType, remarsk: string, date: number, month: number) => void;
 };
 
 const ProfileDateInput = ({
   setAskDate,
   addDate
 }: ProfileDateInputProps): ReactNode => {
-  const [formTitle, setFormTitle] = useState("");
+  const [formTitle, setFormTitle] = useState<UserDateTitleType>("birthday");
+  const [formRemarks, setFormRemarks] = useState("");
   const [formDate, setFormDate] = useState<number>(1);
   const [formMonth, setFormMonth] = useState<number>(0);
 
@@ -19,8 +20,18 @@ const ProfileDateInput = ({
     setAskDate(false);
   };
 
+  const handleTitleChange = (e: React.ChangeEvent<HTMLSelectElement>): void => {
+    const value = e.currentTarget.value as UserDateTitleType;
+
+    setFormTitle(value);
+
+    if (value !== "other") {
+      setFormRemarks("");
+    }
+  };
+
   const handleSubmit = (): void => {
-    addDate(formTitle, formDate, formMonth);
+    addDate(formTitle, formRemarks, formDate, formMonth);
     closeModal();
   };
 
@@ -47,14 +58,35 @@ const ProfileDateInput = ({
         </div>
         <div className="flex flex-col gap-1">
           <p>Title</p>
-          <input
+          <select
             className="border-2 border-gray-200 rounded-lg outline-none bg-white hover:bg-gray-100 ring-2 ring-white focus:ring-gray-200 transition-all p-2"
             value={formTitle}
-            onChange={e => setFormTitle(e.target.value)}
-            type="text"
+            onChange={handleTitleChange}
             required
-          />
+          >
+            <option value="birthday">
+              Birthday
+            </option>
+            <option value="anniversary">
+              Anniversary
+            </option>
+            <option value="other">
+              Other
+            </option>
+          </select>
         </div>
+        {formTitle === "other" && (
+          <div className="flex flex-col gap-1">
+            <p>Remarks</p>
+            <input
+              className="border-2 border-gray-200 rounded-lg outline-none bg-white hover:bg-gray-100 ring-2 ring-white focus:ring-gray-200 transition-all p-2"
+              value={formRemarks}
+              onChange={e => setFormRemarks(e.currentTarget.value)}
+              type="text"
+              required
+            />
+          </div>
+        )}
         <div className="flex items-stretch gap-2">
           <div className="basis-full flex flex-col gap-1">
             <p>Date</p>

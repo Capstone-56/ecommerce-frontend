@@ -40,33 +40,28 @@ export class UserService {
       return {
         id: date_item.id,
         name: date_item.name,
+        remarks: date_item.remarks,
         date: parseInt(date_item.date),
         month: parseInt(date_item.month)
       }
     });
   }
 
-  async addUserDate(name: string, date: number, month: number): Promise<DateItemType | null> {
-    try {
-      const response = await api.post("/api/user-dates/add", {
-        name,
-        date,
-        month
-      });
+  async addUserDate(name: UserDateTitleType, remarks: string, date: number, month: number): Promise<DateItemType> {
+    const response = await api.post("/api/user-dates/add", {
+      name,
+      remarks,
+      date,
+      month
+    });
 
-      return {
-        id: response.data.id,
-        name,
-        date,
-        month
-      };
-    } catch (err: any) {
-      if (err.status === 409) {
-        return null
-      } else {
-        throw err;
-      }
-    }
+    return {
+      id: response.data.id,
+      name,
+      remarks,
+      date,
+      month
+    };
   }
 
   /**
