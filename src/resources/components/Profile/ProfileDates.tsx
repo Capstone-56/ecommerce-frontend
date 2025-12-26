@@ -44,17 +44,50 @@ const ProfileDates = (): ReactNode => {
     <div className="absolute inset-0 flex flex-col gap-2 items-stretch">
       <p className="font-semibold md:text-4xl text-2xl">Dates</p>
       <div className="grow relative">
-        <div className="absolute inset-0 flex flex-col gap-2 items-stretch overflow-y-auto">
+        <div className="absolute inset-0 flex flex-col gap-2 items-stretch">
           {dates.length === 0 ? (
             <p className="border border-gray-200 bg-gray-100 text-gray-600 text-center rounded-lg p-4 w-full">No dates added</p>
-          ) : dates.map((item): ReactNode => {
-            return (
-              <ProfileDateItem
-                key={`${item.name}:${item.date}:${item.month}`}
-                dateItem={item}
-              />
-            );
-          })}
+          ) : (
+            <div className="border-2 border-gray-200 rounded-lg w-full h-full overflow-clip">
+              <div className="w-full h-full overflow-y-auto">
+                <table className="table-fixed w-full">
+                  <colgroup>
+                    <col className="w-[20%]" />
+                    <col className="w-[10%]" />
+                    <col className="w-[15%]" />
+                    <col className="w-[55%]" />
+                  </colgroup>
+                  <thead className="sticky top-0 border-b border-gray-200 bg-white">
+                    <tr>
+                      <th>
+                        <p className="text-start px-4 py-2">Title</p>
+                      </th>
+                      <th>
+                        <p className="text-start px-4 py-2">Date</p>
+                      </th>
+                      <th>
+                        <p className="text-start px-4 py-2">Month</p>
+                      </th>
+                      <th>
+                        <p className="text-start px-4 py-2">Remarks</p>
+                      </th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {dates.map((item, i): ReactNode => {
+                      return (
+                        <ProfileDateItem
+                          key={`${item.name}:${item.date}:${item.month}`}
+                          idx={i}
+                          dateItem={item}
+                        />
+                      );
+                    })}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          )}
         </div>
       </div>
       <div className="flex items-center justify-end">

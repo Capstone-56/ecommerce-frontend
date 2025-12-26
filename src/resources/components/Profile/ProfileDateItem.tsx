@@ -3,24 +3,28 @@ import { ReactNode } from "react";
 
 type ProfileDateItemProps = {
   dateItem: DateItemType;
+  idx: number;
 };
 
 const ProfileDateItem = ({
-  dateItem
+  dateItem,
+  idx
 }: ProfileDateItemProps): ReactNode => {
   return (
-    <div className="border border-gray-200 rounded-lg p-4">
-      <p
-        className="text-xl font-semibold"
-      >
-        {dateItem.name}
-      </p>
-      <p
-        className="text-gray-600"
-      >
-        {`${dateItem.date.toString().padStart(2, "0")} ${MONTHS[dateItem.month].name}`}
-      </p>
-    </div>
+    <tr className={`${idx % 2 === 0 ? "bg-whit" : "bg-gray-50"} hover:bg-gray-200 transition-colors`}>
+      <td>
+        <p className="px-4 py-2">{dateItem.name}</p>
+      </td>
+      <td>
+        <p className="px-4 py-2">{dateItem.date.toString().padStart(2, "0")}</p>
+      </td>
+      <td>
+        <p className="px-4 py-2">{MONTHS[dateItem.month].name}</p>
+      </td>
+      <td>
+        <p className="px-4 py-2">{dateItem.remarks}</p>
+      </td>
+    </tr>
   );
 };
 
