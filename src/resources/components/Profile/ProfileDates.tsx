@@ -17,8 +17,6 @@ const ProfileDates = (): ReactNode => {
 
   const addDate = async (title: UserDateTitleType, remarks: string, date: number, month: number): Promise<void> => {
     const newDate = await userService.addUserDate(title, remarks, date, month);
-  const addDate = async (title: UserDateTitleType, remarks: string, date: number, month: number): Promise<void> => {
-    const newDate = await userService.addUserDate(title, remarks, date, month);
 
     if (newDate === null) {
       toast.error("Date with this title already exists.");
