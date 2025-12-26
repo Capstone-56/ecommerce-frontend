@@ -6,6 +6,12 @@ type ProfileDateItemProps = {
   idx: number;
 };
 
+const TITLE_MAP = {
+  "birthday": "Birthday",
+  "anniversary": "Anniversary",
+  "other": "Other"
+};
+
 const ProfileDateItem = ({
   dateItem,
   idx
@@ -13,7 +19,7 @@ const ProfileDateItem = ({
   return (
     <tr className={`${idx % 2 === 0 ? "bg-whit" : "bg-gray-50"} hover:bg-gray-200 transition-colors`}>
       <td>
-        <p className="px-4 py-2">{dateItem.name}</p>
+        <p className="px-4 py-2">{TITLE_MAP[dateItem.name]}</p>
       </td>
       <td>
         <p className="px-4 py-2">{dateItem.date.toString().padStart(2, "0")}</p>
