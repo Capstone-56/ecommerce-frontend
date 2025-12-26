@@ -17,6 +17,8 @@ const ProfileDates = (): ReactNode => {
 
   const addDate = async (title: UserDateTitleType, remarks: string, date: number, month: number): Promise<void> => {
     const newDate = await userService.addUserDate(title, remarks, date, month);
+  const addDate = async (title: UserDateTitleType, remarks: string, date: number, month: number): Promise<void> => {
+    const newDate = await userService.addUserDate(title, remarks, date, month);
 
     if (newDate === null) {
       toast.error("Date with this title already exists.");
@@ -49,8 +51,8 @@ const ProfileDates = (): ReactNode => {
             <p className="border border-gray-200 bg-gray-100 text-gray-600 text-center rounded-lg p-4 w-full">No dates added</p>
           ) : (
             <div className="border-2 border-gray-200 rounded-lg w-full h-full overflow-clip">
-              <div className="w-full h-full overflow-y-auto">
-                <table className="table-fixed w-full">
+              <div className="w-full h-full overflow-y-auto overflow-x-auto">
+                <table className="table-fixed w-full min-w-3xl">
                   <colgroup>
                     <col className="w-[20%]" />
                     <col className="w-[10%]" />
