@@ -11,9 +11,12 @@ interface Me {
   role: "admin" | "customer";
 }
 
+type UserDateTitleType = "birthday" | "anniversary" | "other";
+
 interface DateItemType {
   id: string;
-  name: string;
+  name: UserDateTitleType;
+  remarks: string;
   date: number;
   month: number;
 }
