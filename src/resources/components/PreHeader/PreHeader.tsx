@@ -48,12 +48,23 @@ const PreHeader: React.FC = () => {
 
   return (
     <div className="bg-sky-100 py-2 px-4 border-b border-sky-200">
-      <div className="relative flex md:flex-row flex-col md:justify-between justify-start items-center max-w-[1680px]">
+      <div className="relative flex md:flex-row flex-col md:justify-between justify-start items-center max-w-[1680px] mx-auto">
         <div
           ref={invisibleElemRef}
-          className="md:block hidden opacity-0"
         >
-          .
+          <style>{`
+            @keyframes blink-smooth {
+              0%, 100% { opacity: 1; }
+              50% { opacity: 0; }
+            }
+            .blink-smooth {
+              animation: blink-smooth 2s ease-in-out infinite;
+            }
+          `}</style>
+          <p className="text-center md:text-left blink-smooth h-full">
+            Coming Soon
+            <span className="md:opacity-100 opacity-0">...</span>
+          </p>
         </div>
 
         <p>
